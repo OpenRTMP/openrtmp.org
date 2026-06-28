@@ -1,7 +1,7 @@
 <?php
 $page = 'home';
-$pageTitle = 'OpenRTMP — A modern RTMP / E-RTMP protocol library (OpenSSL-based)';
-$pageDescription = 'librtmp2 is a C protocol library for RTMP and E-RTMP (v1 & v2), built on OpenSSL: handshake, chunking, AMF0/AMF3, FLV and host callbacks — no media server, no HTTP, no auth policy.';
+$pageTitle = 'OpenRTMP — A modern RTMP / E-RTMP protocol library';
+$pageDescription = 'librtmp2 is a C protocol library for RTMP and E-RTMP (v1 & v2): handshake, chunking, AMF0/AMF3, FLV and host callbacks — no media server, no HTTP, no auth policy.';
 include __DIR__ . '/includes/header.php';
 ?>
 
@@ -13,7 +13,7 @@ include __DIR__ . '/includes/header.php';
       <h1>The <span class="gradient">protocol layer</span><br>for RTMP, done right.</h1>
       <p>
         librtmp2 is a C library that speaks RTMP and Enhanced RTMP
-        (v1 &amp; v2) on the wire, built on top of OpenSSL. Your application owns the policy &mdash;
+        (v1 & v2) on the wire. Your application owns the policy &mdash;
         librtmp2 just hands you clean, bounds-checked events.
       </p>
       <div class="hero-actions">
@@ -21,7 +21,6 @@ include __DIR__ . '/includes/header.php';
         <a href="/docs/" class="btn btn-ghost">Read the Docs</a>
       </div>
       <div class="hero-stats">
-        <div class="stat"><strong>1</strong><span>runtime dependency (OpenSSL)</span></div>
         <div class="stat"><strong>9</strong><span>protocol layers</span></div>
         <div class="stat"><strong>v1 / v2</strong><span>E-RTMP support</span></div>
         <div class="stat"><strong>MIT</strong><span>licensed</span></div>
@@ -87,11 +86,6 @@ include __DIR__ . '/includes/header.php';
           <p>Only <code>include/librtmp2/*.h</code> is public. Internal headers move freely under semantic versioning, checked against the previous release before every tag.</p>
         </div>
         <div class="card">
-          <div class="icon">&#128230;</div>
-          <h3>Minimal dependencies</h3>
-          <p>Built on OpenSSL for crypto and TLS. Pure C otherwise, build with Make or Meson. Drop it into an existing media pipeline or embed it as a subproject &mdash; your call.</p>
-        </div>
-        <div class="card">
           <div class="icon">&#129514;</div>
           <h3>Host owns the policy</h3>
           <p>Auth, recording, transcoding, routing &mdash; all yours. librtmp2 emits <code>on_connect</code>, <code>on_publish</code>, <code>on_play</code>, <code>on_frame</code>, <code>on_close</code> and gets out of the way.</p>
@@ -136,7 +130,7 @@ include __DIR__ . '/includes/header.php';
         <div class="card">
           <div class="icon">&#128230;</div>
           <h3>librtmp2</h3>
-          <p>The C library built on OpenSSL: handshake, chunking, AMF0/AMF3, FLV and E-RTMP v1/v2 decoding, delivered through host callbacks. No server loop, no storage, no policy.</p>
+          <p>The C library: handshake, chunking, AMF0/AMF3, FLV and E-RTMP v1/v2 decoding, delivered through host callbacks. No server loop, no storage, no policy.</p>
           <p style="margin-top: 14px;"><a href="https://github.com/openrtmp/librtmp2" target="_blank" rel="noopener" class="btn btn-ghost">View librtmp2 &rarr;</a></p>
         </div>
         <div class="card">
