@@ -45,7 +45,9 @@ function initActiveDocsLink() {
   if (!links.length) return;
 
   const sections = Array.from(links)
-    .map((a) => document.querySelector(a.getAttribute('href')))
+    .map((a) => a.getAttribute('href'))
+    .filter((href) => href && href.startsWith('#'))
+    .map((href) => document.querySelector(href))
     .filter(Boolean);
 
   if (!sections.length) return;
