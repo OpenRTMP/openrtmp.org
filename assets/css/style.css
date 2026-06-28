@@ -73,7 +73,7 @@ body {
   letter-spacing: -0.02em;
 }
 
-.brand svg { display: block; }
+.brand svg, .brand img { display: block; border-radius: 6px; }
 
 .brand .dot { color: var(--accent); }
 
