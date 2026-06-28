@@ -1,0 +1,8 @@
+DirectoryIndex index.php index.html
+
+RewriteEngine On
+
+# Old extension-based URLs -> clean directory URLs
+RewriteRule ^index\.php$ / [R=301,L]
+RewriteRule ^docs\.php$ /docs/ [R=301,L]
+RewriteRule ^download\.php$ /download/ [R=301,L]

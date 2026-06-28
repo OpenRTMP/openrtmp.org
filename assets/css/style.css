@@ -279,6 +279,8 @@ section { padding: 80px 0; }
   gap: 20px;
 }
 
+.grid-2 { grid-template-columns: repeat(2, 1fr); }
+
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -553,6 +555,7 @@ td { color: var(--text-dim); }
 /* ---------- Responsive ---------- */
 @media (max-width: 900px) {
   .grid { grid-template-columns: repeat(2, 1fr); }
+  .grid-2 { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr 1fr; }
   .docs-layout { grid-template-columns: 1fr; }
   .docs-nav { position: static; }
