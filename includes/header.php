@@ -25,10 +25,10 @@ $page = $page ?? 'home';
       <a href="/#ecosystem">Ecosystem</a>
       <a href="/docs/">Docs</a>
       <a href="/download/">Download</a>
-      <a href="https://github.com/openrtmp" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://github.com/OpenRTMP" target="_blank" rel="noopener">GitHub</a>
     </nav>
     <div class="nav-cta">
-      <a href="https://github.com/openrtmp/librtmp2" target="_blank" rel="noopener" class="btn btn-ghost">Star on GitHub</a>
+      <a href="https://github.com/OpenRTMP/librtmp2" target="_blank" rel="noopener" class="btn btn-ghost">Star on GitHub</a>
       <a href="/download/" class="btn btn-primary">Get librtmp2</a>
     </div>
     <button class="nav-toggle" aria-label="Toggle navigation">&#9776;</button>

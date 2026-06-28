@@ -131,19 +131,19 @@ include __DIR__ . '/includes/header.php';
           <div class="icon">&#128230;</div>
           <h3>librtmp2</h3>
           <p>The C library: handshake, chunking, AMF0/AMF3, FLV and E-RTMP v1/v2 decoding, delivered through host callbacks. No server loop, no storage, no policy.</p>
-          <p style="margin-top: 14px;"><a href="https://github.com/openrtmp/librtmp2" target="_blank" rel="noopener" class="btn btn-ghost">View librtmp2 &rarr;</a></p>
+          <p style="margin-top: 14px;"><a href="https://github.com/OpenRTMP/librtmp2" target="_blank" rel="noopener" class="btn btn-ghost">View librtmp2 &rarr;</a></p>
         </div>
         <div class="card">
           <div class="icon">&#128268;</div>
           <h3>librtmp2-server</h3>
           <p>A standalone ingest/playback server built on top of librtmp2's callbacks. It wires up <code>on_connect</code>, <code>on_publish</code>, <code>on_play</code> and <code>on_frame</code> into a working RTMP/E-RTMP endpoint &mdash; use it as-is, or as a blueprint for your own server.</p>
-          <p style="margin-top: 14px;"><a href="https://github.com/openrtmp/librtmp2-server" target="_blank" rel="noopener" class="btn btn-ghost">View librtmp2-server &rarr;</a></p>
+          <p style="margin-top: 14px;"><a href="https://github.com/OpenRTMP/librtmp2-server" target="_blank" rel="noopener" class="btn btn-ghost">View librtmp2-server &rarr;</a></p>
         </div>
         <div class="card">
           <div class="icon">&#127912;</div>
           <h3>librtmp2-server-panel</h3>
           <p>A Flask web panel for managing librtmp2-server. Create streams, monitor stats (bitrate, codec, viewership), and manage keys &mdash; all from a browser. Encrypted key storage, CSRF protection, rate limiting, multi-user support.</p>
-          <p style="margin-top: 14px;"><a href="https://github.com/openrtmp/librtmp2-server-panel" target="_blank" rel="noopener" class="btn btn-ghost">View librtmp2-server-panel &rarr;</a></p>
+          <p style="margin-top: 14px;"><a href="https://github.com/OpenRTMP/librtmp2-server-panel" target="_blank" rel="noopener" class="btn btn-ghost">View librtmp2-server-panel &rarr;</a></p>
         </div>
       </div>
     </div>
@@ -156,7 +156,7 @@ include __DIR__ . '/includes/header.php';
         <p>Clone the library, link it against your media pipeline, and start handling real publishers in minutes. Or deploy the full stack with the server and panel.</p>
         <div class="hero-actions" style="margin-bottom:0;">
           <a href="/download/" class="btn btn-primary">Download librtmp2</a>
-          <a href="https://github.com/openrtmp/librtmp2" target="_blank" rel="noopener" class="btn btn-ghost">View Source on GitHub</a>
+          <a href="https://github.com/OpenRTMP/librtmp2" target="_blank" rel="noopener" class="btn btn-ghost">View Source on GitHub</a>
         </div>
       </div>
     </div>

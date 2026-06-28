@@ -26,8 +26,9 @@ include __DIR__ . '/../includes/header.php';
         </ul>
         <h4>Repositories</h4>
         <ul>
-          <li><a href="https://github.com/openrtmp/librtmp2" target="_blank" rel="noopener">librtmp2</a></li>
-          <li><a href="https://github.com/openrtmp/librtmp2-server" target="_blank" rel="noopener">librtmp2-server</a></li>
+          <li><a href="https://github.com/OpenRTMP/librtmp2" target="_blank" rel="noopener">librtmp2</a></li>
+          <li><a href="https://github.com/OpenRTMP/librtmp2-server" target="_blank" rel="noopener">librtmp2-server</a></li>
+          <li><a href="https://github.com/OpenRTMP/librtmp2-server-panel" target="_blank" rel="noopener">librtmp2-server-panel</a></li>
         </ul>
       </aside>
 
@@ -35,7 +36,7 @@ include __DIR__ . '/../includes/header.php';
 
         <h2 id="getting-started">Getting Started</h2>
         <p>Build with Make for local development, or Meson when embedding librtmp2 as a subproject.</p>
-        <pre><code>git clone https://github.com/openrtmp/librtmp2.git
+        <pre><code>git clone https://github.com/OpenRTMP/librtmp2.git
 cd librtmp2
 make release
 make test</code></pre>
@@ -87,7 +88,7 @@ meson test -C builddir</code></pre>
         </div>
 
         <h2 id="server">librtmp2-server</h2>
-        <p><a href="https://github.com/openrtmp/librtmp2-server" target="_blank" rel="noopener">librtmp2-server</a> is the reference ingest/playback server built on top of librtmp2. It is a separate repository and binary &mdash; librtmp2 itself stays free of any server loop, socket policy, or storage decisions.</p>
+        <p><a href="https://github.com/OpenRTMP/librtmp2-server" target="_blank" rel="noopener">librtmp2-server</a> is the reference ingest/playback server built on top of librtmp2. It is a separate repository and binary &mdash; librtmp2 itself stays free of any server loop, socket policy, or storage decisions.</p>
         <p>What it adds on top of the library:</p>
         <div class="table-wrap">
           <table>
@@ -101,7 +102,7 @@ meson test -C builddir</code></pre>
           </table>
         </div>
         <p>Build it the same way as the library:</p>
-        <pre><code>git clone https://github.com/openrtmp/librtmp2-server.git
+        <pre><code>git clone https://github.com/OpenRTMP/librtmp2-server.git
 cd librtmp2-server
 make release</code></pre>
         <p>Use it as a drop-in ingest/playback endpoint, or read its source as a worked example of wiring host callbacks into a real server &mdash; see the <a href="/download/">download page</a> for build details.</p>
