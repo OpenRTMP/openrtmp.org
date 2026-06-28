@@ -6,3 +6,5 @@ RewriteEngine On
 RewriteRule ^index\.php$ / [R=301,L]
 RewriteRule ^docs\.php$ /docs/ [R=301,L]
 RewriteRule ^download\.php$ /download/ [R=301,L]
+RewriteRule ^docs/index\.php$ /docs/ [R=301,L]
+RewriteRule ^download/index\.php$ /download/ [R=301,L]
