@@ -1,7 +1,7 @@
 <?php
 $page = 'home';
 $pageTitle = 'OpenRTMP — A modern RTMP / E-RTMP protocol library';
-$pageDescription = 'librtmp2 is a C protocol library for RTMP and E-RTMP (v1 & v2): handshake, chunking, AMF0/AMF3, FLV and host callbacks — no media server, no HTTP, no auth policy.';
+$pageDescription = 'librtmp2 is a C protocol library for RTMP and E-RTMP (v1 & v2): handshake, chunking, AMF0/AMF3, FLV and host callbacks — no HTTP, no auth policy.';
 include __DIR__ . '/includes/header.php';
 ?>
 
@@ -61,7 +61,7 @@ include __DIR__ . '/includes/header.php';
     <div class="container">
       <div class="section-head">
         <span class="eyebrow">Why librtmp2</span>
-        <h2>A protocol library, not a media server</h2>
+        <h2>A protocol library</h2>
         <p>No HTTP, no auth, no opinion about your storage or transcoding. librtmp2 decodes the wire and calls you back.</p>
       </div>
       <div class="grid">
