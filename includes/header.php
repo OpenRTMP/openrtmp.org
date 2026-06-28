@@ -22,6 +22,7 @@ $page = $page ?? 'home';
     <nav class="nav-links">
       <a href="/#features">Features</a>
       <a href="/#architecture">Architecture</a>
+      <a href="/#ecosystem">Ecosystem</a>
       <a href="/docs/">Docs</a>
       <a href="/download/">Download</a>
       <a href="https://github.com/openrtmp" target="_blank" rel="noopener">GitHub</a>

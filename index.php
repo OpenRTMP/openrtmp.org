@@ -1,7 +1,7 @@
 <?php
 $page = 'home';
-$pageTitle = 'OpenRTMP — A modern, pure RTMP / E-RTMP protocol library';
-$pageDescription = 'librtmp2 is a pure C protocol library for RTMP and E-RTMP (v1 & v2): handshake, chunking, AMF0/AMF3, FLV and host callbacks — no media server, no HTTP, no auth policy.';
+$pageTitle = 'OpenRTMP — A modern RTMP / E-RTMP protocol library (OpenSSL-based)';
+$pageDescription = 'librtmp2 is a C protocol library for RTMP and E-RTMP (v1 & v2), built on OpenSSL: handshake, chunking, AMF0/AMF3, FLV and host callbacks — no media server, no HTTP, no auth policy.';
 include __DIR__ . '/includes/header.php';
 ?>
 
@@ -12,8 +12,8 @@ include __DIR__ . '/includes/header.php';
       <span class="eyebrow">&#9889; Now with E-RTMP v2 multitrack &amp; ModEx</span>
       <h1>The <span class="gradient">protocol layer</span><br>for RTMP, done right.</h1>
       <p>
-        librtmp2 is a dependency-free C library that speaks RTMP and Enhanced RTMP
-        (v1 &amp; v2) on the wire. Your application owns the policy &mdash;
+        librtmp2 is a C library that speaks RTMP and Enhanced RTMP
+        (v1 &amp; v2) on the wire, built on top of OpenSSL. Your application owns the policy &mdash;
         librtmp2 just hands you clean, bounds-checked events.
       </p>
       <div class="hero-actions">
@@ -21,7 +21,7 @@ include __DIR__ . '/includes/header.php';
         <a href="/docs/" class="btn btn-ghost">Read the Docs</a>
       </div>
       <div class="hero-stats">
-        <div class="stat"><strong>0</strong><span>runtime dependencies</span></div>
+        <div class="stat"><strong>1</strong><span>runtime dependency (OpenSSL)</span></div>
         <div class="stat"><strong>9</strong><span>protocol layers</span></div>
         <div class="stat"><strong>v1 / v2</strong><span>E-RTMP support</span></div>
         <div class="stat"><strong>MIT</strong><span>licensed</span></div>
@@ -88,8 +88,8 @@ include __DIR__ . '/includes/header.php';
         </div>
         <div class="card">
           <div class="icon">&#128230;</div>
-          <h3>Zero runtime dependencies</h3>
-          <p>Pure C, build with Make or Meson. Drop it into an existing media pipeline or embed it as a subproject &mdash; your call.</p>
+          <h3>Minimal dependencies</h3>
+          <p>Built on OpenSSL for crypto and TLS. Pure C otherwise, build with Make or Meson. Drop it into an existing media pipeline or embed it as a subproject &mdash; your call.</p>
         </div>
         <div class="card">
           <div class="icon">&#129514;</div>
@@ -129,14 +129,14 @@ include __DIR__ . '/includes/header.php';
     <div class="container">
       <div class="section-head">
         <span class="eyebrow">Ecosystem</span>
-        <h2>A library, and a server that runs it</h2>
-        <p>librtmp2 stays a pure protocol layer on purpose. librtmp2-server is the reference application that shows what you build on top of it.</p>
+        <h2>A library, a server, and a panel</h2>
+        <p>librtmp2 is the protocol layer. librtmp2-server is the reference application. librtmp2-server-panel is the web UI that ties it all together.</p>
       </div>
-      <div class="grid grid-2">
+      <div class="grid">
         <div class="card">
           <div class="icon">&#128230;</div>
           <h3>librtmp2</h3>
-          <p>The dependency-free C library: handshake, chunking, AMF0/AMF3, FLV and E-RTMP v1/v2 decoding, delivered through host callbacks. No server loop, no storage, no policy.</p>
+          <p>The C library built on OpenSSL: handshake, chunking, AMF0/AMF3, FLV and E-RTMP v1/v2 decoding, delivered through host callbacks. No server loop, no storage, no policy.</p>
           <p style="margin-top: 14px;"><a href="https://github.com/openrtmp/librtmp2" target="_blank" rel="noopener" class="btn btn-ghost">View librtmp2 &rarr;</a></p>
         </div>
         <div class="card">
@@ -145,6 +145,12 @@ include __DIR__ . '/includes/header.php';
           <p>A standalone ingest/playback server built on top of librtmp2's callbacks. It wires up <code>on_connect</code>, <code>on_publish</code>, <code>on_play</code> and <code>on_frame</code> into a working RTMP/E-RTMP endpoint &mdash; use it as-is, or as a blueprint for your own server.</p>
           <p style="margin-top: 14px;"><a href="https://github.com/openrtmp/librtmp2-server" target="_blank" rel="noopener" class="btn btn-ghost">View librtmp2-server &rarr;</a></p>
         </div>
+        <div class="card">
+          <div class="icon">&#127912;</div>
+          <h3>librtmp2-server-panel</h3>
+          <p>A Flask web panel for managing librtmp2-server. Create streams, monitor stats (bitrate, codec, viewership), and manage keys &mdash; all from a browser. Encrypted key storage, CSRF protection, rate limiting, multi-user support.</p>
+          <p style="margin-top: 14px;"><a href="https://github.com/openrtmp/librtmp2-server-panel" target="_blank" rel="noopener" class="btn btn-ghost">View librtmp2-server-panel &rarr;</a></p>
+        </div>
       </div>
     </div>
   </section>
@@ -152,8 +158,8 @@ include __DIR__ . '/includes/header.php';
   <section>
     <div class="container">
       <div class="cta">
-        <h2>Ready to speak RTMP without the boilerplate?</h2>
-        <p>Clone the library, link it against your media pipeline, and start handling real publishers in minutes.</p>
+        <h2>Ready to speak RTMP?</h2>
+        <p>Clone the library, link it against your media pipeline, and start handling real publishers in minutes. Or deploy the full stack with the server and panel.</p>
         <div class="hero-actions" style="margin-bottom:0;">
           <a href="/download/" class="btn btn-primary">Download librtmp2</a>
           <a href="https://github.com/openrtmp/librtmp2" target="_blank" rel="noopener" class="btn btn-ghost">View Source on GitHub</a>
