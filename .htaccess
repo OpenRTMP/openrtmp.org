@@ -1,10 +1,17 @@
-DirectoryIndex index.php index.html
-
-RewriteEngine On
-
-# Old extension-based URLs -> clean directory URLs
-RewriteRule ^index\.php$ / [R=301,L]
-RewriteRule ^docs\.php$ /docs/ [R=301,L]
-RewriteRule ^download\.php$ /download/ [R=301,L]
-RewriteRule ^docs/index\.php$ /docs/ [R=301,L]
-RewriteRule ^download/index\.php$ /download/ [R=301,L]
+# ===== CUSTOM ERROR PAGES =====
+ErrorDocument 400 /errorpages/400.html
+ErrorDocument 401 /errorpages/401.html
+ErrorDocument 403 /errorpages/403.html
+ErrorDocument 404 /errorpages/404.html
+ErrorDocument 405 /errorpages/405.html
+ErrorDocument 408 /errorpages/408.html
+ErrorDocument 410 /errorpages/410.html
+ErrorDocument 413 /errorpages/413.html
+ErrorDocument 414 /errorpages/414.html
+ErrorDocument 429 /errorpages/429.html
+ErrorDocument 451 /errorpages/451.html
+ErrorDocument 500 /errorpages/500.html
+ErrorDocument 501 /errorpages/501.html
+ErrorDocument 502 /errorpages/502.html
+ErrorDocument 503 /errorpages/503.html
+ErrorDocument 504 /errorpages/504.html
