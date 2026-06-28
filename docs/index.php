@@ -1,14 +1,14 @@
 <?php
 $page = 'docs';
 $pageTitle = 'Documentation — OpenRTMP';
-$pageDescription = 'Getting started with librtmp2: building, the connection state machine, server callbacks, and the public ABI boundary.';
-include 'includes/header.php';
+$pageDescription = 'Getting started with librtmp2 and librtmp2-server: building, the connection state machine, server callbacks, and the public ABI boundary.';
+include __DIR__ . '/../includes/header.php';
 ?>
 
 <main>
   <div class="page-hero container">
     <h1>Documentation</h1>
-    <p>Everything you need to embed librtmp2 in a media pipeline: building, the connection lifecycle, and the public API surface.</p>
+    <p>Everything you need to embed librtmp2 in a media pipeline: building, the connection lifecycle, the public API surface, and the reference server.</p>
   </div>
 
   <section style="padding-top: 0;">
@@ -21,6 +21,7 @@ include 'includes/header.php';
           <li><a href="#state-machine">Connection State Machine</a></li>
           <li><a href="#callbacks">Host Callbacks</a></li>
           <li><a href="#layers">Layer Reference</a></li>
+          <li><a href="#server">librtmp2-server</a></li>
           <li><a href="#abi">ABI &amp; Versioning</a></li>
         </ul>
         <h4>Repositories</h4>
@@ -67,7 +68,7 @@ meson test -C builddir</code></pre>
         </div>
 
         <h2 id="layers">Layer Reference</h2>
-        <p>Ingest flows bottom-up through nine layers before reaching your callbacks. See the <a href="index.php#architecture">architecture overview</a> on the homepage for the full diagram. Key directories in <code>src/</code>:</p>
+        <p>Ingest flows bottom-up through nine layers before reaching your callbacks. See the <a href="/#architecture">architecture overview</a> on the homepage for the full diagram. Key directories in <code>src/</code>:</p>
         <div class="table-wrap">
           <table>
             <thead><tr><th>Directory</th><th>Responsibility</th></tr></thead>
@@ -85,6 +86,26 @@ meson test -C builddir</code></pre>
           </table>
         </div>
 
+        <h2 id="server">librtmp2-server</h2>
+        <p><a href="https://github.com/openrtmp/librtmp2-server" target="_blank" rel="noopener">librtmp2-server</a> is the reference ingest/playback server built on top of librtmp2. It is a separate repository and binary &mdash; librtmp2 itself stays free of any server loop, socket policy, or storage decisions.</p>
+        <p>What it adds on top of the library:</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Piece</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td>Accept loop</td><td>drives <code>lrtmp2_server_poll()</code> for many concurrent publishers and players over loopback or LAN</td></tr>
+              <tr><td>Stream registry</td><td>maps stream keys from <code>on_publish</code> to subscriber lists built from <code>on_play</code></td></tr>
+              <tr><td>Frame fan-out</td><td>forwards each <code>on_frame</code> from a publisher to every matching player, GOP-aware</td></tr>
+              <tr><td>Process model</td><td>single-threaded per connection, same as librtmp2 &mdash; safe to run many connections per process</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Build it the same way as the library:</p>
+        <pre><code>git clone https://github.com/openrtmp/librtmp2-server.git
+cd librtmp2-server
+make release</code></pre>
+        <p>Use it as a drop-in ingest/playback endpoint, or read its source as a worked example of wiring host callbacks into a real server &mdash; see the <a href="/download/">download page</a> for build details.</p>
+
         <h2 id="abi">ABI &amp; Versioning</h2>
         <p>Only <code>include/librtmp2/*.h</code> is the stable public API. Everything under <code>src/**/*.h</code> may change freely between patch releases &mdash; internal symbols are <code>static</code> or hidden-visibility, never part of the exported ABI.</p>
         <p>librtmp2 follows SemVer: <code>0.x</code> while the API/ABI is still evolving, <code>1.0.0</code> once stable. Every release is checked against the previous one with <code>abi-compliance-checker</code>.</p>
@@ -94,4 +115,4 @@ meson test -C builddir</code></pre>
   </section>
 </main>
 
-<?php include 'includes/footer.php'; ?>
+<?php include __DIR__ . '/../includes/footer.php'; ?>

@@ -2,7 +2,7 @@
 $page = 'home';
 $pageTitle = 'OpenRTMP — A modern, pure RTMP / E-RTMP protocol library';
 $pageDescription = 'librtmp2 is a pure C protocol library for RTMP and E-RTMP (v1 & v2): handshake, chunking, AMF0/AMF3, FLV and host callbacks — no media server, no HTTP, no auth policy.';
-include 'includes/header.php';
+include __DIR__ . '/includes/header.php';
 ?>
 
 <main>
@@ -17,8 +17,8 @@ include 'includes/header.php';
         librtmp2 just hands you clean, bounds-checked events.
       </p>
       <div class="hero-actions">
-        <a href="download.php" class="btn btn-primary">Download librtmp2</a>
-        <a href="docs.php" class="btn btn-ghost">Read the Docs</a>
+        <a href="/download/" class="btn btn-primary">Download librtmp2</a>
+        <a href="/docs/" class="btn btn-ghost">Read the Docs</a>
       </div>
       <div class="hero-stats">
         <div class="stat"><strong>0</strong><span>runtime dependencies</span></div>
@@ -125,13 +125,37 @@ include 'includes/header.php';
     </div>
   </section>
 
+  <section id="ecosystem">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Ecosystem</span>
+        <h2>A library, and a server that runs it</h2>
+        <p>librtmp2 stays a pure protocol layer on purpose. librtmp2-server is the reference application that shows what you build on top of it.</p>
+      </div>
+      <div class="grid grid-2">
+        <div class="card">
+          <div class="icon">&#128230;</div>
+          <h3>librtmp2</h3>
+          <p>The dependency-free C library: handshake, chunking, AMF0/AMF3, FLV and E-RTMP v1/v2 decoding, delivered through host callbacks. No server loop, no storage, no policy.</p>
+          <p style="margin-top: 14px;"><a href="https://github.com/openrtmp/librtmp2" target="_blank" rel="noopener" class="btn btn-ghost">View librtmp2 &rarr;</a></p>
+        </div>
+        <div class="card">
+          <div class="icon">&#128268;</div>
+          <h3>librtmp2-server</h3>
+          <p>A standalone ingest/playback server built on top of librtmp2's callbacks. It wires up <code>on_connect</code>, <code>on_publish</code>, <code>on_play</code> and <code>on_frame</code> into a working RTMP/E-RTMP endpoint &mdash; use it as-is, or as a blueprint for your own server.</p>
+          <p style="margin-top: 14px;"><a href="https://github.com/openrtmp/librtmp2-server" target="_blank" rel="noopener" class="btn btn-ghost">View librtmp2-server &rarr;</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section>
     <div class="container">
       <div class="cta">
         <h2>Ready to speak RTMP without the boilerplate?</h2>
         <p>Clone the library, link it against your media pipeline, and start handling real publishers in minutes.</p>
         <div class="hero-actions" style="margin-bottom:0;">
-          <a href="download.php" class="btn btn-primary">Download librtmp2</a>
+          <a href="/download/" class="btn btn-primary">Download librtmp2</a>
           <a href="https://github.com/openrtmp/librtmp2" target="_blank" rel="noopener" class="btn btn-ghost">View Source on GitHub</a>
         </div>
       </div>
@@ -140,4 +164,4 @@ include 'includes/header.php';
 
 </main>
 
-<?php include 'includes/footer.php'; ?>
+<?php include __DIR__ . '/includes/footer.php'; ?>

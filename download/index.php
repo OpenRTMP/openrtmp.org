@@ -1,14 +1,14 @@
 <?php
 $page = 'download';
 $pageTitle = 'Download — OpenRTMP';
-$pageDescription = 'Get librtmp2: clone the repository, pick Make or Meson, and build the client/server protocol library.';
-include 'includes/header.php';
+$pageDescription = 'Get librtmp2 and librtmp2-server: clone the repositories, pick Make or Meson, and build the client/server protocol library.';
+include __DIR__ . '/../includes/header.php';
 ?>
 
 <main>
   <div class="page-hero container">
     <h1>Download &amp; Build</h1>
-    <p>librtmp2 ships as source &mdash; no package manager required. Clone, build, link.</p>
+    <p>librtmp2 ships as source &mdash; no package manager required. Clone, build, link. Want a ready-to-run endpoint instead? Grab librtmp2-server too.</p>
   </div>
 
   <section style="padding-top: 0;">
@@ -43,7 +43,7 @@ depth = 1</code></pre>
 
         <div class="download-card">
           <h3>&#128268; librtmp2-server</h3>
-          <p>A reference ingest/playback server built on top of librtmp2, useful as a deployment target or integration example.</p>
+          <p>The reference ingest/playback server built on top of librtmp2 &mdash; a separate repository and binary, ready to run as a deployment target or to read as a worked integration example. See the <a href="/docs/#server">docs</a> for what it adds on top of the library.</p>
           <pre><code>git clone https://github.com/openrtmp/librtmp2-server.git
 cd librtmp2-server
 make release</code></pre>
@@ -59,7 +59,7 @@ make release</code></pre>
         <h2>Need the full build matrix?</h2>
         <p>Debug, ASan, UBSan, and integration test targets are documented alongside the source.</p>
         <div class="hero-actions" style="margin-bottom:0;">
-          <a href="docs.php" class="btn btn-ghost">Read the Docs</a>
+          <a href="/docs/" class="btn btn-ghost">Read the Docs</a>
           <a href="https://github.com/openrtmp/librtmp2" target="_blank" rel="noopener" class="btn btn-primary">Open librtmp2 on GitHub</a>
         </div>
       </div>
@@ -67,4 +67,4 @@ make release</code></pre>
   </section>
 </main>
 
-<?php include 'includes/footer.php'; ?>
+<?php include __DIR__ . '/../includes/footer.php'; ?>
