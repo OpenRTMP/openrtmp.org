@@ -279,7 +279,11 @@ section { padding: 80px 0; }
   gap: 20px;
 }
 
-.grid-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
 
 .card {
   background: var(--surface);
