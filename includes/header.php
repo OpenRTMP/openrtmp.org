@@ -16,10 +16,7 @@ $page = $page ?? 'home';
 <header class="site-header">
   <div class="container nav" id="nav">
     <a href="index.php" class="brand">
-      <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
-        <rect width="32" height="32" rx="8" fill="#ff5c35"/>
-        <path d="M11 9L22 16L11 23V9Z" fill="#0a0e14"/>
-      </svg>
+      <img src="assets/img/favicon.svg" width="28" height="28" alt="OpenRTMP logo">
       OpenRTMP<span class="dot">.org</span>
     </a>
     <nav class="nav-links">
