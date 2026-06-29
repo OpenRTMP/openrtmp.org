@@ -36,8 +36,8 @@ include __DIR__ . '/../includes/header.php';
 
         <h2 id="getting-started">Getting Started</h2>
         <p>Add librtmp2 as a dependency in your <code>Cargo.toml</code>:</p>
-        <pre><code>[dependencies]
-lrtmp2 = "0.9"</code></pre>
+        <pre><code>[dependencies.lrtmp2]
+git = "https://github.com/OpenRTMP/librtmp2.git"</code></pre>
         <p>Or clone and build locally for development:</p>
         <pre><code>git clone https://github.com/OpenRTMP/librtmp2.git
 cd librtmp2
@@ -103,7 +103,7 @@ RUSTFLAGS="-Z sanitizer=undefined" cargo test</code></pre>
         <p>Build it the same way as the library:</p>
         <pre><code>git clone https://github.com/OpenRTMP/librtmp2-server.git
 cd librtmp2-server
-make release</code></pre>
+cargo build --release</code></pre>
         <p>Use it as a drop-in ingest/playback endpoint, or read its source as a worked example of wiring host callbacks into a real server &mdash; see the <a href="/download/">download page</a> for build details.</p>
 
         <h2 id="abi">API &amp; Versioning</h2>

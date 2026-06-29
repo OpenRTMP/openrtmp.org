@@ -17,9 +17,9 @@ include __DIR__ . '/../includes/header.php';
 
         <div class="download-card">
           <h3>&#128193; Cargo (recommended)</h3>
-          <p>Add librtmp2 as a dependency in your <code>Cargo.toml</code>. Always pulls the latest compatible release from crates.io.</p>
-          <pre><code>[dependencies]
-lrtmp2 = "0.9"</code></pre>
+          <p>Add librtmp2 as a dependency in your <code>Cargo.toml</code>. Pulls the latest compatible release from the Git repository.</p>
+          <pre><code>[dependencies.lrtmp2]
+git = "https://github.com/OpenRTMP/librtmp2.git"</code></pre>
         </div>
 
         <div class="download-card">
@@ -44,7 +44,7 @@ cargo test</code></pre>
           <p>The reference ingest/playback server built on top of librtmp2 &mdash; a separate repository and binary, ready to run as a deployment target or to read as a worked integration example. See the <a href="/docs/#server">docs</a> for what it adds on top of the library.</p>
           <pre><code>git clone https://github.com/OpenRTMP/librtmp2-server.git
 cd librtmp2-server
-make release</code></pre>
+cargo build --release</code></pre>
         </div>
 
         <div class="download-card">
