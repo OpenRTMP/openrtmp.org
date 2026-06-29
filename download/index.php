@@ -1,14 +1,14 @@
 <?php
 $page = 'download';
 $pageTitle = 'Download — OpenRTMP';
-$pageDescription = 'Get librtmp2, librtmp2-server, and librtmp2-server-panel: clone the repositories, pick Make or Meson, and build the full RTMP stack.';
+$pageDescription = 'Get librtmp2, librtmp2-server, and librtmp2-server-panel: add the Cargo dependency or clone the repositories, and build the full RTMP stack.';
 include __DIR__ . '/../includes/header.php';
 ?>
 
 <main>
   <div class="page-hero container">
     <h1>Download &amp; Build</h1>
-    <p>librtmp2 ships as source &mdash; no package manager required. Clone, build, link. Want a ready-to-run endpoint instead? Grab librtmp2-server too.</p>
+    <p>librtmp2 ships as a Rust crate &mdash; add it to your <code>Cargo.toml</code> and you're ready to go. Want a ready-to-run endpoint instead? Grab librtmp2-server too.</p>
   </div>
 
   <section style="padding-top: 0;">
@@ -16,29 +16,27 @@ include __DIR__ . '/../includes/header.php';
       <div class="download-grid">
 
         <div class="download-card">
-          <h3>&#128193; Source (recommended)</h3>
-          <p>Always the latest commit on the default branch. Use this for development or to track upstream fixes closely.</p>
-          <pre><code>git clone https://github.com/OpenRTMP/librtmp2.git
-cd librtmp2
-make release</code></pre>
+          <h3>&#128193; Cargo (recommended)</h3>
+          <p>Add librtmp2 as a dependency in your <code>Cargo.toml</code>. Always pulls the latest compatible release from crates.io.</p>
+          <pre><code>[dependencies]
+lrtmp2 = "0.9"</code></pre>
         </div>
 
         <div class="download-card">
           <h3>&#127991;&#65039; Tagged release</h3>
-          <p>Pin to a specific SemVer tag for production builds. Releases are ABI-checked against the previous tag.</p>
-          <pre><code>git clone --branch v0.9.0 \
-  https://github.com/OpenRTMP/librtmp2.git
-cd librtmp2
-make release &amp;&amp; make install</code></pre>
+          <p>Pin to a specific SemVer tag for production builds. Releases are API-checked against the previous tag.</p>
+          <pre><code>[dependencies.lrtmp2]
+git = "https://github.com/OpenRTMP/librtmp2.git"
+tag = "v0.9.0"</code></pre>
         </div>
 
         <div class="download-card">
-          <h3>&#9881;&#65039; Meson subproject</h3>
-          <p>Embed librtmp2 directly inside another Meson-based project.</p>
-          <pre><code>[wrap-git]
-url = https://github.com/OpenRTMP/librtmp2.git
-revision = head
-depth = 1</code></pre>
+          <h3>&#9881;&#65039; Build from source</h3>
+          <p>Clone and build locally for development or to track upstream fixes closely.</p>
+          <pre><code>git clone https://github.com/OpenRTMP/librtmp2.git
+cd librtmp2
+cargo build --release
+cargo test</code></pre>
         </div>
 
         <div class="download-card">

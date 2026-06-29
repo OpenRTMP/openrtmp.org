@@ -1,14 +1,14 @@
 <?php
 $page = 'docs';
 $pageTitle = 'Documentation — OpenRTMP';
-$pageDescription = 'Getting started with librtmp2 and librtmp2-server: building, the connection state machine, server callbacks, and the public ABI boundary.';
+$pageDescription = 'Getting started with librtmp2 and librtmp2-server: building with Cargo, the connection state machine, server callbacks, and the public crate API.';
 include __DIR__ . '/../includes/header.php';
 ?>
 
 <main>
   <div class="page-hero container">
     <h1>Documentation</h1>
-    <p>Everything you need to embed librtmp2 in a media pipeline: building, the connection lifecycle, the public API surface, and the reference server.</p>
+    <p>Everything you need to embed librtmp2 in a media pipeline: building with Cargo, the connection lifecycle, the public crate API surface, and the reference server.</p>
   </div>
 
   <section style="padding-top: 0;">
@@ -20,9 +20,9 @@ include __DIR__ . '/../includes/header.php';
           <li><a href="#getting-started">Getting Started</a></li>
           <li><a href="#state-machine">Connection State Machine</a></li>
           <li><a href="#callbacks">Host Callbacks</a></li>
-          <li><a href="#layers">Layer Reference</a></li>
+          <li><a href="#layers">Module Reference</a></li>
           <li><a href="#server">librtmp2-server</a></li>
-          <li><a href="#abi">ABI &amp; Versioning</a></li>
+          <li><a href="#abi">API &amp; Versioning</a></li>
         </ul>
         <h4>Repositories</h4>
         <ul>
@@ -35,21 +35,20 @@ include __DIR__ . '/../includes/header.php';
       <div class="docs-content">
 
         <h2 id="getting-started">Getting Started</h2>
-        <p>Build with Make for local development, or Meson when embedding librtmp2 as a subproject.</p>
+        <p>Add librtmp2 as a dependency in your <code>Cargo.toml</code>:</p>
+        <pre><code>[dependencies]
+lrtmp2 = "0.9"</code></pre>
+        <p>Or clone and build locally for development:</p>
         <pre><code>git clone https://github.com/OpenRTMP/librtmp2.git
 cd librtmp2
-make release
-make test</code></pre>
+cargo build --release
+cargo test</code></pre>
         <p>For sanitizer builds during development:</p>
-        <pre><code>make clean &amp;&amp; make DEBUG=1 ASAN=1 test
-make clean &amp;&amp; make DEBUG=1 UBSAN=1 test</code></pre>
-        <p>Or via Meson, used for CI and subproject embedding:</p>
-        <pre><code>meson setup builddir -Dtests=true -Dexamples=true
-meson compile -C builddir
-meson test -C builddir</code></pre>
+        <pre><code>RUSTFLAGS="-Z sanitizer=address" cargo test
+RUSTFLAGS="-Z sanitizer=undefined" cargo test</code></pre>
 
         <h2 id="state-machine">Connection State Machine</h2>
-        <p>Every <code>lrtmp2_conn_t</code> moves through a fixed set of states as the handshake, capability negotiation, and stream lifecycle progress:</p>
+        <p>Every <code>Lrtmp2Conn</code> moves through a fixed set of states as the handshake, capability negotiation, and stream lifecycle progress:</p>
         <pre><code>TCP_ACCEPTED &rarr; HANDSHAKE &rarr; CONNECTED &rarr; [CAPS_NEGOTIATED] &rarr; APP_CONNECTED &rarr; STREAM_CREATED &rarr; PUBLISHING | PLAYING &rarr; CLOSING &rarr; CLOSED</code></pre>
         <p><code>CAPS_NEGOTIATED</code> is the E-RTMP v2 capability exchange step that sits between <code>CONNECTED</code> and <code>APP_CONNECTED</code>; classic RTMP and E-RTMP v1 peers skip it entirely.</p>
 
@@ -107,9 +106,9 @@ cd librtmp2-server
 make release</code></pre>
         <p>Use it as a drop-in ingest/playback endpoint, or read its source as a worked example of wiring host callbacks into a real server &mdash; see the <a href="/download/">download page</a> for build details.</p>
 
-        <h2 id="abi">ABI &amp; Versioning</h2>
-        <p>Only <code>include/librtmp2/*.h</code> is the stable public API. Everything under <code>src/**/*.h</code> may change freely between patch releases &mdash; internal symbols are <code>static</code> or hidden-visibility, never part of the exported ABI.</p>
-        <p>librtmp2 follows SemVer: <code>0.x</code> while the API/ABI is still evolving, <code>1.0.0</code> once stable. Every release is checked against the previous one with <code>abi-compliance-checker</code>.</p>
+        <h2 id="abi">API &amp; Versioning</h2>
+        <p>Only the public <code>lrtmp2</code> crate interface is the stable API. Everything under <code>src/**/*</code> that is not <code>pub</code> may change freely between patch releases &mdash; internal modules are private, never part of the exported crate API.</p>
+        <p>librtmp2 follows SemVer: <code>0.x</code> while the API is still evolving, <code>1.0.0</code> once stable. Every release is checked against the previous one for API compatibility.</p>
 
       </div>
     </div>

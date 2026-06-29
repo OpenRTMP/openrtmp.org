@@ -7,7 +7,7 @@ $page = $page ?? 'home';
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><?php echo $pageTitle ?? 'OpenRTMP — A modern, pure RTMP / E-RTMP protocol library'; ?></title>
-<meta name="description" content="<?php echo $pageDescription ?? 'librtmp2 is a pure C protocol library for RTMP and E-RTMP (v1 & v2): handshake, chunking, AMF0/AMF3, FLV and host callbacks — no media server, no HTTP, no auth policy.'; ?>">
+<meta name="description" content="<?php echo $pageDescription ?? 'librtmp2 is a Rust protocol library for RTMP and E-RTMP (v1 & v2): handshake, chunking, AMF0/AMF3, FLV and host callbacks — no media server, no HTTP, no auth policy.'; ?>">
 <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/assets/css/style.css">
 </head>

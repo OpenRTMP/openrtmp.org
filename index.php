@@ -1,7 +1,7 @@
 <?php
 $page = 'home';
 $pageTitle = 'OpenRTMP — A modern RTMP / E-RTMP protocol library';
-$pageDescription = 'librtmp2 is a C protocol library for RTMP and E-RTMP (v1 & v2): handshake, chunking, AMF0/AMF3, FLV and host callbacks — no HTTP, no auth policy.';
+$pageDescription = 'librtmp2 is a Rust protocol library for RTMP and E-RTMP (v1 & v2): handshake, chunking, AMF0/AMF3, FLV and host callbacks — no HTTP, no auth policy.';
 include __DIR__ . '/includes/header.php';
 ?>
 
@@ -12,7 +12,7 @@ include __DIR__ . '/includes/header.php';
       <span class="eyebrow">&#9889; Now with E-RTMP v2 multitrack &amp; ModEx</span>
       <h1>The <span class="gradient">protocol layer</span><br>for RTMP, done right.</h1>
       <p>
-        librtmp2 is a C library that speaks RTMP and Enhanced RTMP
+        librtmp2 is a Rust library that speaks RTMP and Enhanced RTMP
         (v1 & v2) on the wire. Your application owns the policy &mdash;
         librtmp2 just hands you clean, bounds-checked events.
       </p>
@@ -33,25 +33,26 @@ include __DIR__ . '/includes/header.php';
       <div class="code-panel">
         <div class="code-panel-head">
           <div class="traffic"><span></span><span></span><span></span></div>
-          <span class="filename">example/ingest.c</span>
+          <span class="filename">examples/ingest.rs</span>
         </div>
-        <pre><code><span class="kw">static void</span> <span class="fn">on_publish</span>(<span class="type">lrtmp2_conn_t</span> *conn, <span class="kw">const char</span> *stream_key) {
-    <span class="fn">printf</span>(<span class="str">"publish started: %s\n"</span>, stream_key);
+        <pre><code><span class="kw">fn</span> <span class="fn">on_publish</span>(conn: <span class="kw">&amp;</span><span class="type">Lrtmp2Conn</span>, stream_key: <span class="kw">&amp;</span><span class="type">str</span>) {
+    <span class="fn">println!</span>(<span class="str">"publish started: {}"</span>, stream_key);
 }
 
-<span class="kw">static void</span> <span class="fn">on_frame</span>(<span class="type">lrtmp2_conn_t</span> *conn, <span class="type">lrtmp2_frame_t</span> *frame) {
-    <span class="com">/* bounds-checked FLV/E-RTMP frame, ready to mux or forward */</span>
-    <span class="fn">push_to_pipeline</span>(frame->data, frame->size);
+<span class="kw">fn</span> <span class="fn">on_frame</span>(conn: <span class="kw">&amp;</span><span class="type">Lrtmp2Conn</span>, frame: <span class="kw">&amp;</span><span class="type">Lrtmp2Frame</span>) {
+    <span class="com">// bounds-checked FLV/E-RTMP frame, ready to mux or forward</span>
+    <span class="fn">push_to_pipeline</span>(frame.data(), frame.size());
 }
 
-<span class="type">lrtmp2_server_t</span> *srv = <span class="fn">lrtmp2_server_create</span>(&amp;(<span class="type">lrtmp2_server_cfg_t</span>){
-    .port = <span class="str">1935</span>,
-    .on_publish = on_publish,
-    .on_frame   = on_frame,
-});
+<span class="kw">let</span> srv = <span class="type">Lrtmp2Server</span>::<span class="fn">new</span>(<span class="type">ServerConfig</span> {
+    port: <span class="str">1935</span>,
+    on_publish: <span class="kw">Some</span>(on_publish),
+    on_frame:   <span class="kw">Some</span>(on_frame),
+    ..<span class="type">ServerConfig</span>::<span class="fn">default</span>()
+})?;
 
-<span class="kw">while</span> (running) {
-    <span class="fn">lrtmp2_server_poll</span>(srv, <span class="str">10</span>); <span class="com">/* ms timeout */</span>
+<span class="kw">while</span> running {
+    srv.<span class="fn">poll</span>(<span class="str">10</span>)?; <span class="com">// ms timeout</span>
 }</code></pre>
       </div>
     </div>
@@ -62,7 +63,7 @@ include __DIR__ . '/includes/header.php';
       <div class="section-head">
         <span class="eyebrow">Why librtmp2</span>
         <h2>A protocol library</h2>
-        <p>No HTTP, no auth, no opinion about your storage or transcoding. librtmp2 decodes the wire and calls you back.</p>
+        <p>No HTTP, no auth, no opinion about your storage or transcoding. librtmp2 decodes the wire and calls you back &mdash; with Rust safety guarantees.</p>
       </div>
       <div class="grid">
         <div class="card">
@@ -82,8 +83,8 @@ include __DIR__ . '/includes/header.php';
         </div>
         <div class="card">
           <div class="icon">&#128268;</div>
-          <h3>Stable ABI boundary</h3>
-          <p>Only <code>include/librtmp2/*.h</code> is public. Internal headers move freely under semantic versioning, checked against the previous release before every tag.</p>
+          <h3>Stable crate API</h3>
+          <p>Only the public <code>lrtmp2</code> crate interface is stable. Internal modules move freely under semantic versioning, checked against the previous release before every tag.</p>
         </div>
         <div class="card">
           <div class="icon">&#129514;</div>
@@ -130,7 +131,7 @@ include __DIR__ . '/includes/header.php';
         <div class="card">
           <div class="icon">&#128230;</div>
           <h3>librtmp2</h3>
-          <p>The C library: handshake, chunking, AMF0/AMF3, FLV and E-RTMP v1/v2 decoding, delivered through host callbacks. No server loop, no storage, no policy.</p>
+          <p>The Rust library: handshake, chunking, AMF0/AMF3, FLV and E-RTMP v1/v2 decoding, delivered through host callbacks. No server loop, no storage, no policy.</p>
           <p style="margin-top: 14px;"><a href="https://github.com/OpenRTMP/librtmp2" target="_blank" rel="noopener" class="btn btn-ghost">View librtmp2 &rarr;</a></p>
         </div>
         <div class="card">
@@ -153,7 +154,7 @@ include __DIR__ . '/includes/header.php';
     <div class="container">
       <div class="cta">
         <h2>Ready to speak RTMP?</h2>
-        <p>Clone the library, link it against your media pipeline, and start handling real publishers in minutes. Or deploy the full stack with the server and panel.</p>
+        <p>Add the crate, wire it into your media pipeline, and start handling real publishers in minutes. Or deploy the full stack with the server and panel.</p>
         <div class="hero-actions" style="margin-bottom:0;">
           <a href="/download/" class="btn btn-primary">Download librtmp2</a>
           <a href="https://github.com/OpenRTMP/librtmp2" target="_blank" rel="noopener" class="btn btn-ghost">View Source on GitHub</a>

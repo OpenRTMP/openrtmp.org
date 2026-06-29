@@ -7,7 +7,7 @@
           OpenRTMP<span class="dot">.org</span>
         </div>
         <p style="max-width: 320px; margin: 0;">
-          A pure protocol library for RTMP and E-RTMP, plus librtmp2-server,
+          A pure protocol library for Rust targeting RTMP and E-RTMP, plus librtmp2-server,
           the reference ingest/playback server built on top of it, and
           librtmp2-server-panel for web-based stream management. No HTTP,
           no auth policy — just the wire protocol, delivered through
@@ -45,7 +45,7 @@
     <div class="footer-bottom">
       <span>&copy; <span id="year">2026</span> OpenRTMP. Released under the MIT License.</span>
       <div class="badge-row">
-        <span class="badge">C99</span>
+        <span class="badge">Rust</span>
         <span class="badge">RTMP / E-RTMP v1 & v2</span>
         <span class="badge">AMF0 / AMF3</span>
       </div>
