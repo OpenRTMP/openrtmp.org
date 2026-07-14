@@ -69,9 +69,72 @@ cd librtmp2-server
 docker compose up -d</code></pre>
         </div>
 
+        <div class="download-card download-card--wide" id="docker-panel">
+          <h3>&#128051; Docker: librtmp2-server-panel only</h3>
+          <p>Prebuilt image: <code>ghcr.io/openrtmp/librtmp2-server-panel</code>. Requires a running server and its API token (<code>docker logs librtmp2-server</code>). Put both containers on the same Docker network so the panel can reach the server by container name.</p>
+          <pre><code>docker network create openrtmp   # skip if it already exists
+
+docker run -d \
+  --name librtmp2-server-panel \
+  --network openrtmp \
+  -p 8000:8000 \
+  -e LRTMP2_API_URL=http://librtmp2-server:8080 \
+  -e LRTMP2_STATS_URL=http://localhost:8080 \
+  -e LRTMP2_API_TOKEN=&lt;token-from-server-logs&gt; \
+  -e LRTMP2_DOMAIN=localhost \
+  -e PASSWORD=&lt;panel-password-12-chars-or-more&gt; \
+  -e SECRET_KEY=&lt;random-32-plus-char-secret&gt; \
+  ghcr.io/openrtmp/librtmp2-server-panel:latest
+
+# Panel: http://localhost:8000</code></pre>
+          <p>If the server runs on the host (not in Docker), use <code>LRTMP2_API_URL=http://host.docker.internal:8080</code> on Windows/macOS instead of the container name.</p>
+        </div>
+
         <div class="download-card download-card--wide" id="docker-stack">
-          <h3>&#128051; Docker: server + panel (full stack)</h3>
-          <p>The panel repository ships a <code>docker-compose.yml</code> that runs <strong>librtmp2-server</strong>, <strong>librtmp2-server-panel</strong>, and <strong>Redis</strong> (for shared rate limiting). Generate secrets first, then start the stack.</p>
+          <h3>&#128051; Docker: server + panel (<code>docker run</code>)</h3>
+          <p>Full stack without Compose &mdash; shared network, optional Redis for panel rate limiting, one API token for both services. Generate secrets first:</p>
+          <pre><code>export LRTMP2_API_TOKEN=$(openssl rand -hex 32)
+export PANEL_PASSWORD='your-panel-password'
+export PANEL_SECRET=$(python3 -c "import secrets; print(secrets.token_hex(32))")
+
+docker network create openrtmp
+
+docker run -d \
+  --name librtmp2-panel-redis \
+  --network openrtmp \
+  redis:7-alpine
+
+docker run -d \
+  --name librtmp2-server \
+  --network openrtmp \
+  -p 1935:1935 \
+  -p 8080:8080 \
+  -e LRTMP2_API_TOKEN=$LRTMP2_API_TOKEN \
+  -e LRTMP2_DB=/data/server.db \
+  -v librtmp2-server-data:/data \
+  ghcr.io/openrtmp/librtmp2-server:latest
+
+docker run -d \
+  --name librtmp2-server-panel \
+  --network openrtmp \
+  -p 8000:8000 \
+  -e LRTMP2_API_URL=http://librtmp2-server:8080 \
+  -e LRTMP2_STATS_URL=http://localhost:8080 \
+  -e LRTMP2_API_TOKEN=$LRTMP2_API_TOKEN \
+  -e LRTMP2_DOMAIN=localhost \
+  -e PASSWORD=$PANEL_PASSWORD \
+  -e SECRET_KEY=$PANEL_SECRET \
+  -e RATELIMIT_STORAGE_URI=redis://librtmp2-panel-redis:6379/0 \
+  ghcr.io/openrtmp/librtmp2-server-panel:latest
+
+# RTMP:  rtmp://localhost:1935/live
+# API:   http://localhost:8080/api/v1/health
+# Panel: http://localhost:8000</code></pre>
+        </div>
+
+        <div class="download-card download-card--wide" id="docker-compose">
+          <h3>&#128051; Docker: server + panel (<code>docker compose</code>)</h3>
+          <p>Same stack via the panel repo's <code>docker-compose.yml</code> (server, panel, Redis). Set secrets in <code>.env</code> <em>before</em> the first start.</p>
           <pre><code>git clone https://github.com/OpenRTMP/librtmp2-server-panel.git
 cd librtmp2-server-panel
 cp .env.example .env
@@ -80,15 +143,10 @@ cp .env.example .env
 #   LRTMP2_API_TOKEN  (openssl rand -hex 32)
 #   PASSWORD          (panel login, 12+ chars)
 #   SECRET_KEY        (python3 -c "import secrets; print(secrets.token_hex(32))")
-#   LRTMP2_DOMAIN     (public host/IP for RTMP URLs, e.g. your-server.example.com)
+#   LRTMP2_DOMAIN     (public host/IP for RTMP URLs)
 
-docker compose up -d
-# Ports: 1935 RTMP, 8080 API, 8000 panel
-# RTMPS: 1936 (optional) — enable TLS in compose + expose 1936:1936
-# Panel: http://localhost:8000
-# RTMP:  rtmp://&lt;LRTMP2_DOMAIN&gt;:1935/live
-# API:   http://localhost:8080/api/v1/health</code></pre>
-          <p>The shared <code>LRTMP2_API_TOKEN</code> is seeded into the server's SQLite database on first startup (set it in <code>.env</code> <em>before</em> the first run). The panel uses the same token to call the REST API. See the <a href="/docs/#panel">panel docs</a> for all environment variables.</p>
+docker compose up -d</code></pre>
+          <p>The shared <code>LRTMP2_API_TOKEN</code> is seeded into the server's SQLite database on first startup. See the <a href="/docs/#panel">panel docs</a> for all environment variables.</p>
         </div>
 
         <div class="download-card">
@@ -99,20 +157,6 @@ cd librtmp2-server-panel
 cp .env.example .env   # set LRTMP2_API_TOKEN, PASSWORD, etc.
 pip install -r requirements.txt
 python3 app.py</code></pre>
-        </div>
-
-        <div class="download-card">
-          <h3>&#128230; Panel prebuilt image</h3>
-          <p>Run the panel against an existing server container. Assumes you already copied the API token from <code>docker logs librtmp2-server</code>.</p>
-          <pre><code>docker run -d \
-  --name librtmp2-server-panel \
-  -p 8000:8000 \
-  -e LRTMP2_API_URL=http://&lt;server-host&gt;:8080 \
-  -e LRTMP2_DOMAIN=&lt;public-host&gt; \
-  -e LRTMP2_API_TOKEN=&lt;token-from-server-logs&gt; \
-  -e PASSWORD=&lt;panel-password&gt; \
-  -e SECRET_KEY=&lt;random-secret&gt; \
-  ghcr.io/openrtmp/librtmp2-server-panel:latest</code></pre>
         </div>
 
       </div>

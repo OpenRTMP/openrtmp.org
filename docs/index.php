@@ -200,8 +200,57 @@ LRTMP2_DB=./server.db ./target/release/librtmp2-server</code></pre>
 docker logs librtmp2-server   # copy API token from first-start output</code></pre>
         <p>Available tags: <code>latest</code>, <code>beta</code>, <code>alpha</code>, and pinned versions (e.g. <code>0.1.4</code>).</p>
 
-        <h3>Full stack (server + panel + Redis)</h3>
-        <p>The panel repo's <code>docker-compose.yml</code> runs all three services. Set secrets in <code>.env</code> <em>before</em> the first start so the server seeds the shared API token:</p>
+        <h3>Panel only (<code>docker run</code>)</h3>
+        <p>Image: <code>ghcr.io/openrtmp/librtmp2-server-panel</code>. Connect to an existing server on the same Docker network (container name <code>librtmp2-server</code>):</p>
+        <pre><code>docker network create openrtmp   # skip if it already exists
+
+docker run -d \
+  --name librtmp2-server-panel \
+  --network openrtmp \
+  -p 8000:8000 \
+  -e LRTMP2_API_URL=http://librtmp2-server:8080 \
+  -e LRTMP2_STATS_URL=http://localhost:8080 \
+  -e LRTMP2_API_TOKEN=&lt;token-from-server-logs&gt; \
+  -e LRTMP2_DOMAIN=localhost \
+  -e PASSWORD=&lt;panel-password&gt; \
+  -e SECRET_KEY=&lt;random-secret&gt; \
+  ghcr.io/openrtmp/librtmp2-server-panel:latest</code></pre>
+        <p>Server on the host instead of Docker? Use <code>LRTMP2_API_URL=http://host.docker.internal:8080</code> (Windows/macOS).</p>
+
+        <h3>Full stack (<code>docker run</code>)</h3>
+        <p>Server + panel + Redis without Compose. Set a shared API token before the first server start:</p>
+        <pre><code>export LRTMP2_API_TOKEN=$(openssl rand -hex 32)
+export PANEL_PASSWORD='your-panel-password'
+export PANEL_SECRET=$(python3 -c "import secrets; print(secrets.token_hex(32))")
+
+docker network create openrtmp
+
+docker run -d --name librtmp2-panel-redis --network openrtmp redis:7-alpine
+
+docker run -d \
+  --name librtmp2-server \
+  --network openrtmp \
+  -p 1935:1935 -p 8080:8080 \
+  -e LRTMP2_API_TOKEN=$LRTMP2_API_TOKEN \
+  -e LRTMP2_DB=/data/server.db \
+  -v librtmp2-server-data:/data \
+  ghcr.io/openrtmp/librtmp2-server:latest
+
+docker run -d \
+  --name librtmp2-server-panel \
+  --network openrtmp \
+  -p 8000:8000 \
+  -e LRTMP2_API_URL=http://librtmp2-server:8080 \
+  -e LRTMP2_STATS_URL=http://localhost:8080 \
+  -e LRTMP2_API_TOKEN=$LRTMP2_API_TOKEN \
+  -e LRTMP2_DOMAIN=localhost \
+  -e PASSWORD=$PANEL_PASSWORD \
+  -e SECRET_KEY=$PANEL_SECRET \
+  -e RATELIMIT_STORAGE_URI=redis://librtmp2-panel-redis:6379/0 \
+  ghcr.io/openrtmp/librtmp2-server-panel:latest</code></pre>
+
+        <h3>Full stack (<code>docker compose</code>)</h3>
+        <p>The panel repo's <code>docker-compose.yml</code> runs the same three services. Set secrets in <code>.env</code> <em>before</em> the first start so the server seeds the shared API token:</p>
         <pre><code>git clone https://github.com/OpenRTMP/librtmp2-server-panel.git
 cd librtmp2-server-panel
 cp .env.example .env
@@ -220,18 +269,6 @@ docker compose up -d</code></pre>
           </table>
         </div>
         <p>To enable RTMPS alongside plaintext RTMP, set <code>LRTMP2_TLS_ENABLED=true</code> (or <code>TLS_ENABLED=true</code> in <code>.env</code>), mount cert/key files, expose port <code>1936</code>, and set <code>RTMPS_BIND=0.0.0.0:1936</code> as in <code>librtmp2-server/docker-compose.yml</code>. The panel shows <code>rtmps://</code> URLs only when <code>GET /api/v1/health</code> reports <code>rtmps_enabled: true</code> (and uses <code>LRTMP2_RTMPS_PORT</code>, default <code>1936</code>).</p>
-
-        <h3>Panel against an existing server</h3>
-        <p>If the server is already running (native or Docker), start only the panel image and point it at the server's HTTP API:</p>
-        <pre><code>docker run -d \
-  --name librtmp2-server-panel \
-  -p 8000:8000 \
-  -e LRTMP2_API_URL=http://&lt;server-host&gt;:8080 \
-  -e LRTMP2_DOMAIN=&lt;public-host&gt; \
-  -e LRTMP2_API_TOKEN=&lt;token&gt; \
-  -e PASSWORD=&lt;panel-password&gt; \
-  -e SECRET_KEY=&lt;random-secret&gt; \
-  ghcr.io/openrtmp/librtmp2-server-panel:latest</code></pre>
 
         <h2 id="abi">API &amp; Versioning</h2>
         <p>Only the public <code>librtmp2</code> crate interface is the intended stable API surface. Everything under <code>src/**/*</code> that is not <code>pub</code> may change freely between releases.</p>
