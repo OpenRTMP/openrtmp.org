@@ -42,10 +42,10 @@ assets/img/          Favicon / logo
 
 ## Context
 
-The site documents the OpenRTMP ecosystem:
+The site documents the OpenRTMP ecosystem (all projects are **alpha**):
 
-- **[librtmp2](https://github.com/OpenRTMP/librtmp2)** — Rust RTMP/E-RTMP protocol library (alpha, currently `v0.3.1`)
-- **[librtmp2-server](https://github.com/OpenRTMP/librtmp2-server)** — reference media server with REST API and stats
+- **[librtmp2](https://github.com/OpenRTMP/librtmp2)** — Rust RTMP library; live publish/play relay + E-RTMP passthrough; v2 session features still library-only ([status](https://github.com/OpenRTMP/librtmp2#implementation-status))
+- **[librtmp2-server](https://github.com/OpenRTMP/librtmp2-server)** — live RTMP server with REST API, keys, and stats ([status](https://github.com/OpenRTMP/librtmp2-server#project-status))
 - **[librtmp2-server-panel](https://github.com/OpenRTMP/librtmp2-server-panel)** — Flask web UI for stream management
 
-All three projects are alpha. The website is English-only.
+The website is English-only. Some on-site copy may lag behind the repository READMEs — the GitHub READMEs are the source of truth for implementation status.
