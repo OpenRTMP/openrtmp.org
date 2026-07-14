@@ -45,7 +45,7 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <span>&copy; <span id="year">2026</span> OpenRTMP. Released under the MIT License. <a href="/impressum/" class="footer-legal">Impressum</a></span>
+      <span>&copy; <span id="year">2026</span> OpenRTMP. Released under the MIT License. <a href="/legal/" class="footer-legal">Legal Notice</a></span>
       <div class="badge-row">
         <span class="badge">Rust</span>
         <span class="badge">RTMP / E-RTMP v1 & v2</span>
