@@ -403,12 +403,33 @@ section { padding: 80px 0; }
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 16px;
   border-top: 1px solid var(--border);
   padding-top: 24px;
 }
 
-.badge-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.footer-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+}
+
+.footer-meta-sep {
+  color: var(--border);
+  user-select: none;
+}
+
+.footer-legal {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-weight: 500;
+}
+
+.footer-legal:hover {
+  color: var(--text);
+}
 
 .badge {
   font-family: var(--mono);
@@ -618,12 +639,7 @@ td { color: var(--text-dim); }
   border-top: 1px solid var(--border);
 }
 
-.footer-legal {
-  color: var(--text-dim);
-  margin-left: 8px;
-}
-
-.footer-legal:hover { color: var(--accent); }
+.badge-row { display: flex; gap: 10px; flex-wrap: wrap; }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 900px) {

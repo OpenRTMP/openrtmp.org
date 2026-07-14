@@ -41,11 +41,16 @@
           <li><a href="https://github.com/OpenRTMP" target="_blank" rel="noopener">GitHub Org</a></li>
           <li><a href="https://github.com/OpenRTMP/librtmp2/issues" target="_blank" rel="noopener">Issue Tracker</a></li>
           <li><a href="https://github.com/OpenRTMP/librtmp2/discussions" target="_blank" rel="noopener">Discussions</a></li>
+          <li><a href="/legal/">Legal Notice</a></li>
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
-      <span>&copy; <span id="year">2026</span> OpenRTMP. Released under the MIT License. <a href="/legal/" class="footer-legal">Legal Notice</a></span>
+      <div class="footer-meta">
+        <span>&copy; <span id="year">2026</span> OpenRTMP. Released under the MIT License.</span>
+        <span class="footer-meta-sep" aria-hidden="true">&middot;</span>
+        <a href="/legal/" class="footer-legal">Legal Notice</a>
+      </div>
       <div class="badge-row">
         <span class="badge">Rust</span>
         <span class="badge">RTMP / E-RTMP v1 & v2</span>
