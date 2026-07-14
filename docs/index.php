@@ -188,6 +188,7 @@ LRTMP2_DB=./server.db ./target/release/librtmp2-server</code></pre>
   --name librtmp2-server \
   -p 1935:1935 \
   -p 8080:8080 \
+  # -p 1936:1936   # RTMPS — only when TLS_ENABLED=true
   -v librtmp2-server-data:/data \
   ghcr.io/openrtmp/librtmp2-server:latest
 
@@ -201,18 +202,19 @@ cd librtmp2-server-panel
 cp .env.example .env
 # Set LRTMP2_API_TOKEN, PASSWORD, SECRET_KEY, LRTMP2_DOMAIN
 docker compose up -d</code></pre>
-        <p>Ports exposed:</p>
+        <p>Ports exposed by default (from <code>librtmp2-server-panel/docker-compose.yml</code> and <code>librtmp2-server/.env.example</code>):</p>
         <div class="table-wrap">
           <table>
             <thead><tr><th>Port</th><th>Service</th></tr></thead>
             <tbody>
-              <tr><td><code>1935</code></td><td>RTMP ingest / playback</td></tr>
-              <tr><td><code>8080</code></td><td>HTTP API, stats, health check</td></tr>
+              <tr><td><code>1935</code></td><td>RTMP ingest / playback (<code>RTMP_BIND</code>)</td></tr>
+              <tr><td><code>1936</code></td><td>RTMPS ingest / playback (<code>RTMPS_BIND</code>) &mdash; only when <code>TLS_ENABLED=true</code>; not exposed in the default compose file (uncomment <code>1936:1936</code> there)</td></tr>
+              <tr><td><code>8080</code></td><td>HTTP API, stats, health check (<code>HTTP_BIND</code>)</td></tr>
               <tr><td><code>8000</code></td><td>Web panel</td></tr>
             </tbody>
           </table>
         </div>
-        <p>To enable RTMPS alongside plaintext RTMP, uncomment the TLS environment variables in the server's <code>docker-compose.yml</code> and mount your certificate files. The panel shows <code>rtmps://</code> URLs only when <code>GET /api/v1/health</code> reports <code>rtmps_enabled: true</code>.</p>
+        <p>To enable RTMPS alongside plaintext RTMP, set <code>LRTMP2_TLS_ENABLED=true</code> (or <code>TLS_ENABLED=true</code> in <code>.env</code>), mount cert/key files, expose port <code>1936</code>, and set <code>RTMPS_BIND=0.0.0.0:1936</code> as in <code>librtmp2-server/docker-compose.yml</code>. The panel shows <code>rtmps://</code> URLs only when <code>GET /api/v1/health</code> reports <code>rtmps_enabled: true</code> (and uses <code>LRTMP2_RTMPS_PORT</code>, default <code>1936</code>).</p>
 
         <h3>Panel against an existing server</h3>
         <p>If the server is already running (native or Docker), start only the panel image and point it at the server's HTTP API:</p>

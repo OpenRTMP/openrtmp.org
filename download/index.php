@@ -56,6 +56,7 @@ LRTMP2_DB=./server.db ./target/release/librtmp2-server</code></pre>
   --name librtmp2-server \
   -p 1935:1935 \
   -p 8080:8080 \
+  # -p 1936:1936   # RTMPS — only when TLS_ENABLED=true
   -v librtmp2-server-data:/data \
   ghcr.io/openrtmp/librtmp2-server:latest
 
@@ -80,6 +81,8 @@ cp .env.example .env
 #   LRTMP2_DOMAIN     (public host/IP for RTMP URLs, e.g. your-server.example.com)
 
 docker compose up -d
+# Ports: 1935 RTMP, 8080 API, 8000 panel
+# RTMPS: 1936 (optional) — enable TLS in compose + expose 1936:1936
 # Panel: http://localhost:8000
 # RTMP:  rtmp://&lt;LRTMP2_DOMAIN&gt;:1935/live
 # API:   http://localhost:8080/api/v1/health</code></pre>
