@@ -7,11 +7,11 @@
           OpenRTMP<span class="dot">.org</span>
         </div>
         <p style="max-width: 320px; margin: 0;">
-          A pure protocol library for Rust targeting RTMP and E-RTMP, plus librtmp2-server,
-          the reference ingest/playback server built on top of it, and
-          librtmp2-server-panel for web-based stream management. No HTTP,
-          no auth policy — just the wire protocol, delivered through
-          host callbacks.
+          A pure RTMP/E-RTMP protocol library for Rust, plus
+          <code>librtmp2-server</code> (reference media server) and
+          <code>librtmp2-server-panel</code> (web management UI).
+          The library handles only the wire protocol &mdash; your app
+          (or the server) owns auth, storage, and HTTP.
         </p>
       </div>
       <div>
@@ -22,6 +22,8 @@
           <li><a href="/#ecosystem">Ecosystem</a></li>
           <li><a href="/docs/">Documentation</a></li>
           <li><a href="/docs/#server">librtmp2-server</a></li>
+          <li><a href="/docs/#panel">librtmp2-server-panel</a></li>
+          <li><a href="/docs/#docker">Docker Deployment</a></li>
           <li><a href="/download/">Download &amp; Build</a></li>
         </ul>
       </div>
@@ -43,7 +45,7 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <span>&copy; <span id="year">2026</span> OpenRTMP. Released under the MIT License.</span>
+      <span>&copy; <span id="year">2026</span> OpenRTMP. Released under the MIT License. <a href="/impressum/" class="footer-legal">Impressum</a></span>
       <div class="badge-row">
         <span class="badge">Rust</span>
         <span class="badge">RTMP / E-RTMP v1 & v2</span>

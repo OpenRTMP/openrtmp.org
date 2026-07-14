@@ -1,14 +1,14 @@
 <?php
 $page = 'download';
 $pageTitle = 'Download — OpenRTMP';
-$pageDescription = 'Get librtmp2, librtmp2-server, and librtmp2-server-panel: add the Cargo dependency or clone the repositories, and build the full RTMP stack.';
+$pageDescription = 'Get librtmp2, librtmp2-server, and librtmp2-server-panel: add the Cargo dependency, build from source, or deploy with Docker.';
 include __DIR__ . '/../includes/header.php';
 ?>
 
 <main>
   <div class="page-hero container">
     <h1>Download &amp; Build</h1>
-    <p>librtmp2 ships as a Rust crate &mdash; add it to your <code>Cargo.toml</code> and you're ready to go. Want a ready-to-run endpoint instead? Grab librtmp2-server too.</p>
+    <p><code>librtmp2</code> ships as a Rust crate. <code>librtmp2-server</code> and <code>librtmp2-server-panel</code> are separate repositories with prebuilt Docker images. All three projects are currently <strong>Alpha</strong> &mdash; pin to a git tag and test your workflow before production use.</p>
   </div>
 
   <section style="padding-top: 0;">
@@ -17,22 +17,22 @@ include __DIR__ . '/../includes/header.php';
 
         <div class="download-card">
           <h3>&#128193; Cargo (recommended)</h3>
-          <p>Add librtmp2 as a dependency in your <code>Cargo.toml</code>. Pulls the latest compatible release from the Git repository.</p>
-          <pre><code>[dependencies.lrtmp2]
+          <p>Add <code>librtmp2</code> as a dependency in your <code>Cargo.toml</code>. Pulls the latest compatible release from the Git repository.</p>
+          <pre><code>[dependencies.librtmp2]
 git = "https://github.com/OpenRTMP/librtmp2.git"</code></pre>
         </div>
 
         <div class="download-card">
           <h3>&#127991;&#65039; Tagged release</h3>
-          <p>Pin to a specific SemVer tag for production builds. Releases are API-checked against the previous tag.</p>
-          <pre><code>[dependencies.lrtmp2]
+          <p>Pin to a specific SemVer tag for reproducible builds. Latest release: <code>v0.3.1</code>.</p>
+          <pre><code>[dependencies.librtmp2]
 git = "https://github.com/OpenRTMP/librtmp2.git"
-tag = "v0.9.0"</code></pre>
+tag = "v0.3.1"</code></pre>
         </div>
 
         <div class="download-card">
           <h3>&#9881;&#65039; Build from source</h3>
-          <p>Clone and build locally for development or to track upstream fixes closely.</p>
+          <p>Clone and build locally for development or to track upstream fixes closely. Requires Rust 1.93+.</p>
           <pre><code>git clone https://github.com/OpenRTMP/librtmp2.git
 cd librtmp2
 cargo build --release
@@ -41,19 +41,73 @@ cargo test</code></pre>
 
         <div class="download-card">
           <h3>&#128268; librtmp2-server</h3>
-          <p>The reference ingest/playback server built on top of librtmp2 &mdash; a separate repository and binary, ready to run as a deployment target or to read as a worked integration example. See the <a href="/docs/#server">docs</a> for what it adds on top of the library.</p>
+          <p>The reference RTMP/E-RTMP media server (Alpha). SQLite persistence, REST API, key-protected stats, optional RTMPS. See the <a href="/docs/#server">server docs</a> for configuration and API details.</p>
           <pre><code>git clone https://github.com/OpenRTMP/librtmp2-server.git
 cd librtmp2-server
-cargo build --release</code></pre>
+cargo build --release
+cp .env.example .env
+LRTMP2_DB=./server.db ./target/release/librtmp2-server</code></pre>
         </div>
 
-        <div class="download-card">
-          <h3>&#127912; librtmp2-server-panel</h3>
-          <p>The web management panel for librtmp2-server. Create streams, monitor stats, and manage keys from a browser. Flask-based, Docker-ready, with CSRF protection and encrypted key storage.</p>
+        <div class="download-card download-card--wide" id="docker-server">
+          <h3>&#128051; Docker: librtmp2-server only</h3>
+          <p>Prebuilt multi-arch images (<code>amd64</code> / <code>arm64</code> / <code>riscv64</code>) are published to <code>ghcr.io/openrtmp/librtmp2-server</code> on every release. On first start the server generates an API bearer token and prints it once to the logs &mdash; copy it for REST API calls or for the panel.</p>
+          <pre><code>docker run -d \
+  --name librtmp2-server \
+  -p 1935:1935 \
+  -p 8080:8080 \
+  -v librtmp2-server-data:/data \
+  ghcr.io/openrtmp/librtmp2-server:latest
+
+docker logs librtmp2-server   # copy the generated API token</code></pre>
+          <p>Or build from source with the repo's <code>docker-compose.yml</code>:</p>
+          <pre><code>git clone https://github.com/OpenRTMP/librtmp2-server.git
+cd librtmp2-server
+docker compose up -d</code></pre>
+        </div>
+
+        <div class="download-card download-card--wide" id="docker-stack">
+          <h3>&#128051; Docker: server + panel (full stack)</h3>
+          <p>The panel repository ships a <code>docker-compose.yml</code> that runs <strong>librtmp2-server</strong>, <strong>librtmp2-server-panel</strong>, and <strong>Redis</strong> (for shared rate limiting). Generate secrets first, then start the stack.</p>
           <pre><code>git clone https://github.com/OpenRTMP/librtmp2-server-panel.git
 cd librtmp2-server-panel
 cp .env.example .env
-docker compose up -d</code></pre>
+
+# Edit .env — at minimum set:
+#   LRTMP2_API_TOKEN  (openssl rand -hex 32)
+#   PASSWORD          (panel login, 12+ chars)
+#   SECRET_KEY        (python3 -c "import secrets; print(secrets.token_hex(32))")
+#   LRTMP2_DOMAIN     (public host/IP for RTMP URLs, e.g. your-server.example.com)
+
+docker compose up -d
+# Panel: http://localhost:8000
+# RTMP:  rtmp://&lt;LRTMP2_DOMAIN&gt;:1935/live
+# API:   http://localhost:8080/api/v1/health</code></pre>
+          <p>The shared <code>LRTMP2_API_TOKEN</code> is seeded into the server's SQLite database on first startup (set it in <code>.env</code> <em>before</em> the first run). The panel uses the same token to call the REST API. See the <a href="/docs/#panel">panel docs</a> for all environment variables.</p>
+        </div>
+
+        <div class="download-card">
+          <h3>&#127912; librtmp2-server-panel (source)</h3>
+          <p>Flask web UI for stream management. Can connect to an already-running server (Docker or native). Default login is enabled &mdash; set <code>PASSWORD</code> and <code>SECRET_KEY</code> in <code>.env</code>.</p>
+          <pre><code>git clone https://github.com/OpenRTMP/librtmp2-server-panel.git
+cd librtmp2-server-panel
+cp .env.example .env   # set LRTMP2_API_TOKEN, PASSWORD, etc.
+pip install -r requirements.txt
+python3 app.py</code></pre>
+        </div>
+
+        <div class="download-card">
+          <h3>&#128230; Panel prebuilt image</h3>
+          <p>Run the panel against an existing server container. Assumes you already copied the API token from <code>docker logs librtmp2-server</code>.</p>
+          <pre><code>docker run -d \
+  --name librtmp2-server-panel \
+  -p 8000:8000 \
+  -e LRTMP2_API_URL=http://&lt;server-host&gt;:8080 \
+  -e LRTMP2_DOMAIN=&lt;public-host&gt; \
+  -e LRTMP2_API_TOKEN=&lt;token-from-server-logs&gt; \
+  -e PASSWORD=&lt;panel-password&gt; \
+  -e SECRET_KEY=&lt;random-secret&gt; \
+  ghcr.io/openrtmp/librtmp2-server-panel:latest</code></pre>
         </div>
 
       </div>
@@ -63,11 +117,11 @@ docker compose up -d</code></pre>
   <section>
     <div class="container">
       <div class="cta">
-        <h2>Need the full build matrix?</h2>
-        <p>Debug, ASan, UBSan, and integration test targets are documented alongside the source.</p>
+        <h2>Need configuration details?</h2>
+        <p>RTMPS setup, stream keys, REST API endpoints, and panel environment variables are documented on the docs page.</p>
         <div class="hero-actions" style="margin-bottom:0;">
           <a href="/docs/" class="btn btn-ghost">Read the Docs</a>
-          <a href="https://github.com/OpenRTMP/librtmp2" target="_blank" rel="noopener" class="btn btn-primary">Open librtmp2 on GitHub</a>
+          <a href="https://github.com/OpenRTMP/librtmp2-server" target="_blank" rel="noopener" class="btn btn-primary">librtmp2-server on GitHub</a>
         </div>
       </div>
     </div>

@@ -23,6 +23,7 @@ include __DIR__ . '/includes/header.php';
       <div class="hero-stats">
         <div class="stat"><strong>9</strong><span>protocol layers</span></div>
         <div class="stat"><strong>v1 / v2</strong><span>E-RTMP support</span></div>
+        <div class="stat"><strong>0.3.x</strong><span>alpha (Rust)</span></div>
         <div class="stat"><strong>MIT</strong><span>licensed</span></div>
       </div>
     </div>
@@ -33,26 +34,28 @@ include __DIR__ . '/includes/header.php';
       <div class="code-panel">
         <div class="code-panel-head">
           <div class="traffic"><span></span><span></span><span></span></div>
-          <span class="filename">examples/ingest.rs</span>
+          <span class="filename">examples/minimal_server.rs</span>
         </div>
-        <pre><code><span class="kw">fn</span> <span class="fn">on_publish</span>(conn: <span class="kw">&amp;</span><span class="type">Lrtmp2Conn</span>, stream_key: <span class="kw">&amp;</span><span class="type">str</span>) {
-    <span class="fn">println!</span>(<span class="str">"publish started: {}"</span>, stream_key);
-}
+        <pre><code><span class="kw">use</span> librtmp2::server::Server;
+<span class="kw">use</span> librtmp2::types::*;
 
-<span class="kw">fn</span> <span class="fn">on_frame</span>(conn: <span class="kw">&amp;</span><span class="type">Lrtmp2Conn</span>, frame: <span class="kw">&amp;</span><span class="type">Lrtmp2Frame</span>) {
+<span class="kw">fn</span> <span class="fn">on_frame</span>(frame: <span class="kw">&amp;</span><span class="type">Frame</span>) {
     <span class="com">// bounds-checked FLV/E-RTMP frame, ready to mux or forward</span>
-    <span class="fn">push_to_pipeline</span>(frame.data(), frame.size());
+    <span class="fn">push_to_pipeline</span>(frame.data, frame.size);
 }
 
-<span class="kw">let</span> srv = <span class="type">Lrtmp2Server</span>::<span class="fn">new</span>(<span class="type">ServerConfig</span> {
-    port: <span class="str">1935</span>,
-    on_publish: <span class="kw">Some</span>(on_publish),
-    on_frame:   <span class="kw">Some</span>(on_frame),
-    ..<span class="type">ServerConfig</span>::<span class="fn">default</span>()
-})?;
+<span class="kw">fn</span> <span class="fn">on_publish</span>(_id: <span class="type">u64</span>, app: <span class="kw">&amp;</span><span class="type">str</span>, key: <span class="kw">&amp;</span><span class="type">str</span>) -> <span class="type">bool</span> {
+    <span class="fn">println!</span>(<span class="str">"publish: {app}/{key}"</span>);
+    <span class="kw">true</span> <span class="com">// return false to reject</span>
+}
+
+<span class="kw">let</span> <span class="kw">mut</span> server = <span class="type">Server</span>::<span class="fn">new</span>(config)?;
+server.on_frame_cb = <span class="kw">Some</span>(on_frame);
+server.on_publish_cb = <span class="kw">Some</span>(on_publish);
+server.<span class="fn">listen</span>(<span class="str">"0.0.0.0:1935"</span>)?;
 
 <span class="kw">while</span> running {
-    srv.<span class="fn">poll</span>(<span class="str">10</span>)?; <span class="com">// ms timeout</span>
+    server.<span class="fn">poll</span>(<span class="str">10</span>)?; <span class="com">// ms timeout</span>
 }</code></pre>
       </div>
     </div>
@@ -84,7 +87,7 @@ include __DIR__ . '/includes/header.php';
         <div class="card">
           <div class="icon">&#128268;</div>
           <h3>Stable crate API</h3>
-          <p>Only the public <code>lrtmp2</code> crate interface is stable. Internal modules move freely under semantic versioning, checked against the previous release before every tag.</p>
+          <p>Only the public <code>librtmp2</code> crate interface is the intended stable surface. Internal modules may change freely while the project is in <code>0.x</code> alpha &mdash; pin to a git tag for production use.</p>
         </div>
         <div class="card">
           <div class="icon">&#129514;</div>
@@ -137,14 +140,14 @@ include __DIR__ . '/includes/header.php';
         <div class="card">
           <div class="icon">&#128268;</div>
           <h3>librtmp2-server</h3>
-          <p>A standalone ingest/playback server built on top of librtmp2's callbacks. It wires up <code>on_connect</code>, <code>on_publish</code>, <code>on_play</code> and <code>on_frame</code> into a working RTMP/E-RTMP endpoint &mdash; use it as-is, or as a blueprint for your own server.</p>
-          <p style="margin-top: 14px;"><a href="https://github.com/OpenRTMP/librtmp2-server" target="_blank" rel="noopener" class="btn btn-ghost">View librtmp2-server &rarr;</a></p>
+          <p>A standalone RTMP/E-RTMP ingest and playback server (Alpha). SQLite-backed stream registry, per-stream publish/play/stats keys, JSON and nginx-compatible XML stats, REST API, optional RTMPS alongside plaintext RTMP.</p>
+          <p style="margin-top: 14px;"><a href="/docs/#server" class="btn btn-ghost">Server docs &rarr;</a> <a href="/docs/#docker" class="btn btn-ghost">Docker &rarr;</a></p>
         </div>
         <div class="card">
           <div class="icon">&#127912;</div>
           <h3>librtmp2-server-panel</h3>
-          <p>A Flask web panel for managing librtmp2-server. Create streams, monitor stats (bitrate, codec, viewership), and manage keys &mdash; all from a browser. Encrypted key storage, CSRF protection, rate limiting, multi-user support.</p>
-          <p style="margin-top: 14px;"><a href="https://github.com/OpenRTMP/librtmp2-server-panel" target="_blank" rel="noopener" class="btn btn-ghost">View librtmp2-server-panel &rarr;</a></p>
+          <p>A Flask web panel for managing librtmp2-server. Create streams, monitor live stats (bitrate, codec, RTT, viewership), and copy publish/play URLs &mdash; with encrypted key storage, CSRF protection, rate limiting, and multi-user login.</p>
+          <p style="margin-top: 14px;"><a href="/docs/#panel" class="btn btn-ghost">Panel docs &rarr;</a> <a href="/download/#docker-stack" class="btn btn-ghost">Docker stack &rarr;</a></p>
         </div>
       </div>
     </div>
@@ -154,10 +157,10 @@ include __DIR__ . '/includes/header.php';
     <div class="container">
       <div class="cta">
         <h2>Ready to speak RTMP?</h2>
-        <p>Add the crate, wire it into your media pipeline, and start handling real publishers in minutes. Or deploy the full stack with the server and panel.</p>
+        <p>Add the <code>librtmp2</code> crate, wire callbacks into your media pipeline, and start handling real publishers in minutes. Or deploy the full stack &mdash; server plus web panel &mdash; with Docker in a few commands.</p>
         <div class="hero-actions" style="margin-bottom:0;">
-          <a href="/download/" class="btn btn-primary">Download librtmp2</a>
-          <a href="https://github.com/OpenRTMP/librtmp2" target="_blank" rel="noopener" class="btn btn-ghost">View Source on GitHub</a>
+          <a href="/download/" class="btn btn-primary">Download &amp; Docker</a>
+          <a href="/docs/#docker" class="btn btn-ghost">Full-stack Docker guide</a>
         </div>
       </div>
     </div>
