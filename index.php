@@ -87,7 +87,7 @@ server.<span class="fn">listen</span>(<span class="str">"0.0.0.0:1935"</span>)?;
         <div class="card">
           <div class="icon">&#128268;</div>
           <h3>Stable crate API</h3>
-          <p>Only the public <code>librtmp2</code> crate interface is the intended stable surface. Internal modules may change freely while the project is in <code>0.x</code> alpha &mdash; pin a crates.io version for production use.</p>
+          <p>Only the public <code>librtmp2</code> crate interface is the intended stable surface. Internal modules may change freely while the project is in <code>0.x</code> alpha &mdash; use <code>version = "0"</code> and <code>cargo update -p librtmp2</code> to stay current.</p>
         </div>
         <div class="card">
           <div class="icon">&#129514;</div>

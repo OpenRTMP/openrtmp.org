@@ -43,12 +43,15 @@ include __DIR__ . '/../includes/header.php';
 
         <h2 id="getting-started">Getting Started</h2>
         <p><code>librtmp2</code> is a <strong>protocol library</strong> &mdash; it decodes RTMP and Enhanced RTMP (E-RTMP v1/v2) on the wire and calls back into your application. It deliberately contains no HTTP server, no authentication policy, and no stream storage. If you want a ready-to-run endpoint instead of embedding the crate, use <a href="#server">librtmp2-server</a>.</p>
-        <p>Add <code>librtmp2</code> from <a href="https://crates.io/crates/librtmp2" target="_blank" rel="noopener">crates.io</a> to your <code>Cargo.toml</code> (RTMPS/TLS via the default <code>tls</code> feature):</p>
+        <p>Add <code>librtmp2</code> from <a href="https://crates.io/crates/librtmp2" target="_blank" rel="noopener">crates.io</a> to your <code>Cargo.toml</code>. During alpha, use a loose <code>0.x</code> range and refresh the lockfile regularly for security fixes (RTMPS/TLS via the default <code>tls</code> feature):</p>
         <pre><code>[dependencies.librtmp2]
-version = "0.3"</code></pre>
-        <p>Or pin the current release for reproducible builds (<code>0.3.1</code> on crates.io):</p>
+version = "0"
+
+cargo update -p librtmp2   # pull newest 0.x from crates.io</code></pre>
+        <p>For reproducible builds only, pin an exact release (currently <code>0.3.1</code>):</p>
         <pre><code>[dependencies.librtmp2]
 version = "=0.3.1"</code></pre>
+        <p>There is no <code>version = "latest"</code> in Cargo &mdash; <code>Cargo.lock</code> always pins the resolved version until you run <code>cargo update</code>.</p>
         <p>Or clone and build locally for development (requires Rust 1.93+):</p>
         <pre><code>git clone https://github.com/OpenRTMP/librtmp2.git
 cd librtmp2

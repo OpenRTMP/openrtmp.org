@@ -16,15 +16,18 @@ include __DIR__ . '/../includes/header.php';
       <div class="download-grid">
 
         <div class="download-card">
-          <h3>&#128193; Cargo (recommended)</h3>
-          <p>Add <code>librtmp2</code> from <a href="https://crates.io/crates/librtmp2" target="_blank" rel="noopener">crates.io</a> to your <code>Cargo.toml</code>. RTMPS/TLS support is enabled by default via the <code>tls</code> feature.</p>
+          <h3>&#128193; Cargo (recommended for alpha)</h3>
+          <p>Add <code>librtmp2</code> from <a href="https://crates.io/crates/librtmp2" target="_blank" rel="noopener">crates.io</a>. <code>version = "0"</code> accepts any <code>0.x</code> release &mdash; run <code>cargo update -p librtmp2</code> regularly to pull security fixes and new alpha builds. RTMPS/TLS is on by default (<code>tls</code> feature).</p>
           <pre><code>[dependencies.librtmp2]
-version = "0.3"</code></pre>
+version = "0"
+
+# refresh to the newest matching crates.io release:
+# cargo update -p librtmp2</code></pre>
         </div>
 
         <div class="download-card">
-          <h3>&#127991;&#65039; Pinned version</h3>
-          <p>Lock to the current release for reproducible builds. Latest on crates.io: <code>0.3.1</code>.</p>
+          <h3>&#128274; Pinned version</h3>
+          <p>Lock to an exact release for reproducible CI or production builds. Latest on crates.io: <code>0.3.1</code>. Prefer the alpha range above if you want automatic security updates within <code>0.x</code>.</p>
           <pre><code>[dependencies.librtmp2]
 version = "=0.3.1"</code></pre>
         </div>
