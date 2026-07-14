@@ -8,7 +8,7 @@ include __DIR__ . '/../includes/header.php';
 <main>
   <div class="page-hero container">
     <h1>Download &amp; Build</h1>
-    <p><code>librtmp2</code> ships as a Rust crate. <code>librtmp2-server</code> and <code>librtmp2-server-panel</code> are separate repositories with prebuilt Docker images. All three projects are currently <strong>Alpha</strong> &mdash; pin to a git tag and test your workflow before production use.</p>
+    <p><code>librtmp2</code> is published on <a href="https://crates.io/crates/librtmp2" target="_blank" rel="noopener">crates.io</a>. <code>librtmp2-server</code> and <code>librtmp2-server-panel</code> are separate repositories with prebuilt Docker images. All three projects are currently <strong>Alpha</strong> &mdash; pin to a specific version and test your workflow before production use.</p>
   </div>
 
   <section style="padding-top: 0;">
@@ -17,17 +17,16 @@ include __DIR__ . '/../includes/header.php';
 
         <div class="download-card">
           <h3>&#128193; Cargo (recommended)</h3>
-          <p>Add <code>librtmp2</code> as a dependency in your <code>Cargo.toml</code>. Pulls the latest compatible release from the Git repository.</p>
+          <p>Add <code>librtmp2</code> from <a href="https://crates.io/crates/librtmp2" target="_blank" rel="noopener">crates.io</a> to your <code>Cargo.toml</code>. RTMPS/TLS support is enabled by default via the <code>tls</code> feature.</p>
           <pre><code>[dependencies.librtmp2]
-git = "https://github.com/OpenRTMP/librtmp2.git"</code></pre>
+version = "0.3"</code></pre>
         </div>
 
         <div class="download-card">
-          <h3>&#127991;&#65039; Tagged release</h3>
-          <p>Pin to a specific SemVer tag for reproducible builds. Latest release: <code>v0.3.1</code>.</p>
+          <h3>&#127991;&#65039; Pinned version</h3>
+          <p>Lock to the current release for reproducible builds. Latest on crates.io: <code>0.3.1</code>.</p>
           <pre><code>[dependencies.librtmp2]
-git = "https://github.com/OpenRTMP/librtmp2.git"
-tag = "v0.3.1"</code></pre>
+version = "=0.3.1"</code></pre>
         </div>
 
         <div class="download-card">

@@ -38,15 +38,14 @@ include __DIR__ . '/../includes/header.php';
       <div class="docs-content">
 
         <div class="callout callout-warn" id="status">
-          <strong>Alpha software.</strong> All three projects (<code>librtmp2</code>, <code>librtmp2-server</code>, <code>librtmp2-server-panel</code>) are in active early development. APIs, Docker images, and configuration may change without notice. Pin to a specific git tag (currently <code>v0.3.1</code> for the library) and test your OBS/FFmpeg workflow before relying on it for critical streams.
+          <strong>Alpha software.</strong> All three projects (<code>librtmp2</code>, <code>librtmp2-server</code>, <code>librtmp2-server-panel</code>) are in active early development. APIs, Docker images, and configuration may change without notice. Pin to a crates.io version (currently <code>0.3.1</code> for the library) and test your OBS/FFmpeg workflow before relying on it for critical streams.
         </div>
 
         <h2 id="getting-started">Getting Started</h2>
         <p><code>librtmp2</code> is a <strong>protocol library</strong> &mdash; it decodes RTMP and Enhanced RTMP (E-RTMP v1/v2) on the wire and calls back into your application. It deliberately contains no HTTP server, no authentication policy, and no stream storage. If you want a ready-to-run endpoint instead of embedding the crate, use <a href="#server">librtmp2-server</a>.</p>
-        <p>Add <code>librtmp2</code> as a dependency in your <code>Cargo.toml</code>:</p>
+        <p>Add <code>librtmp2</code> from <a href="https://crates.io/crates/librtmp2" target="_blank" rel="noopener">crates.io</a> to your <code>Cargo.toml</code>:</p>
         <pre><code>[dependencies.librtmp2]
-git = "https://github.com/OpenRTMP/librtmp2.git"
-tag = "v0.3.1"</code></pre>
+version = "0.3.1"</code></pre>
         <p>Or clone and build locally for development (requires Rust 1.93+):</p>
         <pre><code>git clone https://github.com/OpenRTMP/librtmp2.git
 cd librtmp2
@@ -230,7 +229,7 @@ docker compose up -d</code></pre>
 
         <h2 id="abi">API &amp; Versioning</h2>
         <p>Only the public <code>librtmp2</code> crate interface is the intended stable API surface. Everything under <code>src/**/*</code> that is not <code>pub</code> may change freely between releases.</p>
-        <p><code>librtmp2</code> follows SemVer but remains on <code>0.x</code> while in alpha. Semantic-versioning guarantees begin at <code>1.0.0</code>. Pin to a git tag (currently <code>v0.3.1</code>) if you depend on a specific API shape.</p>
+        <p><code>librtmp2</code> follows SemVer but remains on <code>0.x</code> while in alpha. Semantic-versioning guarantees begin at <code>1.0.0</code>. Pin a crates.io version (currently <code>0.3.1</code>) if you depend on a specific API shape.</p>
         <p><code>librtmp2-server</code> (currently <code>0.1.4</code>) and <code>librtmp2-server-panel</code> are also alpha &mdash; REST API shapes, environment variable names, and Docker images may evolve.</p>
 
       </div>
