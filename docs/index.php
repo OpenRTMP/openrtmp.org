@@ -43,9 +43,12 @@ include __DIR__ . '/../includes/header.php';
 
         <h2 id="getting-started">Getting Started</h2>
         <p><code>librtmp2</code> is a <strong>protocol library</strong> &mdash; it decodes RTMP and Enhanced RTMP (E-RTMP v1/v2) on the wire and calls back into your application. It deliberately contains no HTTP server, no authentication policy, and no stream storage. If you want a ready-to-run endpoint instead of embedding the crate, use <a href="#server">librtmp2-server</a>.</p>
-        <p>Add <code>librtmp2</code> from <a href="https://crates.io/crates/librtmp2" target="_blank" rel="noopener">crates.io</a> to your <code>Cargo.toml</code>:</p>
+        <p>Add <code>librtmp2</code> from <a href="https://crates.io/crates/librtmp2" target="_blank" rel="noopener">crates.io</a> to your <code>Cargo.toml</code> (RTMPS/TLS via the default <code>tls</code> feature):</p>
         <pre><code>[dependencies.librtmp2]
-version = "0.3.1"</code></pre>
+version = "0.3"</code></pre>
+        <p>Or pin the current release for reproducible builds (<code>0.3.1</code> on crates.io):</p>
+        <pre><code>[dependencies.librtmp2]
+version = "=0.3.1"</code></pre>
         <p>Or clone and build locally for development (requires Rust 1.93+):</p>
         <pre><code>git clone https://github.com/OpenRTMP/librtmp2.git
 cd librtmp2
