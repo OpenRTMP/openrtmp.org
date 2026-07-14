@@ -24,7 +24,7 @@ php -S localhost:8090
 index.php            Home page (hero, features, architecture, ecosystem)
 docs/index.php       Documentation (librtmp2, server, panel, Docker)
 download/index.php   Download, build, and Docker deployment instructions
-legal/index.php      Legal notice (contact / imprint)
+legal/index.php      Contact / legal notice (provider info only)
 includes/            Shared header/footer PHP partials
 assets/css/          Stylesheet
 assets/js/           Nav toggle, copy-to-clipboard, docs scrollspy
@@ -38,7 +38,7 @@ assets/img/          Favicon / logo
 | `/` | Project overview, code example, layer stack, ecosystem cards |
 | `/docs/` | Getting started, callbacks, `librtmp2-server`, panel, Docker |
 | `/download/` | Cargo deps, source builds, GHCR Docker images |
-| `/legal/` | Legal notice and contact information |
+| `/legal/` | Service provider and contact information |
 
 ## Context
 
