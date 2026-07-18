@@ -1,51 +1,68 @@
 # openrtmp.org
 
-Source for the [OpenRTMP.org](https://openrtmp.org) website — a static-ish PHP/HTML/JS site (no build step, no framework, no database).
+Source for [OpenRTMP.org](https://openrtmp.org), the public website for the OpenRTMP ecosystem.
+
+OpenRTMP includes:
+
+- [`librtmp2`](https://github.com/OpenRTMP/librtmp2) — Rust RTMP/RTMPS and Enhanced RTMP protocol library with a C-compatible FFI
+- [`librtmp2-server`](https://github.com/OpenRTMP/librtmp2-server) — self-hosted RTMP/RTMPS server with SQLite, stream keys, REST API, and statistics
+- [`librtmp2-server-panel`](https://github.com/OpenRTMP/librtmp2-server-panel) — web UI for stream lifecycle and live monitoring
+
+All projects are active alpha software. The website intentionally avoids hard-coded release numbers where a package registry or GitHub release page can remain the source of truth.
 
 ## Local development
 
-Requires PHP 7.4+.
-
-```bash
-php -S localhost:8000
-```
-
-Then open http://localhost:8000.
-
-If port `8000` is already in use (e.g. by `librtmp2-server-panel`), pick another port:
+The site is a static-ish PHP/HTML/CSS/JavaScript project with no framework, build step, or database. It requires PHP 7.4 or newer.
 
 ```bash
 php -S localhost:8090
 ```
 
+Open `http://localhost:8090`.
+
+Validate PHP files before publishing:
+
+```bash
+find . -name '*.php' -print0 | xargs -0 -n1 php -l
+```
+
 ## Structure
 
+```text
+index.php                         Homepage and audience paths
+quickstart/index.php              Five-minute Docker + OBS setup
+docs/index.php                    Reference documentation
+download/index.php                Crate, source, and Docker downloads
+guides/index.php                  Guide landing page
+guides/*/index.php                Search-focused technical guides
+legal/index.php                   Contact and legal notice
+includes/                         Shared header and footer
+assets/css/style.css              Core design system
+assets/css/content.css            Article and quickstart styles
+assets/js/                        Navigation, copy, and docs behavior
+assets/img/                       Logo and favicon
+robots.txt                        Crawler policy
+sitemap.xml                       Indexable public pages
 ```
-index.php            Home page (hero, features, architecture, ecosystem)
-docs/index.php       Documentation (librtmp2, server, panel, Docker)
-download/index.php   Download, build, and Docker deployment instructions
-legal/index.php      Contact / legal notice (provider info only)
-includes/            Shared header/footer PHP partials
-assets/css/          Stylesheet
-assets/js/           Nav toggle, copy-to-clipboard, docs scrollspy
-assets/img/          Favicon / logo
-```
 
-## Pages
+## Content principles
 
-| Path | Content |
-|------|---------|
-| `/` | Project overview, code example, layer stack, ecosystem cards |
-| `/docs/` | Getting started, callbacks, `librtmp2-server`, panel, Docker |
-| `/download/` | Cargo deps, source builds, GHCR Docker images |
-| `/legal/` | Service provider and contact information |
+- Separate the **developer/library** path from the **operator/server** path.
+- State the alpha status and implementation boundaries consistently.
+- Link to repository implementation-status tables for code-accurate claims.
+- Prefer package registries and release pages over manually copied latest-version strings.
+- Create one canonical page for each major search intent instead of duplicating setup text.
+- Keep guides task-focused, honest about missing features, and useful without marketing language.
 
-## Context
+## Adding a guide
 
-The site documents the OpenRTMP ecosystem:
+1. Create `guides/<slug>/index.php`.
+2. Set a unique `$pageTitle`, `$pageDescription`, and `$canonicalPath`.
+3. Add `TechArticle` structured data when appropriate.
+4. Link the guide from `guides/index.php` and relevant existing pages.
+5. Add the canonical URL to `sitemap.xml`.
+6. Run PHP lint and review mobile table/code overflow.
 
-- **[librtmp2](https://github.com/OpenRTMP/librtmp2)** — Rust RTMP/E-RTMP protocol library (alpha, currently `v0.3.1`)
-- **[librtmp2-server](https://github.com/OpenRTMP/librtmp2-server)** — reference media server with REST API and stats
-- **[librtmp2-server-panel](https://github.com/OpenRTMP/librtmp2-server-panel)** — Flask web UI for stream management
+## Deployment
 
-All three projects are alpha. The website is English-only.
+Deploy the repository contents to a PHP-capable web root. The server should route directory requests such as `/quickstart/` to the corresponding `index.php` and serve XML/TXT/CSS/JS/image files directly.
