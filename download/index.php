@@ -1,176 +1,136 @@
 <?php
 $page = 'download';
-$pageTitle = 'Download — OpenRTMP';
-$pageDescription = 'Get librtmp2, librtmp2-server, and librtmp2-server-panel: add the Cargo dependency, build from source, or deploy with Docker.';
+$pageTitle = 'Download OpenRTMP — Rust crate, source, and Docker images';
+$pageDescription = 'Install librtmp2 from crates.io, build OpenRTMP projects from source, or deploy the RTMP server and web panel from published Docker images.';
+$canonicalPath = '/download/';
 include __DIR__ . '/../includes/header.php';
 ?>
 
 <main>
   <div class="page-hero container">
-    <h1>Download &amp; Build</h1>
-    <p><code>librtmp2</code> is published on <a href="https://crates.io/crates/librtmp2" target="_blank" rel="noopener">crates.io</a>. <code>librtmp2-server</code> and <code>librtmp2-server-panel</code> are separate repositories with prebuilt Docker images. All three projects are currently <strong>Alpha</strong> &mdash; pin to a specific version and test your workflow before production use.</p>
+    <span class="eyebrow">Crate &middot; Source &middot; Docker</span>
+    <h1>Download and deploy OpenRTMP</h1>
+    <p>Choose the protocol library when building an application, or use the published server and panel images for a self-hosted RTMP stack.</p>
   </div>
 
   <section style="padding-top: 0;">
     <div class="container">
+      <div class="callout warning">
+        <strong>All OpenRTMP projects are active alpha software.</strong> Review each repository's implementation status, pin tested versions, and validate your complete workflow before critical production use.
+      </div>
+
+      <div class="grid-2" style="margin-bottom: 42px;">
+        <article class="card path-card">
+          <div class="icon">&#128225;</div>
+          <h2>Run server + panel</h2>
+          <p>Use the standalone Compose stack for the fastest evaluation. It pulls published images and does not require source checkouts or a Rust toolchain.</p>
+          <div class="card-actions">
+            <a href="/quickstart/" class="btn btn-primary">Five-minute quickstart</a>
+            <a href="https://github.com/OpenRTMP/librtmp2-server-panel/blob/main/compose.quickstart.yml" target="_blank" rel="noopener" class="btn btn-ghost">View Compose file</a>
+          </div>
+        </article>
+        <article class="card path-card">
+          <div class="icon">&#128736;&#65039;</div>
+          <h2>Embed the Rust library</h2>
+          <p>Add <code>librtmp2</code> from crates.io for custom RTMP servers, clients, relays, plugins, and protocol tooling.</p>
+          <div class="card-actions">
+            <a href="https://crates.io/crates/librtmp2" target="_blank" rel="noopener" class="btn btn-primary">Open crates.io</a>
+            <a href="https://docs.rs/librtmp2" target="_blank" rel="noopener" class="btn btn-ghost">Open docs.rs</a>
+          </div>
+        </article>
+      </div>
+
       <div class="download-grid">
-
-        <div class="download-card">
-          <h3>&#128193; Cargo (recommended for alpha)</h3>
-          <p>Add <code>librtmp2</code> from <a href="https://crates.io/crates/librtmp2" target="_blank" rel="noopener">crates.io</a>. <code>version = "0"</code> accepts any <code>0.x</code> release &mdash; run <code>cargo update -p librtmp2</code> regularly to pull security fixes and new alpha builds. RTMPS/TLS is on by default (<code>tls</code> feature).</p>
-          <pre><code>[dependencies.librtmp2]
-version = "0"
-
-# refresh to the newest matching crates.io release:
-# cargo update -p librtmp2</code></pre>
+        <div class="download-card download-card--wide" id="cargo">
+          <h3>&#128230; Install librtmp2 with Cargo</h3>
+          <p>Let Cargo select the current release, then commit <code>Cargo.lock</code> for applications. Libraries should choose an explicit compatibility range based on the release they have tested.</p>
+          <pre><code>cargo add librtmp2
+cargo build
+cargo test</code></pre>
+          <p>RTMPS/TLS is enabled by default. To build without the optional OpenSSL-backed TLS feature:</p>
+          <pre><code>cargo add librtmp2 --no-default-features</code></pre>
+          <p>Use the release shown on <a href="https://crates.io/crates/librtmp2" target="_blank" rel="noopener">crates.io</a> as the source of truth instead of copying a version number from this website.</p>
         </div>
 
         <div class="download-card">
-          <h3>&#128274; Pinned version</h3>
-          <p>Lock to an exact release for reproducible CI or production builds. Latest on crates.io: <code>0.3.1</code>. Prefer the alpha range above if you want automatic security updates within <code>0.x</code>.</p>
-          <pre><code>[dependencies.librtmp2]
-version = "=0.3.1"</code></pre>
-        </div>
-
-        <div class="download-card">
-          <h3>&#9881;&#65039; Build from source</h3>
-          <p>Clone and build locally for development or to track upstream fixes closely. Requires Rust 1.93+.</p>
+          <h3>&#9881;&#65039; Build librtmp2 from source</h3>
           <pre><code>git clone https://github.com/OpenRTMP/librtmp2.git
 cd librtmp2
 cargo build --release
 cargo test</code></pre>
+          <p>The repository documents the code-accurate implementation status for legacy RTMP, E-RTMP v1/v2, client behavior, TLS, and interoperability tests.</p>
         </div>
 
         <div class="download-card">
-          <h3>&#128268; librtmp2-server</h3>
-          <p>The reference RTMP/E-RTMP media server (Alpha). SQLite persistence, REST API, key-protected stats, optional RTMPS. See the <a href="/docs/#server">server docs</a> for configuration and API details.</p>
+          <h3>&#128268; Build librtmp2-server from source</h3>
           <pre><code>git clone https://github.com/OpenRTMP/librtmp2-server.git
 cd librtmp2-server
 cargo build --release
 cp .env.example .env
 LRTMP2_DB=./server.db ./target/release/librtmp2-server</code></pre>
+          <p>The API token is generated on first startup unless supplied as the real <code>LRTMP2_API_TOKEN</code> process environment variable.</p>
         </div>
 
-        <div class="download-card download-card--wide" id="docker-server">
-          <h3>&#128051; Docker: librtmp2-server only</h3>
-          <p>Prebuilt multi-arch images (<code>amd64</code> / <code>arm64</code> / <code>riscv64</code>) are published to <code>ghcr.io/openrtmp/librtmp2-server</code> on every release. On first start the server generates an API bearer token and prints it once to the logs &mdash; copy it for REST API calls or for the panel.</p>
+        <div class="download-card download-card--wide" id="docker-stack">
+          <h3>&#128051; Docker Compose: server + panel + Redis</h3>
+          <p>The recommended evaluation path uses the standalone Compose file from the panel repository:</p>
+          <pre><code>git clone https://github.com/OpenRTMP/librtmp2-server-panel.git
+cd librtmp2-server-panel
+
+# Create .env with LRTMP2_API_TOKEN, PASSWORD, and SECRET_KEY.
+docker compose -f compose.quickstart.yml up -d</code></pre>
+          <p>Follow the <a href="/quickstart/">quickstart</a> for secure secret generation, OBS settings, health checks, troubleshooting, and the production checklist.</p>
+        </div>
+
+        <div class="download-card" id="docker-server">
+          <h3>&#128051; Server image</h3>
+          <p>Published for multiple architectures at:</p>
+          <pre><code>ghcr.io/openrtmp/librtmp2-server</code></pre>
+          <p>Use a release tag for tested deployments. Moving tags such as <code>latest</code>, <code>beta</code>, and <code>alpha</code> are convenient for evaluation but can change underneath an automated redeploy.</p>
+        </div>
+
+        <div class="download-card" id="docker-panel">
+          <h3>&#128051; Panel image</h3>
+          <p>Published for multiple architectures at:</p>
+          <pre><code>ghcr.io/openrtmp/librtmp2-server-panel</code></pre>
+          <p>The panel requires a reachable server API, the matching API token, a public RTMP hostname, login credentials, and a Flask session secret.</p>
+        </div>
+
+        <div class="download-card download-card--wide" id="server-only">
+          <h3>&#128225; Run the server image by itself</h3>
           <pre><code>docker run -d \
   --name librtmp2-server \
   -p 1935:1935 \
   -p 8080:8080 \
-  # -p 1936:1936   # RTMPS — only when TLS_ENABLED=true
+  -e LRTMP2_API_TOKEN="$(openssl rand -hex 32)" \
   -v librtmp2-server-data:/data \
-  ghcr.io/openrtmp/librtmp2-server:latest
-
-docker logs librtmp2-server   # copy the generated API token</code></pre>
-          <p>Or build from source with the repo's <code>docker-compose.yml</code>:</p>
-          <pre><code>git clone https://github.com/OpenRTMP/librtmp2-server.git
-cd librtmp2-server
-docker compose up -d</code></pre>
+  ghcr.io/openrtmp/librtmp2-server:latest</code></pre>
+          <p>Save the supplied token before running the command. If you omit it, retrieve the generated token from the first-start logs. For repeatable deployments, pin the image tag.</p>
         </div>
 
-        <div class="download-card download-card--wide" id="docker-panel">
-          <h3>&#128051; Docker: librtmp2-server-panel only</h3>
-          <p>Prebuilt image: <code>ghcr.io/openrtmp/librtmp2-server-panel</code>. Requires a running server and its API token (<code>docker logs librtmp2-server</code>). Put both containers on the same Docker network so the panel can reach the server by container name.</p>
-          <pre><code>docker network create openrtmp   # skip if it already exists
-
-docker run -d \
+        <div class="download-card download-card--wide" id="panel-only">
+          <h3>&#127912; Run the panel against an existing server</h3>
+          <pre><code>docker run -d \
   --name librtmp2-server-panel \
-  --network openrtmp \
   -p 8000:8000 \
-  -e LRTMP2_API_URL=http://librtmp2-server:8080 \
-  -e LRTMP2_STATS_URL=http://localhost:8080 \
-  -e LRTMP2_API_TOKEN=&lt;token-from-server-logs&gt; \
-  -e LRTMP2_DOMAIN=localhost \
-  -e PASSWORD=&lt;panel-password-12-chars-or-more&gt; \
-  -e SECRET_KEY=&lt;random-32-plus-char-secret&gt; \
-  ghcr.io/openrtmp/librtmp2-server-panel:latest
-
-# Panel: http://localhost:8000</code></pre>
-          <p>If the server runs on the host (not in Docker), use <code>LRTMP2_API_URL=http://host.docker.internal:8080</code> on Windows/macOS instead of the container name.</p>
+  -e LRTMP2_API_URL=http://server.internal:8080 \
+  -e LRTMP2_STATS_URL=https://api.example.com \
+  -e LRTMP2_DOMAIN=stream.example.com \
+  -e LRTMP2_API_TOKEN=&lt;matching-server-token&gt; \
+  -e USERNAME=admin \
+  -e PASSWORD=&lt;strong-password&gt; \
+  -e SECRET_KEY=&lt;random-session-secret&gt; \
+  ghcr.io/openrtmp/librtmp2-server-panel:latest</code></pre>
         </div>
-
-        <div class="download-card download-card--wide" id="docker-stack">
-          <h3>&#128051; Docker: server + panel (<code>docker run</code>)</h3>
-          <p>Full stack without Compose &mdash; shared network, optional Redis for panel rate limiting, one API token for both services. Generate secrets first:</p>
-          <pre><code>export LRTMP2_API_TOKEN=$(openssl rand -hex 32)
-export PANEL_PASSWORD='your-panel-password'
-export PANEL_SECRET=$(python3 -c "import secrets; print(secrets.token_hex(32))")
-
-docker network create openrtmp
-
-docker run -d \
-  --name librtmp2-panel-redis \
-  --network openrtmp \
-  redis:7-alpine
-
-docker run -d \
-  --name librtmp2-server \
-  --network openrtmp \
-  -p 1935:1935 \
-  -p 8080:8080 \
-  -e LRTMP2_API_TOKEN=$LRTMP2_API_TOKEN \
-  -e LRTMP2_DB=/data/server.db \
-  -v librtmp2-server-data:/data \
-  ghcr.io/openrtmp/librtmp2-server:latest
-
-docker run -d \
-  --name librtmp2-server-panel \
-  --network openrtmp \
-  -p 8000:8000 \
-  -e LRTMP2_API_URL=http://librtmp2-server:8080 \
-  -e LRTMP2_STATS_URL=http://localhost:8080 \
-  -e LRTMP2_API_TOKEN=$LRTMP2_API_TOKEN \
-  -e LRTMP2_DOMAIN=localhost \
-  -e PASSWORD=$PANEL_PASSWORD \
-  -e SECRET_KEY=$PANEL_SECRET \
-  -e RATELIMIT_STORAGE_URI=redis://librtmp2-panel-redis:6379/0 \
-  ghcr.io/openrtmp/librtmp2-server-panel:latest
-
-# RTMP:  rtmp://localhost:1935/live
-# API:   http://localhost:8080/api/v1/health
-# Panel: http://localhost:8000</code></pre>
-        </div>
-
-        <div class="download-card download-card--wide" id="docker-compose">
-          <h3>&#128051; Docker: server + panel (<code>docker compose</code>)</h3>
-          <p>Same stack via the panel repo's <code>docker-compose.yml</code> (server, panel, Redis). Set secrets in <code>.env</code> <em>before</em> the first start.</p>
-          <pre><code>git clone https://github.com/OpenRTMP/librtmp2-server-panel.git
-cd librtmp2-server-panel
-cp .env.example .env
-
-# Edit .env — at minimum set:
-#   LRTMP2_API_TOKEN  (openssl rand -hex 32)
-#   PASSWORD          (panel login, 12+ chars)
-#   SECRET_KEY        (python3 -c "import secrets; print(secrets.token_hex(32))")
-#   LRTMP2_DOMAIN     (public host/IP for RTMP URLs)
-
-docker compose up -d</code></pre>
-          <p>The shared <code>LRTMP2_API_TOKEN</code> is seeded into the server's SQLite database on first startup. See the <a href="/docs/#panel">panel docs</a> for all environment variables.</p>
-        </div>
-
-        <div class="download-card">
-          <h3>&#127912; librtmp2-server-panel (source)</h3>
-          <p>Flask web UI for stream management. Can connect to an already-running server (Docker or native). Default login is enabled &mdash; set <code>PASSWORD</code> and <code>SECRET_KEY</code> in <code>.env</code>.</p>
-          <pre><code>git clone https://github.com/OpenRTMP/librtmp2-server-panel.git
-cd librtmp2-server-panel
-cp .env.example .env   # set LRTMP2_API_TOKEN, PASSWORD, etc.
-pip install -r requirements.txt
-python3 app.py</code></pre>
-        </div>
-
       </div>
-    </div>
-  </section>
 
-  <section>
-    <div class="container">
-      <div class="cta">
-        <h2>Need configuration details?</h2>
-        <p>RTMPS setup, stream keys, REST API endpoints, and panel environment variables are documented on the docs page.</p>
+      <div class="cta" style="margin-top: 48px;">
+        <h2>Not sure which component you need?</h2>
+        <p>The homepage separates the library and operator paths, while the guides cover Docker, OBS, RTMPS, and Enhanced RTMP.</p>
         <div class="hero-actions" style="margin-bottom:0;">
-          <a href="/docs/" class="btn btn-ghost">Read the Docs</a>
-          <a href="https://github.com/OpenRTMP/librtmp2-server" target="_blank" rel="noopener" class="btn btn-primary">librtmp2-server on GitHub</a>
+          <a href="/#paths" class="btn btn-primary">Choose a path</a>
+          <a href="/guides/" class="btn btn-ghost">Browse guides</a>
+          <a href="/docs/" class="btn btn-ghost">Reference docs</a>
         </div>
       </div>
     </div>
