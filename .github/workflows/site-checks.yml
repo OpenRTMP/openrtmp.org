@@ -46,6 +46,7 @@ jobs:
             /guides/enhanced-rtmp-hevc-av1-opus/ \
             /guides/openrtmp-vs-nginx-rtmp/ \
             /docs/ \
-            /download/; do
+            /download/ \
+            /legal/; do
             curl --fail --silent --show-error "http://127.0.0.1:8090${path}" >/dev/null
           done

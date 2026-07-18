@@ -14,6 +14,7 @@ function initNavToggle() {
 
   toggle.addEventListener('click', () => {
     nav.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', String(nav.classList.contains('open')));
   });
 }
 

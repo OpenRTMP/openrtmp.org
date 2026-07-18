@@ -4,6 +4,7 @@ $pageTitle = $pageTitle ?? 'OpenRTMP — Rust RTMP/E-RTMP library and self-hoste
 $pageDescription = $pageDescription ?? 'OpenRTMP provides a Rust RTMP/E-RTMP library plus a self-hosted RTMP/RTMPS server, REST API, live statistics, and web control panel.';
 $canonicalPath = $canonicalPath ?? ($_SERVER['REQUEST_URI'] ?? '/');
 $canonicalPath = parse_url($canonicalPath, PHP_URL_PATH) ?: '/';
+$canonicalPath = preg_replace('#/index\.php$#', '/', $canonicalPath);
 $canonicalUrl = 'https://openrtmp.org' . $canonicalPath;
 $ogType = $ogType ?? 'website';
 ?>
@@ -28,7 +29,7 @@ $ogType = $ogType ?? 'website';
 <link rel="stylesheet" href="/assets/css/style.css">
 <link rel="stylesheet" href="/assets/css/content.css">
 <?php if (!empty($structuredData)): ?>
-<script type="application/ld+json"><?php echo json_encode($structuredData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); ?></script>
+<script type="application/ld+json"><?php echo json_encode($structuredData, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); ?></script>
 <?php endif; ?>
 </head>
 <body>
