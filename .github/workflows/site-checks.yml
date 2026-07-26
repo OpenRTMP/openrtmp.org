@@ -44,6 +44,7 @@ jobs:
             /guides/self-hosted-rtmp-server-docker/ \
             /guides/rtmps-server-obs/ \
             /guides/enhanced-rtmp-hevc-av1-opus/ \
+            /guides/openrtmp-noalbs-json-stats/ \
             /guides/openrtmp-vs-nginx-rtmp/ \
             /docs/ \
             /download/ \
