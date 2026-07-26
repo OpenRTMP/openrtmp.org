@@ -7,6 +7,10 @@ $canonicalPath = parse_url($canonicalPath, PHP_URL_PATH) ?: '/';
 $canonicalPath = preg_replace('#/index\.php$#', '/', $canonicalPath);
 $canonicalUrl = 'https://openrtmp.org' . $canonicalPath;
 $ogType = $ogType ?? 'website';
+$socialImage = $socialImage ?? 'https://openrtmp.org/assets/img/social-preview.png';
+$socialImageWidth = $socialImageWidth ?? 1200;
+$socialImageHeight = $socialImageHeight ?? 630;
+$socialImageAlt = $socialImageAlt ?? 'OpenRTMP social preview showing the librtmp2 Rust RTMP/E-RTMP library and the self-hosted RTMP/RTMPS server with web panel.';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -22,9 +26,15 @@ $ogType = $ogType ?? 'website';
 <meta property="og:title" content="<?php echo htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8'); ?>">
 <meta property="og:description" content="<?php echo htmlspecialchars($pageDescription, ENT_QUOTES, 'UTF-8'); ?>">
 <meta property="og:url" content="<?php echo htmlspecialchars($canonicalUrl, ENT_QUOTES, 'UTF-8'); ?>">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="<?php echo htmlspecialchars($socialImage, ENT_QUOTES, 'UTF-8'); ?>">
+<meta property="og:image:width" content="<?php echo (int) $socialImageWidth; ?>">
+<meta property="og:image:height" content="<?php echo (int) $socialImageHeight; ?>">
+<meta property="og:image:alt" content="<?php echo htmlspecialchars($socialImageAlt, ENT_QUOTES, 'UTF-8'); ?>">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="<?php echo htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8'); ?>">
 <meta name="twitter:description" content="<?php echo htmlspecialchars($pageDescription, ENT_QUOTES, 'UTF-8'); ?>">
+<meta name="twitter:image" content="<?php echo htmlspecialchars($socialImage, ENT_QUOTES, 'UTF-8'); ?>">
+<meta name="twitter:image:alt" content="<?php echo htmlspecialchars($socialImageAlt, ENT_QUOTES, 'UTF-8'); ?>">
 <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/assets/css/style.css">
 <link rel="stylesheet" href="/assets/css/content.css">
