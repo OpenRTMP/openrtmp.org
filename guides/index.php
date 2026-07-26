@@ -1,7 +1,7 @@
 <?php
 $page = 'guides';
-$pageTitle = 'OpenRTMP Guides — Docker, OBS, RTMPS, and Enhanced RTMP';
-$pageDescription = 'Practical OpenRTMP guides for self-hosting an RTMP server with Docker, publishing from OBS, enabling RTMPS, and understanding Enhanced RTMP codecs.';
+$pageTitle = 'OpenRTMP Guides — Docker, OBS, RTMPS, NOALBS, and Enhanced RTMP';
+$pageDescription = 'Practical OpenRTMP guides for self-hosting an RTMP server, publishing from OBS, enabling RTMPS, connecting NOALBS statistics, and understanding Enhanced RTMP codecs.';
 $canonicalPath = '/guides/';
 include __DIR__ . '/../includes/header.php';
 ?>
@@ -35,6 +35,13 @@ include __DIR__ . '/../includes/header.php';
           <h2><a href="/guides/enhanced-rtmp-hevc-av1-opus/">Enhanced RTMP codecs explained</a></h2>
           <p>Understand why Enhanced RTMP exists, how FourCC-based media differs from legacy FLV signaling, and which OpenRTMP paths are complete versus still experimental.</p>
           <a href="/guides/enhanced-rtmp-hevc-av1-opus/" class="text-link">Read the codec guide &rarr;</a>
+        </article>
+
+        <article class="card guide-card">
+          <span class="guide-tag">NOALBS &middot; JSON &middot; Monitoring</span>
+          <h2><a href="/guides/openrtmp-noalbs-json-stats/">Connect NOALBS to OpenRTMP statistics</a></h2>
+          <p>Configure the native OpenRTMP provider in NOALBS v2.19.0 or newer, understand bitrate and RTT values, use the XML fallback, and troubleshoot container or proxy connectivity.</p>
+          <a href="/guides/openrtmp-noalbs-json-stats/" class="text-link">Read the statistics guide &rarr;</a>
         </article>
 
         <article class="card guide-card">
