@@ -1,0 +1,53 @@
+name: Website checks
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+
+      - name: Lint PHP files
+        run: find . -name '*.php' -print0 | xargs -0 -n1 php -l
+
+      - name: Validate sitemap XML
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libxml2-utils
+          xmllint --noout sitemap.xml
+
+      - name: Smoke-test public pages
+        run: |
+          php -S 127.0.0.1:8090 >/tmp/openrtmp-site.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid"' EXIT
+          sleep 2
+          for path in \
+            / \
+            /quickstart/ \
+            /guides/ \
+            /guides/self-hosted-rtmp-server-docker/ \
+            /guides/rtmps-server-obs/ \
+            /guides/enhanced-rtmp-hevc-av1-opus/ \
+            /guides/openrtmp-noalbs-json-stats/ \
+            /guides/openrtmp-vs-nginx-rtmp/ \
+            /docs/ \
+            /download/ \
+            /legal/; do
+            curl --fail --silent --show-error "http://127.0.0.1:8090${path}" >/dev/null
+          done

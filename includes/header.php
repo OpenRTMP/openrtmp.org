@@ -1,15 +1,46 @@
 <?php
 $page = $page ?? 'home';
+$pageTitle = $pageTitle ?? 'OpenRTMP — Rust RTMP/E-RTMP library and self-hosted server';
+$pageDescription = $pageDescription ?? 'OpenRTMP provides a Rust RTMP/E-RTMP library plus a self-hosted RTMP/RTMPS server, REST API, live statistics, and web control panel.';
+$canonicalPath = $canonicalPath ?? ($_SERVER['REQUEST_URI'] ?? '/');
+$canonicalPath = parse_url($canonicalPath, PHP_URL_PATH) ?: '/';
+$canonicalPath = preg_replace('#/index\.php$#', '/', $canonicalPath);
+$canonicalUrl = 'https://openrtmp.org' . $canonicalPath;
+$ogType = $ogType ?? 'website';
+$socialImage = $socialImage ?? 'https://openrtmp.org/assets/img/social-preview.png';
+$socialImageWidth = $socialImageWidth ?? 1200;
+$socialImageHeight = $socialImageHeight ?? 630;
+$socialImageAlt = $socialImageAlt ?? 'OpenRTMP social preview showing the librtmp2 Rust RTMP/E-RTMP library and the self-hosted RTMP/RTMPS server with web panel.';
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title><?php echo $pageTitle ?? 'OpenRTMP — A modern, pure RTMP / E-RTMP protocol library'; ?></title>
-<meta name="description" content="<?php echo $pageDescription ?? 'librtmp2 is a Rust protocol library for RTMP and E-RTMP (v1 & v2): handshake, chunking, AMF0/AMF3, FLV and host callbacks — no media server, no HTTP, no auth policy.'; ?>">
+<title><?php echo htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8'); ?></title>
+<meta name="description" content="<?php echo htmlspecialchars($pageDescription, ENT_QUOTES, 'UTF-8'); ?>">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="<?php echo htmlspecialchars($canonicalUrl, ENT_QUOTES, 'UTF-8'); ?>">
+<meta property="og:type" content="<?php echo htmlspecialchars($ogType, ENT_QUOTES, 'UTF-8'); ?>">
+<meta property="og:site_name" content="OpenRTMP">
+<meta property="og:title" content="<?php echo htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8'); ?>">
+<meta property="og:description" content="<?php echo htmlspecialchars($pageDescription, ENT_QUOTES, 'UTF-8'); ?>">
+<meta property="og:url" content="<?php echo htmlspecialchars($canonicalUrl, ENT_QUOTES, 'UTF-8'); ?>">
+<meta property="og:image" content="<?php echo htmlspecialchars($socialImage, ENT_QUOTES, 'UTF-8'); ?>">
+<meta property="og:image:width" content="<?php echo (int) $socialImageWidth; ?>">
+<meta property="og:image:height" content="<?php echo (int) $socialImageHeight; ?>">
+<meta property="og:image:alt" content="<?php echo htmlspecialchars($socialImageAlt, ENT_QUOTES, 'UTF-8'); ?>">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="<?php echo htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8'); ?>">
+<meta name="twitter:description" content="<?php echo htmlspecialchars($pageDescription, ENT_QUOTES, 'UTF-8'); ?>">
+<meta name="twitter:image" content="<?php echo htmlspecialchars($socialImage, ENT_QUOTES, 'UTF-8'); ?>">
+<meta name="twitter:image:alt" content="<?php echo htmlspecialchars($socialImageAlt, ENT_QUOTES, 'UTF-8'); ?>">
 <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/assets/css/style.css">
+<link rel="stylesheet" href="/assets/css/content.css">
+<?php if (!empty($structuredData)): ?>
+<script type="application/ld+json"><?php echo json_encode($structuredData, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); ?></script>
+<?php endif; ?>
 </head>
 <body>
 
@@ -19,18 +50,17 @@ $page = $page ?? 'home';
       <img src="/assets/img/favicon.svg" width="28" height="28" alt="OpenRTMP logo">
       OpenRTMP<span class="dot">.org</span>
     </a>
-    <nav class="nav-links">
-      <a href="/#features">Features</a>
-      <a href="/#architecture">Architecture</a>
-      <a href="/#ecosystem">Ecosystem</a>
+    <nav class="nav-links" aria-label="Primary navigation">
+      <a href="/quickstart/">Quickstart</a>
+      <a href="/guides/">Guides</a>
       <a href="/docs/">Docs</a>
       <a href="/download/">Download</a>
       <a href="https://github.com/OpenRTMP" target="_blank" rel="noopener">GitHub</a>
     </nav>
     <div class="nav-cta">
-      <a href="https://github.com/OpenRTMP/librtmp2" target="_blank" rel="noopener" class="btn btn-ghost">Star on GitHub</a>
-      <a href="/download/" class="btn btn-primary">Get librtmp2</a>
+      <a href="https://github.com/OpenRTMP" target="_blank" rel="noopener" class="btn btn-ghost">View on GitHub</a>
+      <a href="/quickstart/" class="btn btn-primary">Run with Docker</a>
     </div>
-    <button class="nav-toggle" aria-label="Toggle navigation">&#9776;</button>
+    <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">&#9776;</button>
   </div>
 </header>
