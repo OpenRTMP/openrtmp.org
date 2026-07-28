@@ -1,3 +1,7 @@
+RewriteEngine On
+RewriteCond %{HTTP_HOST} ^www.openrtmp.org [NC]
+RewriteRule ^(.*)$ https://openrtmp.org/$1 [L,R=301]
+
 # ===== CUSTOM ERROR PAGES =====
 ErrorDocument 400 /errorpages/400.html
 ErrorDocument 401 /errorpages/401.html
