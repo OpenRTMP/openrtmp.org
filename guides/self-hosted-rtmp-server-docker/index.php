@@ -50,6 +50,7 @@ docker compose -f compose.quickstart.yml up -d</code></pre>
             <tr><td><code>1935/tcp</code></td><td>RTMP publishers and players</td><td>Expose when remote RTMP clients need it</td></tr>
             <tr><td><code>8000/tcp</code></td><td>Web control panel</td><td>Prefer HTTPS through a reverse proxy</td></tr>
             <tr><td><code>8080/tcp</code></td><td>REST API and statistics</td><td>Restrict; proxy only required routes</td></tr>
+            <tr><td><code>1940/tcp</code> / <code>1941/tcp</code></td><td>Cluster control and media mesh</td><td>Only between peers when <code>CLUSTER_ENABLED=true</code>; see the <a href="/guides/rtmp-server-ha-clustering/">HA guide</a></td></tr>
           </tbody>
         </table>
 
@@ -90,6 +91,7 @@ docker compose -f compose.quickstart.yml up -d</code></pre>
           <li>Put the panel behind HTTPS and enable secure cookies.</li>
           <li>Do not expose the administrative REST API broadly.</li>
           <li>Enable RTMPS when publishers need encrypted transport.</li>
+          <li>For multi-node HA, follow the <a href="/guides/rtmp-server-ha-clustering/">clustering guide</a> and give each node its own SQLite volume.</li>
           <li>Back up the persistent SQLite volume.</li>
           <li>Pin tested container versions instead of using moving tags.</li>
           <li>Apply connection, request-body, and rate limits appropriate for the host.</li>
@@ -114,6 +116,7 @@ docker compose -f compose.quickstart.yml up -d</code></pre>
           <div class="hero-actions" style="margin-bottom:0;">
             <a href="/quickstart/" class="btn btn-primary">Open quickstart</a>
             <a href="/guides/rtmps-server-obs/" class="btn btn-ghost">Add RTMPS</a>
+            <a href="/guides/rtmp-server-ha-clustering/" class="btn btn-ghost">Add clustering</a>
           </div>
         </div>
       </article>

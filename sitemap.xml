@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://openrtmp.org/</loc>
-    <lastmod>2026-07-18</lastmod>
+    <lastmod>2026-08-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
@@ -14,19 +14,25 @@
   </url>
   <url>
     <loc>https://openrtmp.org/guides/</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://openrtmp.org/guides/self-hosted-rtmp-server-docker/</loc>
-    <lastmod>2026-07-18</lastmod>
+    <lastmod>2026-08-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://openrtmp.org/guides/rtmps-server-obs/</loc>
     <lastmod>2026-07-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://openrtmp.org/guides/rtmp-server-ha-clustering/</loc>
+    <lastmod>2026-08-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -44,19 +50,19 @@
   </url>
   <url>
     <loc>https://openrtmp.org/guides/openrtmp-vs-nginx-rtmp/</loc>
-    <lastmod>2026-07-18</lastmod>
+    <lastmod>2026-08-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://openrtmp.org/docs/</loc>
-    <lastmod>2026-07-18</lastmod>
+    <lastmod>2026-08-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://openrtmp.org/download/</loc>
-    <lastmod>2026-07-18</lastmod>
+    <lastmod>2026-08-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>

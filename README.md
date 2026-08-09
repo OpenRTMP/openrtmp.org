@@ -5,8 +5,8 @@ Source for [OpenRTMP.org](https://openrtmp.org), the public website for the Open
 OpenRTMP includes:
 
 - [`librtmp2`](https://github.com/OpenRTMP/librtmp2) — Rust RTMP/RTMPS and Enhanced RTMP protocol library with a C-compatible FFI
-- [`librtmp2-server`](https://github.com/OpenRTMP/librtmp2-server) — self-hosted RTMP/RTMPS server with SQLite, stream keys, REST API, and statistics
-- [`librtmp2-server-panel`](https://github.com/OpenRTMP/librtmp2-server-panel) — web UI for stream lifecycle and live monitoring
+- [`librtmp2-server`](https://github.com/OpenRTMP/librtmp2-server) — self-hosted RTMP/RTMPS server with SQLite, stream keys, REST API, statistics, and optional HA clustering
+- [`librtmp2-server-panel`](https://github.com/OpenRTMP/librtmp2-server-panel) — web UI for stream lifecycle, live monitoring, and cluster-aware operations
 
 All projects are active alpha software. The website intentionally avoids hard-coded release numbers where a package registry or GitHub release page can remain the source of truth.
 

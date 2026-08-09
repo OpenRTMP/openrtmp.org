@@ -1,7 +1,7 @@
 <?php
 $page = 'home';
 $pageTitle = 'OpenRTMP — Rust RTMP/E-RTMP library and self-hosted server';
-$pageDescription = 'Build RTMP/E-RTMP applications with Rust or deploy a private RTMP/RTMPS server with Docker, stream-key authentication, live statistics, REST API, and a web panel.';
+$pageDescription = 'Build RTMP/E-RTMP applications with Rust or deploy a private RTMP/RTMPS server with Docker, stream-key authentication, optional multi-node clustering, live statistics, REST API, and a web panel.';
 $canonicalPath = '/';
 $structuredData = [
   '@context' => 'https://schema.org',
@@ -19,7 +19,7 @@ $structuredData = [
       'name' => 'OpenRTMP Server and Panel',
       'applicationCategory' => 'DeveloperApplication',
       'operatingSystem' => 'Linux, Docker',
-      'description' => 'Self-hosted RTMP/RTMPS server with REST API, stream keys, live statistics, and a web control panel.',
+      'description' => 'Self-hosted RTMP/RTMPS server with REST API, stream keys, optional HA clustering, live statistics, and a web control panel.',
       'url' => 'https://openrtmp.org/quickstart/'
     ]
   ]
@@ -84,6 +84,7 @@ include __DIR__ . '/includes/header.php';
             <li>RTMP and optional RTMPS listeners</li>
             <li>Per-stream publish, play, and statistics keys</li>
             <li>SQLite persistence and Bearer-authenticated REST API</li>
+            <li>Optional multi-node HA clustering (off by default)</li>
             <li>JSON and nginx-compatible XML statistics</li>
             <li>Web panel for stream creation and live monitoring</li>
           </ul>
@@ -156,6 +157,11 @@ docker compose -f compose.quickstart.yml up -d
           <p>Use modern JSON statistics or nginx-rtmp-compatible XML for existing monitoring and automation tools.</p>
         </div>
         <div class="card">
+          <div class="icon">&#128421;&#65039;</div>
+          <h3>Optional HA clustering</h3>
+          <p>Run multiple server nodes with replicated stream state and a media mesh for playback across nodes. Standalone mode stays the default.</p>
+        </div>
+        <div class="card">
           <div class="icon">&#129513;</div>
           <h3>Composable projects</h3>
           <p>Use only the crate, run only the server, attach the panel, or integrate the REST API into your own control plane.</p>
@@ -172,9 +178,9 @@ docker compose -f compose.quickstart.yml up -d
         <p>That separation makes it clear which project to adopt and where to contribute.</p>
       </div>
       <div class="stack">
-        <div class="stack-row"><span class="layer-name">Panel</span><span class="layer-desc">Browser UI for stream lifecycle, copyable URLs, keys, and live statistics</span></div>
+        <div class="stack-row"><span class="layer-name">Panel</span><span class="layer-desc">Browser UI for stream lifecycle, copyable URLs, keys, live statistics, and optional cluster node management</span></div>
         <div class="stack-arrow">&#8595;</div>
-        <div class="stack-row"><span class="layer-name">Server</span><span class="layer-desc">REST API, authentication, SQLite, statistics, listener configuration, and stream registry</span></div>
+        <div class="stack-row"><span class="layer-name">Server</span><span class="layer-desc">REST API, authentication, SQLite, statistics, listeners, stream registry, and optional HA clustering</span></div>
         <div class="stack-arrow">&#8595;</div>
         <div class="stack-row"><span class="layer-name">librtmp2</span><span class="layer-desc">RTMP/RTMPS connection, handshake, chunking, AMF commands, relay primitives, and E-RTMP modules</span></div>
         <div class="stack-arrow">&#8595;</div>
@@ -198,6 +204,7 @@ docker compose -f compose.quickstart.yml up -d
             <li>Custom Rust or FFI-based RTMP applications</li>
             <li>OBS/FFmpeg integration testing</li>
             <li>Stream-key and statistics tooling</li>
+            <li>Multi-node HA evaluation with optional clustering</li>
             <li>Protocol research and contribution</li>
           </ul>
         </div>
@@ -230,13 +237,13 @@ docker compose -f compose.quickstart.yml up -d
         <div class="card">
           <div class="icon">&#128225;</div>
           <h3>librtmp2-server</h3>
-          <p>RTMP/RTMPS application layer with SQLite, keys, REST API, and monitoring endpoints.</p>
+          <p>RTMP/RTMPS application layer with SQLite, keys, REST API, monitoring endpoints, and optional HA clustering.</p>
           <p class="card-link"><a href="https://github.com/OpenRTMP/librtmp2-server" target="_blank" rel="noopener">Repository &rarr;</a></p>
         </div>
         <div class="card">
           <div class="icon">&#127912;</div>
           <h3>librtmp2-server-panel</h3>
-          <p>Flask web UI for creating streams, copying URLs, and monitoring live publisher/player statistics.</p>
+          <p>Flask web UI for creating streams, copying URLs, monitoring live statistics, and managing cluster nodes when HA is enabled.</p>
           <p class="card-link"><a href="https://github.com/OpenRTMP/librtmp2-server-panel" target="_blank" rel="noopener">Repository &rarr;</a></p>
         </div>
       </div>

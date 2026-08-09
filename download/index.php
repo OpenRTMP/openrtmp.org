@@ -66,9 +66,11 @@ cargo test</code></pre>
           <pre><code>git clone https://github.com/OpenRTMP/librtmp2-server.git
 cd librtmp2-server
 cargo build --release
+# Optional HA clustering:
+# cargo build --release --features cluster
 cp .env.example .env
 LRTMP2_DB=./server.db ./target/release/librtmp2-server</code></pre>
-          <p>The API token is generated on first startup unless supplied as the real <code>LRTMP2_API_TOKEN</code> process environment variable.</p>
+          <p>The API token is generated on first startup unless supplied as the real <code>LRTMP2_API_TOKEN</code> process environment variable. Docker images already include the <code>cluster</code> feature; runtime clustering stays off until you set <code>CLUSTER_ENABLED=true</code>. See the <a href="/guides/rtmp-server-ha-clustering/">HA clustering guide</a>.</p>
         </div>
 
         <div class="download-card download-card--wide" id="docker-stack">
@@ -126,7 +128,7 @@ docker compose -f compose.quickstart.yml up -d</code></pre>
 
       <div class="cta" style="margin-top: 48px;">
         <h2>Not sure which component you need?</h2>
-        <p>The homepage separates the library and operator paths, while the guides cover Docker, OBS, RTMPS, and Enhanced RTMP.</p>
+        <p>The homepage separates the library and operator paths, while the guides cover Docker, OBS, RTMPS, HA clustering, and Enhanced RTMP.</p>
         <div class="hero-actions" style="margin-bottom:0;">
           <a href="/#paths" class="btn btn-primary">Choose a path</a>
           <a href="/guides/" class="btn btn-ghost">Browse guides</a>

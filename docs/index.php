@@ -1,7 +1,7 @@
 <?php
 $page = 'docs';
 $pageTitle = 'Documentation — OpenRTMP';
-$pageDescription = 'Getting started with librtmp2, librtmp2-server, and librtmp2-server-panel: Cargo builds, host callbacks, Docker deployment, REST API, and the web panel.';
+$pageDescription = 'Getting started with librtmp2, librtmp2-server, and librtmp2-server-panel: Cargo builds, host callbacks, Docker deployment, REST API, optional HA clustering, and the web panel.';
 include __DIR__ . '/../includes/header.php';
 ?>
 
@@ -23,6 +23,7 @@ include __DIR__ . '/../includes/header.php';
           <li><a href="#callbacks">Host Callbacks</a></li>
           <li><a href="#layers">Module Reference</a></li>
           <li><a href="#server">librtmp2-server</a></li>
+          <li><a href="#cluster">HA clustering</a></li>
           <li><a href="#panel">librtmp2-server-panel</a></li>
           <li><a href="#docker">Docker Deployment</a></li>
           <li><a href="#abi">API &amp; Versioning</a></li>
@@ -139,10 +140,11 @@ RUSTFLAGS="-Z sanitizer=undefined" cargo test</code></pre>
               <tr><td>REST API</td><td>stream CRUD on <code>/api/v1/streams</code> with Bearer token auth (axum, port <code>8080</code>)</td></tr>
               <tr><td>Stats endpoints</td><td><code>/stats?key=&lt;stats_key&gt;</code> (JSON) and <code>/stats-nginx?key=&lt;stats_key&gt;</code> (nginx-rtmp-compatible XML)</td></tr>
               <tr><td>Frame relay</td><td>forwards publisher frames to all matching players, GOP-aware</td></tr>
+              <tr><td>HA clustering</td><td>optional multi-node mode (<code>CLUSTER_ENABLED</code>, off by default) with OpenRaft state replication and a media mesh &mdash; see <a href="#cluster">HA clustering</a></td></tr>
             </tbody>
           </table>
         </div>
-        <p>Build and run natively:</p>
+        <p>Build and run natively (standalone):</p>
         <pre><code>git clone https://github.com/OpenRTMP/librtmp2-server.git
 cd librtmp2-server
 cargo build --release
@@ -155,6 +157,37 @@ LRTMP2_DB=./server.db ./target/release/librtmp2-server</code></pre>
   -H "Content-Type: application/json" \
   -d '{"id":"mystream","name":"My Live Stream","app":"live"}'</code></pre>
 
+        <h2 id="cluster">HA clustering</h2>
+        <p>From server <code>0.2.0</code>, <code>librtmp2-server</code> can run as a multi-node cluster. Clustering is <strong>off by default</strong>; standalone behavior is unchanged when <code>CLUSTER_ENABLED=false</code>. Published Docker images build with the <code>cluster</code> Cargo feature; runtime still defaults to standalone.</p>
+        <p>Architecture in short:</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Plane</th><th>Default port</th><th>Role</th></tr></thead>
+            <tbody>
+              <tr><td>Control</td><td><code>1940</code></td><td>OpenRaft RPC, join/admin, heartbeats, StatsProxy</td></tr>
+              <tr><td>Media</td><td><code>1941</code></td><td>Inter-node frame relay, subscribe, init-cache</td></tr>
+              <tr><td>RTMP / HTTP</td><td><code>1935</code> / <code>8080</code></td><td>Client publish/play and admin API (unchanged)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <ul>
+          <li>One SQLite DB per node; durable stream/viewer/token/ownership mutations go through Raft.</li>
+          <li>No central media proxy and no mandatory Postgres/Redis for the cluster plane.</li>
+          <li>Publisher ownership uses epoch fencing; players on non-owner nodes receive media via the mesh.</li>
+          <li>Shared-secret peer auth; optional mTLS for control and media.</li>
+        </ul>
+        <p>Minimal bootstrap (first voter):</p>
+        <pre><code>CLUSTER_ENABLED=true
+CLUSTER_NODE_ID=1
+CLUSTER_BOOTSTRAP=true
+CLUSTER_SECRET=&lt;long-random-secret&gt;
+CLUSTER_ADVERTISE_ADDR=10.0.0.1:1940
+CLUSTER_MEDIA_ADVERTISE_ADDR=10.0.0.1:1941</code></pre>
+        <p>Additional nodes join with an empty database and <code>CLUSTER_JOIN=&lt;existing-control-addr&gt;</code>, then promote learners to voters via <code>POST /api/v1/cluster/nodes/{id}/promote</code>.</p>
+        <p>Authenticated cluster APIs include <code>GET /api/v1/cluster</code>, <code>/nodes</code>, <code>/streams</code>, plus drain/resume/promote/remove. Full configuration, limitations, and operator notes live in the server repo's <a href="https://github.com/OpenRTMP/librtmp2-server/blob/main/docs/clustering.md" target="_blank" rel="noopener"><code>docs/clustering.md</code></a> and the site guide <a href="/guides/rtmp-server-ha-clustering/">Run an HA RTMP cluster</a>.</p>
+        <p>Native builds that need clustering must compile with the feature:</p>
+        <pre><code>cargo build --release --features cluster</code></pre>
+
         <h2 id="panel">librtmp2-server-panel</h2>
         <p><a href="https://github.com/OpenRTMP/librtmp2-server-panel" target="_blank" rel="noopener">librtmp2-server-panel</a> is a Flask web UI that talks to the server's REST API. It does not implement RTMP itself &mdash; it manages streams, copies URLs, and polls live stats.</p>
         <div class="table-wrap">
@@ -164,11 +197,13 @@ LRTMP2_DB=./server.db ./target/release/librtmp2-server</code></pre>
               <tr><td>Stream management</td><td>create and delete streams via <code>/api/v1/streams</code></td></tr>
               <tr><td>One-click copy</td><td>publish URL, stream key, play URL, and stats URL</td></tr>
               <tr><td>Live stats</td><td>bitrate, resolution, codec, uptime, RTT polled from <code>/stats?key=...</code></td></tr>
+              <tr><td>Cluster UI</td><td>when health reports <code>cluster.enabled=true</code>: quorum overview, node drain/resume/remove, stream owner/epoch placement</td></tr>
               <tr><td>Login gate</td><td>optional admin login (<code>REQUIRE_LOGIN=True</code> by default)</td></tr>
               <tr><td>Security</td><td>CSRF protection, rate limiting (Redis-backed in Docker), encrypted key display</td></tr>
             </tbody>
           </table>
         </div>
+        <p>The panel does not participate in Raft. Point it at any healthy synchronized node; durable admin writes are forwarded inside the cluster. Standalone servers hide the Cluster navigation automatically.</p>
         <p>Key environment variables (see <code>.env.example</code> in the panel repo):</p>
         <div class="table-wrap">
           <table>
@@ -198,7 +233,7 @@ LRTMP2_DB=./server.db ./target/release/librtmp2-server</code></pre>
   ghcr.io/openrtmp/librtmp2-server:latest
 
 docker logs librtmp2-server   # copy API token from first-start output</code></pre>
-        <p>Available tags: <code>latest</code>, <code>beta</code>, <code>alpha</code>, and pinned versions (e.g. <code>0.1.4</code>).</p>
+        <p>Available tags: <code>latest</code>, <code>beta</code>, <code>alpha</code>, and pinned versions (e.g. <code>0.2.0</code>).</p>
 
         <h3>Panel only (<code>docker run</code>)</h3>
         <p>Image: <code>ghcr.io/openrtmp/librtmp2-server-panel</code>. Connect to an existing server on the same Docker network (container name <code>librtmp2-server</code>):</p>
@@ -263,17 +298,20 @@ docker compose up -d</code></pre>
             <tbody>
               <tr><td><code>1935</code></td><td>RTMP ingest / playback (<code>RTMP_BIND</code>)</td></tr>
               <tr><td><code>1936</code></td><td>RTMPS ingest / playback (<code>RTMPS_BIND</code>) &mdash; only when <code>TLS_ENABLED=true</code>; not exposed in the default compose file (uncomment <code>1936:1936</code> there)</td></tr>
+              <tr><td><code>1940</code></td><td>Cluster control plane (<code>CLUSTER_BIND</code>) &mdash; only when <code>CLUSTER_ENABLED=true</code></td></tr>
+              <tr><td><code>1941</code></td><td>Cluster media mesh (<code>CLUSTER_MEDIA_BIND</code>) &mdash; only when clustering is enabled</td></tr>
               <tr><td><code>8080</code></td><td>HTTP API, stats, health check (<code>HTTP_BIND</code>)</td></tr>
               <tr><td><code>8000</code></td><td>Web panel</td></tr>
             </tbody>
           </table>
         </div>
         <p>To enable RTMPS alongside plaintext RTMP, set <code>LRTMP2_TLS_ENABLED=true</code> (or <code>TLS_ENABLED=true</code> in <code>.env</code>), mount cert/key files, expose port <code>1936</code>, and set <code>RTMPS_BIND=0.0.0.0:1936</code> as in <code>librtmp2-server/docker-compose.yml</code>. The panel shows <code>rtmps://</code> URLs only when <code>GET /api/v1/health</code> reports <code>rtmps_enabled: true</code> (and uses <code>LRTMP2_RTMPS_PORT</code>, default <code>1936</code>).</p>
+        <p>For a multi-node cluster, expose <code>1940</code> and <code>1941</code> between peers, set the <code>CLUSTER_*</code> variables described under <a href="#cluster">HA clustering</a>, and keep each node on its own SQLite volume. See the <a href="/guides/rtmp-server-ha-clustering/">clustering guide</a> for bootstrap and join steps.</p>
 
         <h2 id="abi">API &amp; Versioning</h2>
         <p>Only the public <code>librtmp2</code> crate interface is the intended stable API surface. Everything under <code>src/**/*</code> that is not <code>pub</code> may change freely between releases.</p>
         <p><code>librtmp2</code> follows SemVer but remains on <code>0.x</code> while in alpha. Semantic-versioning guarantees begin at <code>1.0.0</code>. Pin a crates.io version (currently <code>0.3.1</code>) if you depend on a specific API shape.</p>
-        <p><code>librtmp2-server</code> (currently <code>0.1.4</code>) and <code>librtmp2-server-panel</code> are also alpha &mdash; REST API shapes, environment variable names, and Docker images may evolve.</p>
+        <p><code>librtmp2-server</code> (currently <code>0.2.0</code>) and <code>librtmp2-server-panel</code> (currently <code>0.2.0</code>) are also alpha &mdash; REST API shapes, environment variable names, and Docker images may evolve. Prefer GitHub releases and image tags over hard-coding versions from this page.</p>
 
       </div>
     </div>
