@@ -1,7 +1,7 @@
 <?php
 $page = 'guides';
-$pageTitle = 'OpenRTMP Guides — Docker, OBS, RTMPS, NOALBS, and Enhanced RTMP';
-$pageDescription = 'Practical OpenRTMP guides for self-hosting an RTMP server, publishing from OBS, enabling RTMPS, connecting NOALBS statistics, and understanding Enhanced RTMP codecs.';
+$pageTitle = 'OpenRTMP Guides — Docker, OBS, RTMPS, Clustering, NOALBS, and Enhanced RTMP';
+$pageDescription = 'Practical OpenRTMP guides for self-hosting an RTMP server, publishing from OBS, enabling RTMPS, HA clustering, connecting NOALBS statistics, and understanding Enhanced RTMP codecs.';
 $canonicalPath = '/guides/';
 include __DIR__ . '/../includes/header.php';
 ?>
@@ -28,6 +28,13 @@ include __DIR__ . '/../includes/header.php';
           <h2><a href="/guides/rtmps-server-obs/">Configure an RTMPS server for OBS</a></h2>
           <p>Run encrypted RTMPS alongside plaintext RTMP, configure certificates, expose the correct port, and verify the server before changing OBS ingest settings.</p>
           <a href="/guides/rtmps-server-obs/" class="text-link">Read the RTMPS guide &rarr;</a>
+        </article>
+
+        <article class="card guide-card">
+          <span class="guide-tag">HA &middot; Clustering &middot; OpenRaft</span>
+          <h2><a href="/guides/rtmp-server-ha-clustering/">Run an HA RTMP server cluster</a></h2>
+          <p>Enable optional multi-node clustering, bootstrap and join voters, expose control/media ports, and operate nodes from the API or panel — with current alpha limits stated up front.</p>
+          <a href="/guides/rtmp-server-ha-clustering/" class="text-link">Read the clustering guide &rarr;</a>
         </article>
 
         <article class="card guide-card">

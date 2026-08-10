@@ -25,7 +25,7 @@ include __DIR__ . '/../../includes/header.php';
   <section class="content-section" style="padding-top: 0;">
     <div class="container article-layout">
       <article class="prose">
-        <div class="callout"><strong>Summary:</strong> choose nginx-rtmp for established nginx workflows and built-in module features. Choose OpenRTMP for a Rust-first protocol stack, a small API-driven server, separate stream keys, JSON statistics, and an embeddable library — while accepting its alpha status and narrower feature set.</div>
+        <div class="callout"><strong>Summary:</strong> choose nginx-rtmp for established nginx workflows and built-in module features. Choose OpenRTMP for a Rust-first protocol stack, a small API-driven server, separate stream keys, JSON statistics, optional HA clustering, and an embeddable library — while accepting its alpha status and narrower media feature set.</div>
 
         <h2 id="overview">High-level comparison</h2>
         <table class="comparison-table">
@@ -38,6 +38,7 @@ include __DIR__ . '/../../includes/header.php';
             <tr><td>Statistics</td><td>JSON plus nginx-compatible XML</td><td>Classic XML statistics endpoint with XSL presentation</td></tr>
             <tr><td>Embeddable library</td><td>Rust crate and C-compatible FFI</td><td>No equivalent standalone protocol crate</td></tr>
             <tr><td>HLS, recording, exec, push</td><td>Not built into the current server</td><td>Common nginx-rtmp module features</td></tr>
+            <tr><td>Multi-node HA</td><td>Optional OpenRaft + media mesh clustering (alpha, off by default)</td><td>Usually external load balancers, shared storage, or custom push topology</td></tr>
             <tr><td>Modern RTMP work</td><td>Explicit focus on RTMPS and Enhanced RTMP building blocks</td><td>Primarily traditional RTMP module workflows</td></tr>
           </tbody>
         </table>
@@ -49,6 +50,7 @@ include __DIR__ . '/../../includes/header.php';
           <li>You want separate publish, playback, and monitoring credentials.</li>
           <li>You need JSON statistics but also want compatibility with tools that expect nginx-style XML.</li>
           <li>You want to contribute to Enhanced RTMP, RTMPS, interoperability, or parser safety work.</li>
+          <li>You want optional multi-node HA with replicated stream state (evaluate carefully; still alpha).</li>
           <li>You accept alpha software and can test the exact publishing/playback workflow.</li>
         </ul>
 
