@@ -119,6 +119,7 @@
   font-family: var(--mono);
   font-size: 0.9em;
   color: #ffd7c9;
+  overflow-wrap: break-word;
 }
 
 .prose pre {
