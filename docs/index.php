@@ -39,7 +39,7 @@ include __DIR__ . '/../includes/header.php';
       <div class="docs-content">
 
         <div class="callout callout-warn" id="status">
-          <strong>Alpha software.</strong> All three projects (<code>librtmp2</code>, <code>librtmp2-server</code>, <code>librtmp2-server-panel</code>) are in active early development. APIs, Docker images, and configuration may change without notice. Pin to a crates.io version (currently <code>0.3.1</code> for the library) and test your OBS/FFmpeg workflow before relying on it for critical streams.
+          <strong>Alpha software.</strong> All three projects (<code>librtmp2</code>, <code>librtmp2-server</code>, <code>librtmp2-server-panel</code>) are in active early development. APIs, Docker images, and configuration may change without notice. Pin to a crates.io version (currently <code>0.8.0</code> for the library) and test your OBS/FFmpeg workflow before relying on it for critical streams.
         </div>
 
         <h2 id="getting-started">Getting Started</h2>
@@ -49,9 +49,9 @@ include __DIR__ . '/../includes/header.php';
 version = "0"
 
 cargo update -p librtmp2   # pull newest 0.x from crates.io</code></pre>
-        <p>For reproducible builds only, pin an exact release (currently <code>0.3.1</code>):</p>
+        <p>For reproducible builds only, pin an exact release (currently <code>0.8.0</code>):</p>
         <pre><code>[dependencies.librtmp2]
-version = "=0.3.1"</code></pre>
+version = "=0.8.0"</code></pre>
         <p>There is no <code>version = "latest"</code> in Cargo &mdash; <code>Cargo.lock</code> always pins the resolved version until you run <code>cargo update</code>.</p>
         <p>Or clone and build locally for development (requires Rust 1.93+):</p>
         <pre><code>git clone https://github.com/OpenRTMP/librtmp2.git
@@ -233,7 +233,7 @@ CLUSTER_MEDIA_ADVERTISE_ADDR=10.0.0.1:1941</code></pre>
   ghcr.io/openrtmp/librtmp2-server:latest
 
 docker logs librtmp2-server   # copy API token from first-start output</code></pre>
-        <p>Available tags: <code>latest</code>, <code>beta</code>, <code>alpha</code>, and pinned versions (e.g. <code>0.2.0</code>).</p>
+        <p>Available tags: <code>latest</code>, <code>beta</code>, <code>alpha</code>, and pinned versions (e.g. <code>0.2.2</code>).</p>
 
         <h3>Panel only (<code>docker run</code>)</h3>
         <p>Image: <code>ghcr.io/openrtmp/librtmp2-server-panel</code>. Connect to an existing server on the same Docker network (container name <code>librtmp2-server</code>):</p>
@@ -310,8 +310,8 @@ docker compose up -d</code></pre>
 
         <h2 id="abi">API &amp; Versioning</h2>
         <p>Only the public <code>librtmp2</code> crate interface is the intended stable API surface. Everything under <code>src/**/*</code> that is not <code>pub</code> may change freely between releases.</p>
-        <p><code>librtmp2</code> follows SemVer but remains on <code>0.x</code> while in alpha. Semantic-versioning guarantees begin at <code>1.0.0</code>. Pin a crates.io version (currently <code>0.3.1</code>) if you depend on a specific API shape.</p>
-        <p><code>librtmp2-server</code> (currently <code>0.2.0</code>) and <code>librtmp2-server-panel</code> (currently <code>0.2.0</code>) are also alpha &mdash; REST API shapes, environment variable names, and Docker images may evolve. Prefer GitHub releases and image tags over hard-coding versions from this page.</p>
+        <p><code>librtmp2</code> follows SemVer but remains on <code>0.x</code> while in alpha. Semantic-versioning guarantees begin at <code>1.0.0</code>. Pin a crates.io version (currently <code>0.8.0</code>) if you depend on a specific API shape.</p>
+        <p><code>librtmp2-server</code> (currently <code>0.2.2</code>) and <code>librtmp2-server-panel</code> (currently <code>0.1.7</code>) are also alpha &mdash; REST API shapes, environment variable names, and Docker images may evolve. Prefer GitHub releases and image tags over hard-coding versions from this page.</p>
 
       </div>
     </div>
