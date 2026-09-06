@@ -12,7 +12,7 @@
           REST API, live statistics, and a web control panel.
         </p>
         <p class="status-note" style="max-width: 360px; margin-top: 14px;">
-          Active alpha. Pin versions and validate your complete workflow before critical production use.
+          Active development, pre-1.0. Pin versions and validate your complete workflow before critical production use.
         </p>
       </div>
       <div>
