@@ -31,7 +31,7 @@ include __DIR__ . '/includes/header.php';
 
   <section class="hero">
     <div class="container">
-      <span class="eyebrow">Active alpha &middot; Rust &middot; Docker &middot; MIT</span>
+      <span class="eyebrow">Active development &middot; Pre-1.0 &middot; Rust &middot; Docker &middot; MIT</span>
       <h1>Modern RTMP infrastructure<br><span class="gradient">for builders and operators.</span></h1>
       <p>
         Embed a focused RTMP/E-RTMP protocol library in your own application,

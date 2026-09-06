@@ -16,7 +16,7 @@ include __DIR__ . '/../includes/header.php';
   <section style="padding-top: 0;">
     <div class="container">
       <div class="callout warning">
-        <strong>All OpenRTMP projects are active alpha software.</strong> Review each repository's implementation status, pin tested versions, and validate your complete workflow before critical production use.
+        <strong>OpenRTMP is under active development and remains pre-1.0.</strong> Review each repository's implementation status, pin tested versions, and validate your complete workflow before critical production use.
       </div>
 
       <div class="grid-2" style="margin-bottom: 42px;">

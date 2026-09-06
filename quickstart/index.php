@@ -35,7 +35,7 @@ include __DIR__ . '/../includes/header.php';
     <div class="container article-layout">
       <article class="prose">
         <div class="callout warning">
-          <strong>Alpha software:</strong> this guide is intended for evaluation and tested self-hosted deployments. Pin image versions and validate publishing, playback, authentication, and recovery before critical production use.
+          <strong>Active development:</strong> OpenRTMP remains pre-1.0. This guide is intended for evaluation and tested self-hosted deployments. Pin image versions and validate publishing, playback, authentication, and recovery before critical production use.
         </div>
 
         <h2 id="requirements">Requirements</h2>

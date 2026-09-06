@@ -34,7 +34,7 @@ include __DIR__ . '/../../includes/header.php';
           <li>The stream's <code>stats_key</code>.</li>
           <li>NOALBS v2.19.0 or newer for the native JSON provider.</li>
         </ul>
-        <p>The OpenRTMP server and protocol stack are still alpha software. Test the exact publisher, statistics, reconnect, and scene-switching workflow before relying on it for a critical production stream.</p>
+        <p>The OpenRTMP server and protocol stack remain pre-1.0 and under active development. Test the exact publisher, statistics, reconnect, and scene-switching workflow before relying on it for a critical production stream.</p>
 
         <h2 id="create-stream">Create a stream and obtain its keys</h2>
         <p>The easiest option is <a href="https://github.com/OpenRTMP/librtmp2-server-panel" target="_blank" rel="noopener">librtmp2-server-panel</a>. Create a stream in the panel and copy its statistics URL or <code>stats_key</code>.</p>

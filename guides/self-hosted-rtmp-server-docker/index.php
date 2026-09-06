@@ -26,7 +26,7 @@ include __DIR__ . '/../../includes/header.php';
   <section class="content-section" style="padding-top: 0;">
     <div class="container article-layout">
       <article class="prose">
-        <div class="callout warning"><strong>Status:</strong> OpenRTMP is active alpha software. Test failure recovery, reconnect behavior, codecs, and every client you rely on before critical production use.</div>
+        <div class="callout warning"><strong>Status:</strong> OpenRTMP is under active development and remains pre-1.0. Test failure recovery, reconnect behavior, codecs, and every client you rely on before critical production use.</div>
 
         <h2 id="architecture">What the Docker stack runs</h2>
         <p>The quickstart stack separates protocol handling, application policy, and user interface:</p>

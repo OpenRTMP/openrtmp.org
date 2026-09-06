@@ -10,7 +10,7 @@ include __DIR__ . '/../includes/header.php';
   <div class="page-hero container">
     <span class="eyebrow">Practical guides</span>
     <h1>Build and operate RTMP infrastructure</h1>
-    <p>Task-focused articles for operators, application developers, and contributors. Each guide states the current alpha limitations instead of hiding them behind generic feature claims.</p>
+    <p>Task-focused articles for operators, application developers, and contributors. Each guide states the current pre-1.0 limitations and implementation boundaries instead of hiding them behind generic feature claims.</p>
   </div>
 
   <section style="padding-top: 0;">
@@ -33,7 +33,7 @@ include __DIR__ . '/../includes/header.php';
         <article class="card guide-card">
           <span class="guide-tag">HA &middot; Clustering &middot; OpenRaft</span>
           <h2><a href="/guides/rtmp-server-ha-clustering/">Run an HA RTMP server cluster</a></h2>
-          <p>Enable optional multi-node clustering, bootstrap and join voters, expose control/media ports, and operate nodes from the API or panel — with current alpha limits stated up front.</p>
+          <p>Enable optional multi-node clustering, bootstrap and join voters, expose control/media ports, and operate nodes from the API or panel — with current operational limits stated up front.</p>
           <a href="/guides/rtmp-server-ha-clustering/" class="text-link">Read the clustering guide &rarr;</a>
         </article>
 
