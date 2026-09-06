@@ -1,7 +1,7 @@
 <?php
 $page = 'guides';
 $pageTitle = 'Run an HA RTMP server cluster — OpenRTMP Guide';
-$pageDescription = 'Enable optional multi-node HA clustering in librtmp2-server: OpenRaft state replication, media mesh ports, bootstrap and join, panel operations, and current alpha limits.';
+$pageDescription = 'Enable optional multi-node HA clustering in librtmp2-server: OpenRaft state replication, media mesh ports, bootstrap and join, panel operations, and current operational limits.';
 $canonicalPath = '/guides/rtmp-server-ha-clustering/';
 $ogType = 'article';
 $structuredData = [
@@ -25,7 +25,7 @@ include __DIR__ . '/../../includes/header.php';
   <section class="content-section" style="padding-top: 0;">
     <div class="container article-layout">
       <article class="prose">
-        <div class="callout warning"><strong>Alpha feature:</strong> clustering landed in server and panel <code>0.2.0</code>. Test failover, publisher reconnect, and firewall paths thoroughly. Invalid cluster configuration fails startup hard — there is no silent fallback to standalone.</div>
+        <div class="callout warning"><strong>Clustering status:</strong> clustering landed in server and panel <code>0.2.0</code> and remains an area that should be validated carefully. Test failover, publisher reconnect, and firewall paths thoroughly. Invalid cluster configuration fails startup hard — there is no silent fallback to standalone.</div>
 
         <h2 id="what-it-is">What clustering provides</h2>
         <p>With <code>CLUSTER_ENABLED=true</code>, each node keeps its own SQLite file while durable mutations (streams, viewers, tokens, ownership) go through Raft. Live frames leave the publisher owner over the media mesh so players can attach to other healthy nodes.</p>
