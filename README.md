@@ -7,8 +7,15 @@ OpenRTMP includes:
 - [`librtmp2`](https://github.com/OpenRTMP/librtmp2) — Rust RTMP/RTMPS and Enhanced RTMP protocol library with a C-compatible FFI
 - [`librtmp2-server`](https://github.com/OpenRTMP/librtmp2-server) — self-hosted RTMP/RTMPS server with SQLite, stream keys, REST API, statistics, and optional HA clustering
 - [`librtmp2-server-panel`](https://github.com/OpenRTMP/librtmp2-server-panel) — web UI for stream lifecycle, live monitoring, and cluster-aware operations
+- [`community`](https://github.com/OpenRTMP/community) — central issue tracker and discussion hub for all OpenRTMP projects
 
 All projects are under active development and remain pre-1.0. Interfaces and configuration may still evolve; the website intentionally avoids hard-coded current release numbers where a package registry or GitHub release page can remain the source of truth.
+
+## Community links
+
+- Issues, bug reports, feature requests, and interoperability reports: [OpenRTMP Community Issues](https://github.com/OpenRTMP/community/issues/new/choose)
+- Questions, setup help, ideas, and design discussion: [OpenRTMP Community Discussions](https://github.com/OpenRTMP/community/discussions)
+- Source-code pull requests stay in the repository that owns the implementation.
 
 ## Local development
 
@@ -50,6 +57,7 @@ sitemap.xml                       Indexable public pages
 - Separate the **developer/library** path from the **operator/server** path.
 - State the pre-1.0 status and implementation boundaries consistently.
 - Link to repository implementation-status tables for code-accurate claims.
+- Route issues to [`OpenRTMP/community/issues`](https://github.com/OpenRTMP/community/issues) and discussions to [`OpenRTMP/community/discussions`](https://github.com/OpenRTMP/community/discussions), rather than to an individual source repository.
 - Prefer package registries and release pages over manually copied latest-version strings.
 - Create one canonical page for each major search intent instead of duplicating setup text.
 - Keep guides task-focused, honest about missing features, and useful without marketing language.
