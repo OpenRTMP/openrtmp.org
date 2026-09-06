@@ -8,7 +8,7 @@ OpenRTMP includes:
 - [`librtmp2-server`](https://github.com/OpenRTMP/librtmp2-server) — self-hosted RTMP/RTMPS server with SQLite, stream keys, REST API, statistics, and optional HA clustering
 - [`librtmp2-server-panel`](https://github.com/OpenRTMP/librtmp2-server-panel) — web UI for stream lifecycle, live monitoring, and cluster-aware operations
 
-All projects are active alpha software. The website intentionally avoids hard-coded release numbers where a package registry or GitHub release page can remain the source of truth.
+All projects are under active development and remain pre-1.0. Interfaces and configuration may still evolve; the website intentionally avoids hard-coded current release numbers where a package registry or GitHub release page can remain the source of truth.
 
 ## Local development
 
@@ -48,7 +48,7 @@ sitemap.xml                       Indexable public pages
 ## Content principles
 
 - Separate the **developer/library** path from the **operator/server** path.
-- State the alpha status and implementation boundaries consistently.
+- State the pre-1.0 status and implementation boundaries consistently.
 - Link to repository implementation-status tables for code-accurate claims.
 - Prefer package registries and release pages over manually copied latest-version strings.
 - Create one canonical page for each major search intent instead of duplicating setup text.
