@@ -76,9 +76,8 @@ include __DIR__ . '/../../includes/header.php';
 
         <h2 id="library">Using librtmp2 in your own application</h2>
         <p>Developers can consume the Rust crate directly or use the generated dynamic/static library through the C-compatible FFI. The host application remains responsible for decisions such as authorization, storage, transcoding, recording, and track routing.</p>
-        <pre><code>[dependencies]
-librtmp2 = "0.4"</code></pre>
-        <p>While the project remains in <code>0.x</code>, pin the version range appropriate for your compatibility policy and review release notes before updating.</p>
+        <pre><code>cargo add librtmp2</code></pre>
+        <p>Let Cargo select the current release instead of copying a version number from this guide. Applications should commit <code>Cargo.lock</code>; libraries should choose an explicit compatibility range based on the release they have tested and review release notes before updating.</p>
 
         <h2 id="avoid-overclaiming">Avoid these common assumptions</h2>
         <ul>
