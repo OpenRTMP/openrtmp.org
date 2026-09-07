@@ -34,6 +34,7 @@ function initCopyButtons() {
         await navigator.clipboard.writeText(text);
         btn.textContent = 'Copied!';
       } catch (err) {
+        console.error('Failed to copy code to clipboard:', err);
         btn.textContent = 'Error';
       }
       setTimeout(() => { btn.textContent = 'Copy'; }, 1500);
@@ -47,7 +48,7 @@ function initActiveDocsLink() {
 
   const sections = Array.from(links)
     .map((a) => a.getAttribute('href'))
-    .filter((href) => href && href.startsWith('#'))
+    .filter((href) => href?.startsWith('#'))
     .map((href) => document.querySelector(href))
     .filter(Boolean);
 

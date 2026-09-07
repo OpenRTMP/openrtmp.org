@@ -24,7 +24,7 @@ $structuredData = [
     ]
   ]
 ];
-include __DIR__ . '/includes/header.php';
+include_once __DIR__ . '/includes/header.php';
 ?>
 
 <main>
@@ -266,4 +266,4 @@ docker compose -f compose.quickstart.yml up -d
 
 </main>
 
-<?php include __DIR__ . '/includes/footer.php'; ?>
+<?php include_once __DIR__ . '/includes/footer.php'; ?>

@@ -2,7 +2,7 @@
 $page = 'legal';
 $pageTitle = 'Legal Notice — OpenRTMP';
 $pageDescription = 'Contact information for openrtmp.org (OpenRTMP).';
-include __DIR__ . '/../includes/header.php';
+include_once __DIR__ . '/../includes/header.php';
 ?>
 
 <main>
@@ -36,4 +36,4 @@ include __DIR__ . '/../includes/header.php';
   </section>
 </main>
 
-<?php include __DIR__ . '/../includes/footer.php'; ?>
+<?php include_once __DIR__ . '/../includes/footer.php'; ?>
