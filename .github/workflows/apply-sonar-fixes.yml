@@ -1,0 +1,116 @@
+name: Apply SonarCloud fixes
+
+on:
+  push:
+    branches:
+      - fix/sonar-findings-20260908
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Apply targeted fixes
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+
+          php_files = {
+              'docs/index.php': 2,
+              'download/index.php': 2,
+              'guides/enhanced-rtmp-hevc-av1-opus/index.php': 2,
+              'guides/index.php': 2,
+              'guides/openrtmp-noalbs-json-stats/index.php': 2,
+              'guides/openrtmp-vs-nginx-rtmp/index.php': 2,
+              'guides/rtmp-server-ha-clustering/index.php': 2,
+              'guides/rtmps-server-obs/index.php': 2,
+              'guides/self-hosted-rtmp-server-docker/index.php': 2,
+              'index.php': 2,
+              'legal/index.php': 2,
+              'quickstart/index.php': 2,
+          }
+
+          for filename, expected in php_files.items():
+              path = Path(filename)
+              text = path.read_text()
+              count = text.count('include __DIR__')
+              if count != expected:
+                  raise RuntimeError(f'{filename}: expected {expected} include statements, found {count}')
+              path.write_text(text.replace('include __DIR__', 'include_once __DIR__'))
+
+          workflow = Path('.github/workflows/site-checks.yml')
+          text = workflow.read_text()
+          old = 'uses: shivammathur/setup-php@v2'
+          new = 'uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2'
+          if text.count(old) != 1:
+              raise RuntimeError('Expected exactly one setup-php@v2 reference')
+          workflow.write_text(text.replace(old, new))
+
+          css = Path('assets/css/style.css')
+          text = css.read_text()
+          base_body = '''body {
+            margin: 0;
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+          }'''
+          merged_body = '''body {
+            margin: 0;
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            background-image:
+              radial-gradient(circle at 15% 0%, rgba(255, 92, 53, 0.08), transparent 45%),
+              radial-gradient(circle at 85% 20%, rgba(255, 176, 46, 0.06), transparent 40%);
+            background-attachment: fixed;
+          }'''
+          texture_section = '''/* ---------- Background texture ---------- */
+          body {
+            background-image:
+              radial-gradient(circle at 15% 0%, rgba(255, 92, 53, 0.08), transparent 45%),
+              radial-gradient(circle at 85% 20%, rgba(255, 176, 46, 0.06), transparent 40%);
+            background-attachment: fixed;
+          }
+
+          '''
+          if text.count(base_body) != 1 or text.count(texture_section) != 1:
+              raise RuntimeError('Could not identify the two body rule blocks')
+          text = text.replace(base_body, merged_body, 1).replace(texture_section, '', 1)
+          css.write_text(text)
+
+          js = Path('assets/js/main.js')
+          text = js.read_text()
+          old_catch = '''      } catch (err) {
+                  btn.textContent = 'Error';
+                }'''
+          new_catch = '''      } catch (err) {
+                  console.error('Failed to copy code to clipboard:', err);
+                  btn.textContent = 'Error';
+                }'''
+          old_filter = ".filter((href) => href && href.startsWith('#'))"
+          new_filter = ".filter((href) => href?.startsWith('#'))"
+          if text.count(old_catch) != 1:
+              raise RuntimeError('Could not identify clipboard error handler')
+          if text.count(old_filter) != 1:
+              raise RuntimeError('Could not identify docs-link filter')
+          text = text.replace(old_catch, new_catch, 1).replace(old_filter, new_filter, 1)
+          js.write_text(text)
+          PY
+
+      - name: Commit fixes
+        run: |
+          rm .github/workflows/apply-sonar-fixes.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Fix SonarCloud findings"
+          git push origin HEAD:fix/sonar-findings-20260908
