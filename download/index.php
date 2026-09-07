@@ -3,7 +3,7 @@ $page = 'download';
 $pageTitle = 'Download OpenRTMP — Rust crate, source, and Docker images';
 $pageDescription = 'Install librtmp2 from crates.io, build OpenRTMP projects from source, or deploy the RTMP server and web panel from published Docker images.';
 $canonicalPath = '/download/';
-include __DIR__ . '/../includes/header.php';
+include_once __DIR__ . '/../includes/header.php';
 ?>
 
 <main>
@@ -139,4 +139,4 @@ docker compose -f compose.quickstart.yml up -d</code></pre>
   </section>
 </main>
 
-<?php include __DIR__ . '/../includes/footer.php'; ?>
+<?php include_once __DIR__ . '/../includes/footer.php'; ?>

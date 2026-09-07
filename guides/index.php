@@ -3,7 +3,7 @@ $page = 'guides';
 $pageTitle = 'OpenRTMP Guides — Docker, OBS, RTMPS, Clustering, NOALBS, and Enhanced RTMP';
 $pageDescription = 'Practical OpenRTMP guides for self-hosting an RTMP server, publishing from OBS, enabling RTMPS, HA clustering, connecting NOALBS statistics, and understanding Enhanced RTMP codecs.';
 $canonicalPath = '/guides/';
-include __DIR__ . '/../includes/header.php';
+include_once __DIR__ . '/../includes/header.php';
 ?>
 
 <main>
@@ -71,4 +71,4 @@ include __DIR__ . '/../includes/header.php';
   </section>
 </main>
 
-<?php include __DIR__ . '/../includes/footer.php'; ?>
+<?php include_once __DIR__ . '/../includes/footer.php'; ?>

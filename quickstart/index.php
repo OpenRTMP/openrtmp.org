@@ -21,7 +21,7 @@ $structuredData = [
     ['@type' => 'HowToStep', 'name' => 'Publish from OBS', 'url' => 'https://openrtmp.org/quickstart/#obs']
   ]
 ];
-include __DIR__ . '/../includes/header.php';
+include_once __DIR__ . '/../includes/header.php';
 ?>
 
 <main>
@@ -165,4 +165,4 @@ docker compose -f compose.quickstart.yml down -v</code></pre>
   </section>
 </main>
 
-<?php include __DIR__ . '/../includes/footer.php'; ?>
+<?php include_once __DIR__ . '/../includes/footer.php'; ?>

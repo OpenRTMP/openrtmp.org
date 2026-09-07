@@ -12,7 +12,7 @@ $structuredData = [
   'author' => ['@type' => 'Organization', 'name' => 'OpenRTMP'],
   'mainEntityOfPage' => 'https://openrtmp.org/guides/enhanced-rtmp-hevc-av1-opus/'
 ];
-include __DIR__ . '/../../includes/header.php';
+include_once __DIR__ . '/../../includes/header.php';
 ?>
 
 <main>
@@ -112,4 +112,4 @@ include __DIR__ . '/../../includes/header.php';
   </section>
 </main>
 
-<?php include __DIR__ . '/../../includes/footer.php'; ?>
+<?php include_once __DIR__ . '/../../includes/footer.php'; ?>

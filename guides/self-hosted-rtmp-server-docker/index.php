@@ -13,7 +13,7 @@ $structuredData = [
   'publisher' => ['@type' => 'Organization', 'name' => 'OpenRTMP'],
   'mainEntityOfPage' => 'https://openrtmp.org/guides/self-hosted-rtmp-server-docker/'
 ];
-include __DIR__ . '/../../includes/header.php';
+include_once __DIR__ . '/../../includes/header.php';
 ?>
 
 <main>
@@ -136,4 +136,4 @@ docker compose -f compose.quickstart.yml up -d</code></pre>
   </section>
 </main>
 
-<?php include __DIR__ . '/../../includes/footer.php'; ?>
+<?php include_once __DIR__ . '/../../includes/footer.php'; ?>

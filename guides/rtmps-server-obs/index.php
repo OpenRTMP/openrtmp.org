@@ -12,7 +12,7 @@ $structuredData = [
   'author' => ['@type' => 'Organization', 'name' => 'OpenRTMP'],
   'mainEntityOfPage' => 'https://openrtmp.org/guides/rtmps-server-obs/'
 ];
-include __DIR__ . '/../../includes/header.php';
+include_once __DIR__ . '/../../includes/header.php';
 ?>
 
 <main>
@@ -121,4 +121,4 @@ RTMPS_BIND=0.0.0.0:1936</code></pre>
   </section>
 </main>
 
-<?php include __DIR__ . '/../../includes/footer.php'; ?>
+<?php include_once __DIR__ . '/../../includes/footer.php'; ?>

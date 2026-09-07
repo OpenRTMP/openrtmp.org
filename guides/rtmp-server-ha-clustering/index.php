@@ -12,7 +12,7 @@ $structuredData = [
   'author' => ['@type' => 'Organization', 'name' => 'OpenRTMP'],
   'mainEntityOfPage' => 'https://openrtmp.org/guides/rtmp-server-ha-clustering/'
 ];
-include __DIR__ . '/../../includes/header.php';
+include_once __DIR__ . '/../../includes/header.php';
 ?>
 
 <main>
@@ -126,4 +126,4 @@ LRTMP2_DB=/data/node2.db</code></pre>
   </section>
 </main>
 
-<?php include __DIR__ . '/../../includes/footer.php'; ?>
+<?php include_once __DIR__ . '/../../includes/footer.php'; ?>
