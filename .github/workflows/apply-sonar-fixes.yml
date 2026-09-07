@@ -43,14 +43,6 @@ jobs:
                   raise RuntimeError(f'{filename}: expected {expected} include statements, found {count}')
               path.write_text(text.replace('include __DIR__', 'include_once __DIR__'))
 
-          workflow = Path('.github/workflows/site-checks.yml')
-          text = workflow.read_text()
-          old = 'uses: shivammathur/setup-php@v2'
-          new = 'uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2'
-          if text.count(old) != 1:
-              raise RuntimeError('Expected exactly one setup-php@v2 reference')
-          workflow.write_text(text.replace(old, new))
-
           css = Path('assets/css/style.css')
           text = css.read_text()
           base_body = '''body {
@@ -108,9 +100,8 @@ jobs:
 
       - name: Commit fixes
         run: |
-          rm .github/workflows/apply-sonar-fixes.yml
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
-          git commit -m "Fix SonarCloud findings"
+          git add docs download guides index.php legal quickstart assets/css/style.css assets/js/main.js
+          git commit -m "Fix SonarCloud code findings"
           git push origin HEAD:fix/sonar-findings-20260908
