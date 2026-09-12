@@ -23,27 +23,13 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Build deployment payload
-        run: |
-          mkdir -p .deploy-payload
-          rsync -a \
-            --exclude='.git' \
-            --exclude='.github' \
-            --exclude='.gitignore' \
-            --exclude='.deploy-payload' \
-            --exclude='README.md' \
-            --exclude='AGENTS.md' \
-            --exclude='renovate.json' \
-            ./ .deploy-payload/
-
       - name: Deploy over SFTP
-        uses: wlixcc/SFTP-Deploy-Action@a5ccb9c6211a94cc59404f0fdb2a9936a6dfee64 # v1.2.6
+        uses: wangyucode/sftp-upload-action@a1e64f60df0d085b26ca9efff77566e79f1c6b78 # v3.0.0
         with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          port: ${{ secrets.DEPLOY_PORT }}
           username: ${{ secrets.DEPLOY_USERNAME }}
           password: ${{ secrets.DEPLOY_PASSWORD }}
-          server: ${{ secrets.DEPLOY_HOST }}
-          port: ${{ secrets.DEPLOY_PORT }}
-          local_path: './.deploy-payload/*'
-          remote_path: ${{ secrets.DEPLOY_REMOTE_PATH }}
-          sftp_only: true
-          delete_remote_files: false
+          localDir: '.'
+          remoteDir: ${{ secrets.DEPLOY_REMOTE_PATH }}
+          exclude: '.git/*,.github/*,README.md,AGENTS.md,renovate.json'
