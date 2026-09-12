@@ -1,0 +1,49 @@
+name: Deploy to production
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Build deployment payload
+        run: |
+          mkdir -p .deploy-payload
+          rsync -a \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='.gitignore' \
+            --exclude='.deploy-payload' \
+            --exclude='README.md' \
+            --exclude='AGENTS.md' \
+            --exclude='renovate.json' \
+            ./ .deploy-payload/
+
+      - name: Deploy over SFTP
+        uses: wlixcc/SFTP-Deploy-Action@a5ccb9c6211a94cc59404f0fdb2a9936a6dfee64 # v1.2.6
+        with:
+          username: ${{ secrets.DEPLOY_USERNAME }}
+          password: ${{ secrets.DEPLOY_PASSWORD }}
+          server: ${{ secrets.DEPLOY_HOST }}
+          port: ${{ secrets.DEPLOY_PORT }}
+          local_path: './.deploy-payload/*'
+          remote_path: ${{ secrets.DEPLOY_REMOTE_PATH }}
+          sftp_only: true
+          delete_remote_files: false
