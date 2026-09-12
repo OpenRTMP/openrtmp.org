@@ -3,7 +3,7 @@ RewriteCond %{HTTP_HOST} ^www.openrtmp.org [NC]
 RewriteRule ^(.*)$ https://openrtmp.org/$1 [L,R=301]
 
 # ===== BLOCK REPO METADATA FILES =====
-<FilesMatch "(\.md$|^renovate\.json$)">
+<FilesMatch "(\.md$|^renovate\.json$|^\.sftp_upload_action_hashes$)">
     Require all denied
 </FilesMatch>
 
