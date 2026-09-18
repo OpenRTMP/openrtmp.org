@@ -49,8 +49,29 @@ assets/css/content.css            Article and quickstart styles
 assets/js/                        Navigation, copy, and docs behavior
 assets/img/                       Logo and favicon
 robots.txt                        Crawler policy
-sitemap.xml                       Indexable public pages
+sitemap.xml                       Indexable public pages (generated)
+scripts/generate-sitemap.sh       Rebuilds sitemap.xml from git history
 ```
+
+## Sitemap
+
+`sitemap.xml` is generated, not hand-edited. Each `<lastmod>` is the date of the
+most recent commit that touched that page's `index.php`, so the sitemap cannot
+drift away from the content it describes.
+
+```bash
+scripts/generate-sitemap.sh          # rewrite sitemap.xml
+scripts/generate-sitemap.sh -o -     # preview on stdout
+```
+
+The URL list, `changefreq`, and `priority` live in the `PAGES` table at the top
+of the script. The script fails if an `index.php` exists on disk but is missing
+from that table, and it needs full git history — a shallow clone is rejected
+rather than silently producing wrong dates.
+
+CI enforces both ends of this: `Website checks` fails when the committed
+`sitemap.xml` differs from what the script produces, and the production deploy
+regenerates it just before upload.
 
 ## Content principles
 
@@ -68,7 +89,8 @@ sitemap.xml                       Indexable public pages
 2. Set a unique `$pageTitle`, `$pageDescription`, and `$canonicalPath`.
 3. Add `TechArticle` structured data when appropriate.
 4. Link the guide from `guides/index.php` and relevant existing pages.
-5. Add the canonical URL to `sitemap.xml`.
+5. Add the page to the `PAGES` table in `scripts/generate-sitemap.sh`, then run
+   `scripts/generate-sitemap.sh` and commit the regenerated `sitemap.xml`.
 6. Run PHP lint and review mobile table/code overflow.
 
 ## Deployment
