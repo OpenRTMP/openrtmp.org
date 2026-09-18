@@ -37,8 +37,9 @@ jobs:
 
       - name: Check sitemap matches git history
         run: |
-          scripts/generate-sitemap.sh -o /tmp/sitemap.expected.xml
-          if ! diff -u sitemap.xml /tmp/sitemap.expected.xml; then
+          expected=$(mktemp)
+          scripts/generate-sitemap.sh -o "$expected"
+          if ! diff -u sitemap.xml "$expected"; then
             echo
             echo "sitemap.xml is out of date. Run scripts/generate-sitemap.sh and commit the result."
             exit 1

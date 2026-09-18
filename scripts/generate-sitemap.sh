@@ -36,7 +36,12 @@ output='sitemap.xml'
 while [ $# -gt 0 ]; do
   case "$1" in
     -o|--output) output="${2:?-o needs a file}"; shift 2 ;;
-    -h|--help) sed -n '2,12p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    -h|--help)
+      echo 'Usage: generate-sitemap.sh [-o FILE]'
+      echo
+      echo "Rewrite sitemap.xml with each URL's <lastmod> taken from the date of"
+      echo "the most recent commit touching that page. Use '-o -' for stdout."
+      exit 0 ;;
     *) echo "generate-sitemap: unknown argument '$1'" >&2; exit 2 ;;
   esac
 done
@@ -100,9 +105,13 @@ EOF
 if [ "$output" = '-' ]; then
   emit
 else
-  tmp="${output}.tmp.$$"
+  # mktemp rather than a $$-derived name: predictable temp paths are a
+  # symlink-attack vector. It creates the file 0600, so restore the mode a
+  # publicly served file needs before moving it into place.
+  tmp=$(mktemp "${output}.XXXXXX")
   trap 'rm -f "$tmp"' EXIT
   emit >"$tmp"
+  chmod 644 "$tmp"
   mv "$tmp" "$output"
   echo "generate-sitemap: wrote $output"
 fi
