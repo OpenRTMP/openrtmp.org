@@ -74,7 +74,11 @@ fi
 
 emit() {
   echo '<?xml version="1.0" encoding="UTF-8"?>'
-  echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+  # The sitemap protocol defines this exact namespace URI. It is an
+  # identifier, never fetched, and crawlers match it literally - an https
+  # variant is simply not a sitemap namespace. NOSONAR(S5332): the
+  # clear-text-protocol warning does not apply to an XML namespace.
+  echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' # NOSONAR
   # Redirected, not piped: a failure inside the loop must exit the script.
   while IFS='|' read -r path source changefreq priority; do
     [ -n "$path" ] || continue
