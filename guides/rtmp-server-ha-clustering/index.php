@@ -67,16 +67,27 @@ CLUSTER_MEDIA_ADVERTISE_ADDR=10.0.0.1:1941</code></pre>
   - "1941:1941"</code></pre>
 
         <h2 id="join">2. Join additional nodes</h2>
-        <p>Each joiner needs an <strong>empty</strong> database (no prior <code>streams</code> or <code>raft_*</code> state) and the same secret:</p>
+        <p>Each joiner needs an <strong>empty</strong> database (no prior <code>streams</code> or <code>raft_*</code> state) and the same secret. A fresh join also needs a one-time join proof — <code>CLUSTER_SECRET</code> on its own can no longer enroll a learner. Mint the proof on an existing member with the normal API token, using the exact addresses the new node will advertise:</p>
+        <pre><code>curl -sS -X POST http://10.0.0.1:8080/api/v1/cluster/join-proof \
+  -H "Authorization: Bearer &lt;api-token&gt;" \
+  -H "Content-Type: application/json" \
+  -d '{"node_id": 2, "control_addr": "10.0.0.2:1940", "media_addr": "10.0.0.2:1941"}'</code></pre>
+        <p>The response carries a <code>proof</code> string. Start the joining node with it, plus the advertise addresses the proof was minted for:</p>
         <pre><code>CLUSTER_ENABLED=true
 CLUSTER_NODE_ID=2
 CLUSTER_JOIN=10.0.0.1:1940
+CLUSTER_JOIN_PROOF=&lt;join-proof&gt;
 CLUSTER_SECRET=&lt;same-secret&gt;
+CLUSTER_BIND=0.0.0.0:1940
+CLUSTER_MEDIA_BIND=0.0.0.0:1941
+CLUSTER_ADVERTISE_ADDR=10.0.0.2:1940
+CLUSTER_MEDIA_ADVERTISE_ADDR=10.0.0.2:1941
 LRTMP2_DB=/data/node2.db</code></pre>
+        <p>A fresh join without <code>CLUSTER_JOIN_PROOF</code> is rejected before the join request is even sent. The proof is bound to the node ID and to both advertised addresses, so mint a new one if any of those values change. Restarting a node that already has local Raft state resumes instead of joining and needs no new proof.</p>
         <p>Joined nodes start as learners. After catch-up, promote to voter:</p>
         <pre><code>curl -X POST http://10.0.0.1:8080/api/v1/cluster/nodes/2/promote \
   -H "Authorization: Bearer &lt;api-token&gt;"</code></pre>
-        <p>Do not copy a live SQLite file from another node and join — that creates conflicting Raft state. To reseed, delete the node's DB files and join again.</p>
+        <p>Do not copy a live SQLite file from another node and join — that creates conflicting Raft state. To reseed, delete the node's DB files, mint a fresh join proof, and join again.</p>
 
         <h2 id="operate">3. Operate from the API or panel</h2>
         <p>Useful authenticated endpoints:</p>
@@ -86,6 +97,7 @@ LRTMP2_DB=/data/node2.db</code></pre>
             <tr><td>GET</td><td><code>/api/v1/cluster</code></td><td>Leader, term, quorum, load</td></tr>
             <tr><td>GET</td><td><code>/api/v1/cluster/nodes</code></td><td>Peer list and health states</td></tr>
             <tr><td>GET</td><td><code>/api/v1/cluster/streams</code></td><td>Owner, epoch, mesh subscriptions</td></tr>
+            <tr><td>POST</td><td><code>/api/v1/cluster/join-proof</code></td><td>Mint a proof authorizing one fresh node join</td></tr>
             <tr><td>POST</td><td><code>.../nodes/{id}/drain</code></td><td>Mark node DRAINING</td></tr>
             <tr><td>POST</td><td><code>.../nodes/{id}/resume</code></td><td>Mark node READY</td></tr>
             <tr><td>DELETE</td><td><code>.../nodes/{id}</code></td><td>Remove voter (releases its owners)</td></tr>
