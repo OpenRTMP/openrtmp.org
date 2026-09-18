@@ -22,6 +22,11 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
+          # Full history: sitemap <lastmod> values come from commit dates.
+          fetch-depth: 0
+
+      - name: Regenerate sitemap.xml from git history
+        run: scripts/generate-sitemap.sh
 
       - name: Deploy over SFTP
         uses: wangyucode/sftp-upload-action@a1e64f60df0d085b26ca9efff77566e79f1c6b78 # v3.0.0
@@ -32,4 +37,4 @@ jobs:
           password: ${{ secrets.DEPLOY_PASSWORD }}
           localDir: '.'
           remoteDir: ${{ secrets.DEPLOY_REMOTE_PATH }}
-          exclude: '.git/*,.github/*,README.md,AGENTS.md,renovate.json'
+          exclude: '.git/*,.github/*,scripts/*,README.md,AGENTS.md,renovate.json'
