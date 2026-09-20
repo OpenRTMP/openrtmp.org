@@ -88,6 +88,9 @@ include_once __DIR__ . '/../../includes/header.php';
         <p>The current server is not a drop-in nginx-rtmp replacement. It does not provide built-in HLS, exec, push relay, recording, or full nginx directive parity. The protocol and public APIs are still evolving before 1.0.</p>
         <p>Those limitations are acceptable when the desired system is a focused RTMP endpoint or an embeddable protocol stack. They are blockers when the existing nginx configuration is acting as a full media workflow engine.</p>
 
+        <h2 id="alternatives">Looking beyond nginx-rtmp</h2>
+        <p>If your migration is driven by multi-protocol delivery rather than specifically by OpenRTMP, compare the broader options in <a href="/guides/nginx-rtmp-alternatives/">nginx-rtmp alternatives</a> and <a href="/guides/openrtmp-vs-mediamtx-vs-srs/">OpenRTMP vs MediaMTX vs SRS</a>.</p>
+
         <div class="cta compact-cta">
           <h2>Evaluate OpenRTMP without replacing nginx</h2>
           <p>Run the Docker stack on an alternate host or port and test one workflow end to end.</p>
@@ -106,6 +109,7 @@ include_once __DIR__ . '/../../includes/header.php';
         <a href="#migration">Migration</a>
         <a href="#coexist">Coexistence</a>
         <a href="#limitations">Limitations</a>
+        <a href="#alternatives">Alternatives</a>
       </aside>
     </div>
   </section>
