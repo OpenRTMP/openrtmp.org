@@ -1,13 +1,13 @@
 <?php
 $page = 'guides';
-$pageTitle = 'Self-host an RTMP server with Docker and OBS — OpenRTMP';
-$pageDescription = 'Deploy a private RTMP server and web panel with Docker, create stream keys, publish from OBS, and prepare OpenRTMP for an internet-facing host.';
+$pageTitle = 'Self-host an RTMP server in five minutes with Docker and OBS — OpenRTMP';
+$pageDescription = 'Self-host an RTMP server in five minutes with Docker and OBS, create stream keys, verify live stats, and prepare OpenRTMP for an internet-facing deployment.';
 $canonicalPath = '/guides/self-hosted-rtmp-server-docker/';
 $ogType = 'article';
 $structuredData = [
   '@context' => 'https://schema.org',
   '@type' => 'TechArticle',
-  'headline' => 'Self-host an RTMP server with Docker and OBS',
+  'headline' => 'Self-host an RTMP server in five minutes with Docker and OBS',
   'description' => $pageDescription,
   'author' => ['@type' => 'Organization', 'name' => 'OpenRTMP'],
   'publisher' => ['@type' => 'Organization', 'name' => 'OpenRTMP'],
@@ -19,14 +19,24 @@ include_once __DIR__ . '/../../includes/header.php';
 <main>
   <div class="page-hero container article-hero">
     <span class="eyebrow">Docker &middot; OBS &middot; Self-hosted</span>
-    <h1>Self-host an RTMP server with Docker</h1>
-    <p>Use OpenRTMP when you want a focused private RTMP/RTMPS endpoint with stream-key authentication, REST API, live statistics, and a browser control panel.</p>
+    <h1>Self-host an RTMP server in five minutes with Docker</h1>
+    <p>The OpenRTMP quickstart takes you from an empty Docker host to a private RTMP/RTMPS endpoint with stream keys, REST API, live statistics, a browser control panel, and an OBS-ready publish URL.</p>
   </div>
 
   <section class="content-section" style="padding-top: 0;">
     <div class="container article-layout">
       <article class="prose">
         <div class="callout warning"><strong>Status:</strong> OpenRTMP is under active development and remains pre-1.0. Test failure recovery, reconnect behavior, codecs, and every client you rely on before critical production use.</div>
+
+        <h2 id="five-minutes">The five-minute path</h2>
+        <ol>
+          <li>Clone <code>librtmp2-server-panel</code>.</li>
+          <li>Generate the API token, panel password, and Flask session secret from the <a href="/quickstart/">copy-and-paste quickstart</a>.</li>
+          <li>Start <code>compose.quickstart.yml</code>.</li>
+          <li>Open the panel on port <code>8000</code> and create a stream.</li>
+          <li>Copy the RTMP URL and <code>publish_key</code> into OBS.</li>
+        </ol>
+        <p>The rest of this guide explains what the stack is doing and what to change before exposing it to the internet.</p>
 
         <h2 id="architecture">What the Docker stack runs</h2>
         <p>The quickstart stack separates protocol handling, application policy, and user interface:</p>
@@ -123,6 +133,7 @@ docker compose -f compose.quickstart.yml up -d</code></pre>
 
       <aside class="toc-card" aria-label="On this page">
         <strong>On this page</strong>
+        <a href="#five-minutes">Five-minute path</a>
         <a href="#architecture">Architecture</a>
         <a href="#deploy">Deploy</a>
         <a href="#stream-keys">Stream keys</a>
