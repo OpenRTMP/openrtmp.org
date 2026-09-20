@@ -57,9 +57,17 @@ jobs:
             /guides/ \
             /guides/self-hosted-rtmp-server-docker/ \
             /guides/rtmps-server-obs/ \
+            /guides/rtmp-server-ha-clustering/ \
             /guides/enhanced-rtmp-hevc-av1-opus/ \
+            /guides/rtmp-vs-enhanced-rtmp/ \
+            /guides/enhanced-rtmp-v2-explained/ \
+            /guides/hevc-streaming-obs/ \
+            /guides/av1-over-rtmp/ \
             /guides/openrtmp-noalbs-json-stats/ \
             /guides/openrtmp-vs-nginx-rtmp/ \
+            /guides/nginx-rtmp-alternatives/ \
+            /guides/openrtmp-vs-mediamtx-vs-srs/ \
+            /guides/rtmp-server-rust/ \
             /docs/ \
             /download/ \
             /legal/; do

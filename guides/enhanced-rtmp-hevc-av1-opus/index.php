@@ -62,6 +62,8 @@ include_once __DIR__ . '/../../includes/header.php';
         </table>
         <p>A successful publish does not guarantee that every downstream player can decode the codec. Test the complete publisher &rarr; server &rarr; player chain.</p>
 
+        <p>For task-focused walkthroughs, see <a href="/guides/hevc-streaming-obs/">HEVC streaming with OBS</a>, <a href="/guides/av1-over-rtmp/">AV1 over RTMP</a>, and <a href="/guides/enhanced-rtmp-v2-explained/">Enhanced RTMP v2 explained</a>.</p>
+
         <h2 id="testing">A practical interoperability test plan</h2>
         <ol>
           <li>Record the exact OBS or FFmpeg version and command/settings.</li>
