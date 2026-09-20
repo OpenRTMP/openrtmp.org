@@ -27,6 +27,13 @@ PAGES='
 /guides/enhanced-rtmp-hevc-av1-opus/|guides/enhanced-rtmp-hevc-av1-opus/index.php|monthly|0.8
 /guides/openrtmp-noalbs-json-stats/|guides/openrtmp-noalbs-json-stats/index.php|monthly|0.8
 /guides/openrtmp-vs-nginx-rtmp/|guides/openrtmp-vs-nginx-rtmp/index.php|monthly|0.8
+/guides/rtmp-vs-enhanced-rtmp/|guides/rtmp-vs-enhanced-rtmp/index.php|monthly|0.8
+/guides/enhanced-rtmp-v2-explained/|guides/enhanced-rtmp-v2-explained/index.php|monthly|0.8
+/guides/hevc-streaming-obs/|guides/hevc-streaming-obs/index.php|monthly|0.8
+/guides/av1-over-rtmp/|guides/av1-over-rtmp/index.php|monthly|0.8
+/guides/nginx-rtmp-alternatives/|guides/nginx-rtmp-alternatives/index.php|monthly|0.8
+/guides/openrtmp-vs-mediamtx-vs-srs/|guides/openrtmp-vs-mediamtx-vs-srs/index.php|monthly|0.8
+/guides/rtmp-server-rust/|guides/rtmp-server-rust/index.php|monthly|0.8
 /docs/|docs/index.php|weekly|0.8
 /download/|download/index.php|weekly|0.8
 /legal/|legal/index.php|yearly|0.2
