@@ -36,6 +36,7 @@
       <div>
         <h4>Community</h4>
         <ul>
+          <li><a href="/showcase/">Showcase</a></li>
           <li><a href="https://github.com/OpenRTMP/community" target="_blank" rel="noopener">Community hub</a></li>
           <li><a href="https://github.com/OpenRTMP/community/issues" target="_blank" rel="noopener">Issue tracker</a></li>
           <li><a href="https://github.com/OpenRTMP/community/discussions" target="_blank" rel="noopener">Discussions</a></li>

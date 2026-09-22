@@ -36,6 +36,7 @@ PAGES='
 /guides/openrtmp-vs-wowza/|guides/openrtmp-vs-wowza/index.php|monthly|0.8
 /guides/openrtmp-vs-ant-media-server/|guides/openrtmp-vs-ant-media-server/index.php|monthly|0.8
 /guides/rtmp-server-rust/|guides/rtmp-server-rust/index.php|monthly|0.8
+/showcase/|showcase/index.php|weekly|0.7
 /docs/|docs/index.php|weekly|0.8
 /download/|download/index.php|weekly|0.8
 /legal/|legal/index.php|yearly|0.2

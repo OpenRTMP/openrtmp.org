@@ -53,6 +53,7 @@ $socialImageAlt = $socialImageAlt ?? 'OpenRTMP social preview showing the librtm
     <nav class="nav-links" aria-label="Primary navigation">
       <a href="/quickstart/">Quickstart</a>
       <a href="/guides/">Guides</a>
+      <a href="/showcase/">Showcase</a>
       <a href="/docs/">Docs</a>
       <a href="/download/">Download</a>
       <a href="https://github.com/OpenRTMP" target="_blank" rel="noopener">GitHub</a>
