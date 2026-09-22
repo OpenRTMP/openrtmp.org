@@ -95,6 +95,7 @@ include_once __DIR__ . '/../../includes/header.php';
         </ul>
 
         <h2 id="sources">Check current upstream documentation</h2>
+        <p>For comparisons against commercial or WebRTC-first products instead, see <a href="/guides/openrtmp-vs-wowza/">OpenRTMP vs Wowza</a> and <a href="/guides/openrtmp-vs-ant-media-server/">OpenRTMP vs Ant Media Server</a>.</p>
         <p>All three projects are actively developed. Before making an architecture decision, verify features against the current upstream documentation rather than relying on a comparison article that may become stale:</p>
         <ul>
           <li><a href="https://github.com/OpenRTMP" target="_blank" rel="noopener">OpenRTMP on GitHub</a></li>
