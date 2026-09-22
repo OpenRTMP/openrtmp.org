@@ -88,7 +88,7 @@ include_once __DIR__ . '/../../includes/header.php';
         </ol>
 
         <h2 id="deeper">OpenRTMP, MediaMTX and SRS in more detail</h2>
-        <p>For a feature-by-feature comparison of those three modern options, see <a href="/guides/openrtmp-vs-mediamtx-vs-srs/">OpenRTMP vs MediaMTX vs SRS</a>.</p>
+        <p>For a feature-by-feature comparison of those three modern options, see <a href="/guides/openrtmp-vs-mediamtx-vs-srs/">OpenRTMP vs MediaMTX vs SRS</a>. For commercial or WebRTC-first alternatives, see <a href="/guides/openrtmp-vs-wowza/">OpenRTMP vs Wowza</a> and <a href="/guides/openrtmp-vs-ant-media-server/">OpenRTMP vs Ant Media Server</a>.</p>
 
         <div class="cta compact-cta">
           <h2>Evaluate instead of guessing</h2>

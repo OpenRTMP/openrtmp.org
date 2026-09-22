@@ -94,6 +94,20 @@ include_once __DIR__ . '/../includes/header.php';
         </article>
 
         <article class="card guide-card">
+          <span class="guide-tag">Comparison &middot; Commercial</span>
+          <h2><a href="/guides/openrtmp-vs-wowza/">OpenRTMP vs Wowza Streaming Engine</a></h2>
+          <p>Compare a free, self-hosted Rust RTMP stack against a paid commercial media server with built-in transcoding, DRM, and vendor support.</p>
+          <a href="/guides/openrtmp-vs-wowza/" class="text-link">Read the open source vs commercial comparison &rarr;</a>
+        </article>
+
+        <article class="card guide-card">
+          <span class="guide-tag">Comparison &middot; WebRTC</span>
+          <h2><a href="/guides/openrtmp-vs-ant-media-server/">OpenRTMP vs Ant Media Server</a></h2>
+          <p>Compare a focused RTMP/E-RTMP library and server against a WebRTC-first media server with multi-protocol ingest and Community/Enterprise tiers.</p>
+          <a href="/guides/openrtmp-vs-ant-media-server/" class="text-link">Read the WebRTC-focused comparison &rarr;</a>
+        </article>
+
+        <article class="card guide-card">
           <span class="guide-tag">HA &middot; Clustering &middot; OpenRaft</span>
           <h2><a href="/guides/rtmp-server-ha-clustering/">Run an HA RTMP server cluster</a></h2>
           <p>Enable optional multi-node clustering, bootstrap and join voters, expose control/media ports, and operate nodes from the API or panel.</p>
