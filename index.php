@@ -178,11 +178,11 @@ docker compose -f compose.quickstart.yml up -d
         <p>That separation makes it clear which project to adopt and where to contribute.</p>
       </div>
       <div class="stack">
-        <div class="stack-row"><span class="layer-name">Panel</span><span class="layer-desc">Browser UI for stream lifecycle, copyable URLs, keys, live statistics, and optional cluster node management</span></div>
+        <div class="stack-row"><span class="layer-name">OpenRTMP Control Panel<br><code>librtmp2-server-panel</code></span><span class="layer-desc">Browser UI for stream lifecycle, copyable URLs, keys, live statistics, and optional cluster node management</span></div>
         <div class="stack-arrow">&#8595;</div>
-        <div class="stack-row"><span class="layer-name">Server</span><span class="layer-desc">REST API, authentication, SQLite, statistics, listeners, stream registry, and optional HA clustering</span></div>
+        <div class="stack-row"><span class="layer-name">OpenRTMP Server<br><code>librtmp2-server</code></span><span class="layer-desc">REST API, authentication, SQLite, statistics, listeners, stream registry, and optional HA clustering</span></div>
         <div class="stack-arrow">&#8595;</div>
-        <div class="stack-row"><span class="layer-name">librtmp2</span><span class="layer-desc">RTMP/RTMPS connection, handshake, chunking, AMF commands, relay primitives, and E-RTMP modules</span></div>
+        <div class="stack-row"><span class="layer-name">OpenRTMP Protocol Library<br><code>librtmp2</code></span><span class="layer-desc">RTMP/RTMPS connection, handshake, chunking, AMF commands, relay primitives, and E-RTMP modules</span></div>
         <div class="stack-arrow">&#8595;</div>
         <div class="stack-row"><span class="layer-name">Clients</span><span class="layer-desc">OBS, FFmpeg, custom publishers, players, relays, and embedded applications</span></div>
       </div>
@@ -230,21 +230,27 @@ docker compose -f compose.quickstart.yml up -d
       <div class="grid">
         <div class="card">
           <div class="icon">&#128230;</div>
-          <h3>librtmp2</h3>
-          <p>Rust protocol library and C-compatible FFI for custom servers, clients, relays, plugins, and research.</p>
+          <h3>OpenRTMP Protocol Library</h3>
+          <p><code>librtmp2</code> — Rust protocol library and C-compatible FFI for custom servers, clients, relays, plugins, and research.</p>
           <p class="card-link"><a href="https://github.com/OpenRTMP/librtmp2" target="_blank" rel="noopener">Repository &rarr;</a></p>
         </div>
         <div class="card">
           <div class="icon">&#128225;</div>
-          <h3>librtmp2-server</h3>
-          <p>RTMP/RTMPS application layer with SQLite, keys, REST API, monitoring endpoints, and optional HA clustering.</p>
+          <h3>OpenRTMP Server</h3>
+          <p><code>librtmp2-server</code> — RTMP/RTMPS application layer with SQLite, keys, REST API, monitoring endpoints, and optional HA clustering.</p>
           <p class="card-link"><a href="https://github.com/OpenRTMP/librtmp2-server" target="_blank" rel="noopener">Repository &rarr;</a></p>
         </div>
         <div class="card">
           <div class="icon">&#127912;</div>
-          <h3>librtmp2-server-panel</h3>
-          <p>Flask web UI for creating streams, copying URLs, monitoring live statistics, and managing cluster nodes when HA is enabled.</p>
+          <h3>OpenRTMP Control Panel</h3>
+          <p><code>librtmp2-server-panel</code> — Flask web UI for creating streams, copying URLs, monitoring live statistics, and managing cluster nodes when HA is enabled.</p>
           <p class="card-link"><a href="https://github.com/OpenRTMP/librtmp2-server-panel" target="_blank" rel="noopener">Repository &rarr;</a></p>
+        </div>
+        <div class="card">
+          <div class="icon">&#128230;</div>
+          <h3>OpenRTMP Packages</h3>
+          <p><code>packages</code> — official package repositories and distribution automation for supported Linux distributions, macOS, and Windows.</p>
+          <p class="card-link"><a href="https://github.com/OpenRTMP/packages" target="_blank" rel="noopener">Repository &rarr;</a></p>
         </div>
       </div>
     </div>
