@@ -53,7 +53,7 @@ include_once __DIR__ . '/../../includes/header.php';
         <p>That makes it attractive when protocol conversion and routing are first-class requirements. If your desired architecture is “ingest in one protocol, serve another,” MediaMTX should be evaluated directly rather than treated as a simple nginx module replacement.</p>
 
         <h2 id="srs">SRS: when you need a broader streaming platform</h2>
-        <p><a href="https://ossrs.io/lts/en-us/docs/v6/doc/introduction" target="_blank" rel="noopener">SRS</a> supports RTMP, WebRTC, HLS, HTTP-FLV, SRT, MPEG-DASH and related conversion workflows. Its documentation also covers HTTP APIs and clustering/topology patterns.</p>
+        <p><a href="https://ossrs.io/lts/en-us/docs/v6/doc/introduction" target="_blank" rel="noopener">SRS</a> supports RTMP, WebRTC, HLS, HTTP-FLV, HTTP-TS, SRT, MPEG-DASH, GB28181 and related conversion workflows, with H.264, H.265, AV1, and VP9 codec coverage. Its documentation also covers HTTP APIs and clustering/topology patterns. The project ships frequent releases — <a href="https://github.com/ossrs/srs/releases/tag/v7.0-a0" target="_blank" rel="noopener">v7.0-a0 (7.0.162)</a> landed in mid-September 2026 — so check the current release notes rather than a fixed feature snapshot.</p>
         <p>SRS is therefore a natural candidate when the deployment needs RTMP ingest but also expects browser delivery, HLS, WebRTC, SRT, or a larger streaming feature set from the same project.</p>
 
         <h2 id="stay">When staying on nginx-rtmp is reasonable</h2>
