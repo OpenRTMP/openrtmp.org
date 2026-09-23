@@ -34,7 +34,7 @@ include_once __DIR__ . '/../../includes/header.php';
           <tbody>
             <tr><td>Primary design</td><td>RTMP/E-RTMP library + focused server + panel</td><td>Multi-protocol media router/proxy</td><td>Broad live-streaming and WebRTC server</td></tr>
             <tr><td>RTMP / RTMPS</td><td>Yes / yes</td><td>Yes / yes</td><td>RTMP is a core protocol; consult current SRS docs for the exact secure-ingest topology you require</td></tr>
-            <tr><td>E-RTMP focus</td><td>Explicit protocol-development focus in librtmp2</td><td>Supports modern codecs in RTMP workflows according to current codec tables</td><td>Current SRS documentation discusses Enhanced RTMP for HEVC/AV1</td></tr>
+            <tr><td>E-RTMP focus</td><td>Explicit protocol-development focus in librtmp2</td><td>Supports modern codecs in RTMP workflows according to current codec tables</td><td>Current SRS documentation discusses Enhanced RTMP for HEVC/AV1, and its v7.0 line also lists VP9 codec support</td></tr>
             <tr><td>RTSP</td><td>No</td><td>Yes</td><td>Not the primary reason to choose SRS; check current release documentation for required RTSP workflows</td></tr>
             <tr><td>HLS</td><td>No built-in HLS server</td><td>Yes, including HLS generation</td><td>Yes</td></tr>
             <tr><td>WebRTC / WHIP / WHEP</td><td>No</td><td>Yes</td><td>Yes</td></tr>
@@ -62,7 +62,8 @@ include_once __DIR__ . '/../../includes/header.php';
         <p>That makes MediaMTX particularly useful when streams need to move between protocols or when one small server should expose several delivery methods without a separate application layer for each one.</p>
 
         <h2 id="srs">SRS</h2>
-        <p><a href="https://ossrs.io/lts/en-us/docs/v6/doc/introduction" target="_blank" rel="noopener">SRS</a> is a live-streaming server with RTMP, WebRTC, HLS, HTTP-FLV, SRT and other delivery/conversion workflows. Its documentation includes HTTP APIs and larger deployment topologies such as edge and origin clusters.</p>
+        <p><a href="https://ossrs.io/lts/en-us/docs/v6/doc/introduction" target="_blank" rel="noopener">SRS</a> is a live-streaming server describing itself as supporting RTMP, WebRTC, HLS, HTTP-FLV, HTTP-TS, SRT, MPEG-DASH, and GB28181, with codec coverage for H.264, H.265, AV1, VP9, AAC, Opus, and G.711. Its documentation includes HTTP APIs and larger deployment topologies such as edge and origin clusters.</p>
+        <p>SRS ships frequent alpha/dev builds on top of its LTS branches. <a href="https://github.com/ossrs/srs/releases/tag/v7.0-a0" target="_blank" rel="noopener">v7.0-a0 (7.0.162)</a>, published mid-September 2026, is a recent example — mostly SRT security hardening (a libsrt CVE fix) and RTMP/WebRTC/codec-parsing robustness rather than new protocol surface. Treat any comparison as a moving target and check the release you plan to deploy rather than a fixed point-in-time feature list.</p>
         <p>SRS is worth evaluating when RTMP ingest is only one part of a broader streaming platform and the same project is expected to bridge into browser or HTTP delivery paths.</p>
 
         <h2 id="use-cases">Which architecture matches which use case?</h2>
@@ -79,7 +80,7 @@ include_once __DIR__ . '/../../includes/header.php';
         </table>
 
         <h2 id="modern-codecs">HEVC and AV1 are an end-to-end question</h2>
-        <p>Modern codec support should never be reduced to a checkbox in a comparison table. Confirm the sender, server packet format, any protocol conversion, the receiver and the decoder. MediaMTX documents AV1/H.265 among supported RTMP codecs, SRS documents Enhanced RTMP HEVC/AV1 work, and OpenRTMP implements E-RTMP parsing/relay capabilities with the exact status tracked in <code>librtmp2</code>.</p>
+        <p>Modern codec support should never be reduced to a checkbox in a comparison table. Confirm the sender, server packet format, any protocol conversion, the receiver and the decoder. MediaMTX documents AV1/H.265 among supported RTMP codecs, SRS documents Enhanced RTMP HEVC/AV1 work and now lists VP9 alongside them, and OpenRTMP implements E-RTMP parsing/relay capabilities with the exact status tracked in <code>librtmp2</code>.</p>
         <p>For OpenRTMP-specific testing, see <a href="/guides/hevc-streaming-obs/">HEVC with OBS</a> and <a href="/guides/av1-over-rtmp/">AV1 over RTMP</a>.</p>
 
         <h2 id="benchmarks">Do not choose from feature tables alone</h2>
