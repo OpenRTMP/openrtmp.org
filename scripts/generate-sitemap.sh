@@ -14,6 +14,7 @@ set -eu
 BASE_URL='https://openrtmp.org'
 
 # One row per indexable page: URL path, source file, changefreq, priority.
+# German translations mirror the English rows below /de/.
 # Adding a page here is the only step needed to get it into the sitemap; the
 # coverage check below fails if a page exists on disk but is missing from this
 # table.
@@ -40,6 +41,28 @@ PAGES='
 /docs/|docs/index.php|weekly|0.8
 /download/|download/index.php|weekly|0.8
 /legal/|legal/index.php|yearly|0.2
+/de/|de/index.php|weekly|1.0
+/de/quickstart/|de/quickstart/index.php|monthly|0.9
+/de/guides/|de/guides/index.php|weekly|0.8
+/de/guides/self-hosted-rtmp-server-docker/|de/guides/self-hosted-rtmp-server-docker/index.php|monthly|0.8
+/de/guides/rtmps-server-obs/|de/guides/rtmps-server-obs/index.php|monthly|0.8
+/de/guides/rtmp-server-ha-clustering/|de/guides/rtmp-server-ha-clustering/index.php|monthly|0.8
+/de/guides/enhanced-rtmp-hevc-av1-opus/|de/guides/enhanced-rtmp-hevc-av1-opus/index.php|monthly|0.8
+/de/guides/openrtmp-noalbs-json-stats/|de/guides/openrtmp-noalbs-json-stats/index.php|monthly|0.8
+/de/guides/openrtmp-vs-nginx-rtmp/|de/guides/openrtmp-vs-nginx-rtmp/index.php|monthly|0.8
+/de/guides/rtmp-vs-enhanced-rtmp/|de/guides/rtmp-vs-enhanced-rtmp/index.php|monthly|0.8
+/de/guides/enhanced-rtmp-v2-explained/|de/guides/enhanced-rtmp-v2-explained/index.php|monthly|0.8
+/de/guides/hevc-streaming-obs/|de/guides/hevc-streaming-obs/index.php|monthly|0.8
+/de/guides/av1-over-rtmp/|de/guides/av1-over-rtmp/index.php|monthly|0.8
+/de/guides/nginx-rtmp-alternatives/|de/guides/nginx-rtmp-alternatives/index.php|monthly|0.8
+/de/guides/openrtmp-vs-mediamtx-vs-srs/|de/guides/openrtmp-vs-mediamtx-vs-srs/index.php|monthly|0.8
+/de/guides/openrtmp-vs-wowza/|de/guides/openrtmp-vs-wowza/index.php|monthly|0.8
+/de/guides/openrtmp-vs-ant-media-server/|de/guides/openrtmp-vs-ant-media-server/index.php|monthly|0.8
+/de/guides/rtmp-server-rust/|de/guides/rtmp-server-rust/index.php|monthly|0.8
+/de/showcase/|de/showcase/index.php|weekly|0.7
+/de/docs/|de/docs/index.php|weekly|0.8
+/de/download/|de/download/index.php|weekly|0.8
+/de/legal/|de/legal/index.php|yearly|0.2
 '
 
 output='sitemap.xml'
