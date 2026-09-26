@@ -51,25 +51,8 @@ jobs:
           server_pid=$!
           trap 'kill "$server_pid"' EXIT
           sleep 2
-          for path in \
-            / \
-            /quickstart/ \
-            /guides/ \
-            /guides/self-hosted-rtmp-server-docker/ \
-            /guides/rtmps-server-obs/ \
-            /guides/rtmp-server-ha-clustering/ \
-            /guides/enhanced-rtmp-hevc-av1-opus/ \
-            /guides/rtmp-vs-enhanced-rtmp/ \
-            /guides/enhanced-rtmp-v2-explained/ \
-            /guides/hevc-streaming-obs/ \
-            /guides/av1-over-rtmp/ \
-            /guides/openrtmp-noalbs-json-stats/ \
-            /guides/openrtmp-vs-nginx-rtmp/ \
-            /guides/nginx-rtmp-alternatives/ \
-            /guides/openrtmp-vs-mediamtx-vs-srs/ \
-            /guides/rtmp-server-rust/ \
-            /docs/ \
-            /download/ \
-            /legal/; do
+          # Every page on disk, English and German, must render.
+          # './index.php' -> '/', './de/guides/x/index.php' -> '/de/guides/x/'
+          for path in $(find . -name 'index.php' -not -path './includes/*' | sed 's|^\.||; s|index\.php$||' | sort); do
             curl --fail --silent --show-error "http://127.0.0.1:8090${path}" >/dev/null
           done

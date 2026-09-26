@@ -43,7 +43,8 @@ download/index.php                Crate, source, and Docker downloads
 guides/index.php                  Guide landing page
 guides/*/index.php                Search-focused technical guides
 legal/index.php                   Contact and legal notice
-includes/                         Shared header and footer
+de/                               German translation, mirroring the paths above
+includes/                         Shared header, footer, and i18n strings
 assets/css/style.css              Core design system
 assets/css/content.css            Article and quickstart styles
 assets/js/                        Navigation, copy, and docs behavior
@@ -64,7 +65,8 @@ scripts/generate-sitemap.sh          # rewrite sitemap.xml
 scripts/generate-sitemap.sh -o -     # preview on stdout
 ```
 
-The URL list, `changefreq`, and `priority` live in the `PAGES` table at the top
+The URL list, `changefreq`, `priority`, and any extra files a page depends on
+(for example the shared showcase entries) live in the `PAGES` table at the top
 of the script. The script fails if an `index.php` exists on disk but is missing
 from that table, and it needs full git history — a shallow clone is rejected
 rather than silently producing wrong dates.
@@ -72,6 +74,21 @@ rather than silently producing wrong dates.
 CI enforces both ends of this: `Website checks` fails when the committed
 `sitemap.xml` differs from what the script produces, and the production deploy
 regenerates it just before upload.
+
+## Languages
+
+English is the primary language and lives at the site root. German is the
+second language and mirrors every page below `/de/` (for example
+`/guides/av1-over-rtmp/` ↔ `/de/guides/av1-over-rtmp/`).
+
+- A German page sets `$lang = 'de';` and its `/de/...` `$canonicalPath` before
+  including the header, and links to other pages through their `/de/` paths.
+- The header emits `hreflang` alternates (`en`, `de`, `x-default`) and the
+  EN/DE switcher automatically whenever both language versions exist on disk.
+- Shared header/footer strings are translated in `includes/i18n.php`; wrap new
+  shared strings in `t('...')` and add the German text there.
+- When you change an English page, update its German counterpart in the same
+  pull request.
 
 ## Content principles
 
@@ -89,9 +106,11 @@ regenerates it just before upload.
 2. Set a unique `$pageTitle`, `$pageDescription`, and `$canonicalPath`.
 3. Add `TechArticle` structured data when appropriate.
 4. Link the guide from `guides/index.php` and relevant existing pages.
-5. Add the page to the `PAGES` table in `scripts/generate-sitemap.sh`, then run
+5. Add the German translation at `de/guides/<slug>/index.php` and link it from
+   `de/guides/index.php` (see [Languages](#languages)).
+6. Add both pages to the `PAGES` table in `scripts/generate-sitemap.sh`, then run
    `scripts/generate-sitemap.sh` and commit the regenerated `sitemap.xml`.
-6. Run PHP lint and review mobile table/code overflow.
+7. Run PHP lint and review mobile table/code overflow.
 
 ## Deployment
 

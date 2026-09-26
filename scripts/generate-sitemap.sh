@@ -13,7 +13,9 @@ set -eu
 
 BASE_URL='https://openrtmp.org'
 
-# One row per indexable page: URL path, source file, changefreq, priority.
+# One row per indexable page: URL path, source file, changefreq, priority,
+# and optionally extra files (space-separated) whose changes also update the
+# page's lastmod. German translations mirror the English rows below /de/.
 # Adding a page here is the only step needed to get it into the sitemap; the
 # coverage check below fails if a page exists on disk but is missing from this
 # table.
@@ -36,10 +38,32 @@ PAGES='
 /guides/openrtmp-vs-wowza/|guides/openrtmp-vs-wowza/index.php|monthly|0.8
 /guides/openrtmp-vs-ant-media-server/|guides/openrtmp-vs-ant-media-server/index.php|monthly|0.8
 /guides/rtmp-server-rust/|guides/rtmp-server-rust/index.php|monthly|0.8
-/showcase/|showcase/index.php|weekly|0.7
+/showcase/|showcase/index.php|weekly|0.7|includes/showcase-entries.php
 /docs/|docs/index.php|weekly|0.8
 /download/|download/index.php|weekly|0.8
 /legal/|legal/index.php|yearly|0.2
+/de/|de/index.php|weekly|1.0
+/de/quickstart/|de/quickstart/index.php|monthly|0.9
+/de/guides/|de/guides/index.php|weekly|0.8
+/de/guides/self-hosted-rtmp-server-docker/|de/guides/self-hosted-rtmp-server-docker/index.php|monthly|0.8
+/de/guides/rtmps-server-obs/|de/guides/rtmps-server-obs/index.php|monthly|0.8
+/de/guides/rtmp-server-ha-clustering/|de/guides/rtmp-server-ha-clustering/index.php|monthly|0.8
+/de/guides/enhanced-rtmp-hevc-av1-opus/|de/guides/enhanced-rtmp-hevc-av1-opus/index.php|monthly|0.8
+/de/guides/openrtmp-noalbs-json-stats/|de/guides/openrtmp-noalbs-json-stats/index.php|monthly|0.8
+/de/guides/openrtmp-vs-nginx-rtmp/|de/guides/openrtmp-vs-nginx-rtmp/index.php|monthly|0.8
+/de/guides/rtmp-vs-enhanced-rtmp/|de/guides/rtmp-vs-enhanced-rtmp/index.php|monthly|0.8
+/de/guides/enhanced-rtmp-v2-explained/|de/guides/enhanced-rtmp-v2-explained/index.php|monthly|0.8
+/de/guides/hevc-streaming-obs/|de/guides/hevc-streaming-obs/index.php|monthly|0.8
+/de/guides/av1-over-rtmp/|de/guides/av1-over-rtmp/index.php|monthly|0.8
+/de/guides/nginx-rtmp-alternatives/|de/guides/nginx-rtmp-alternatives/index.php|monthly|0.8
+/de/guides/openrtmp-vs-mediamtx-vs-srs/|de/guides/openrtmp-vs-mediamtx-vs-srs/index.php|monthly|0.8
+/de/guides/openrtmp-vs-wowza/|de/guides/openrtmp-vs-wowza/index.php|monthly|0.8
+/de/guides/openrtmp-vs-ant-media-server/|de/guides/openrtmp-vs-ant-media-server/index.php|monthly|0.8
+/de/guides/rtmp-server-rust/|de/guides/rtmp-server-rust/index.php|monthly|0.8
+/de/showcase/|de/showcase/index.php|weekly|0.7|includes/showcase-entries.php
+/de/docs/|de/docs/index.php|weekly|0.8
+/de/download/|de/download/index.php|weekly|0.8
+/de/legal/|de/legal/index.php|yearly|0.2
 '
 
 output='sitemap.xml'
@@ -90,7 +114,7 @@ emit() {
   # clear-text-protocol warning does not apply to an XML namespace.
   echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' # NOSONAR
   # Redirected, not piped: a failure inside the loop must exit the script.
-  while IFS='|' read -r path source changefreq priority; do
+  while IFS='|' read -r path source changefreq priority deps; do
     [ -n "$path" ] || continue
 
     if [ ! -f "$source" ]; then
@@ -98,7 +122,9 @@ emit() {
       exit 1
     fi
 
-    lastmod=$(git log -1 --format=%cs -- "$source")
+    # $deps is intentionally unquoted: it is a space-separated file list.
+    # shellcheck disable=SC2086
+    lastmod=$(git log -1 --format=%cs -- "$source" $deps)
     if [ -z "$lastmod" ]; then
       lastmod=$(date -u +%F)
       echo "generate-sitemap: $source has no commit yet, using today ($lastmod)" >&2

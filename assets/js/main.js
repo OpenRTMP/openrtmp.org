@@ -18,12 +18,18 @@ function initNavToggle() {
   });
 }
 
+const COPY_LABELS = {
+  en: { copy: 'Copy', copied: 'Copied!', error: 'Error' },
+  de: { copy: 'Kopieren', copied: 'Kopiert!', error: 'Fehler' },
+};
+
 function initCopyButtons() {
+  const labels = COPY_LABELS[document.documentElement.lang] || COPY_LABELS.en;
   document.querySelectorAll('pre').forEach((pre) => {
     const btn = document.createElement('button');
     btn.className = 'copy-btn';
     btn.type = 'button';
-    btn.textContent = 'Copy';
+    btn.textContent = labels.copy;
     pre.style.position = pre.style.position || 'relative';
     pre.appendChild(btn);
 
@@ -32,12 +38,12 @@ function initCopyButtons() {
       const text = code.innerText;
       try {
         await navigator.clipboard.writeText(text);
-        btn.textContent = 'Copied!';
+        btn.textContent = labels.copied;
       } catch (err) {
         console.error('Failed to copy code to clipboard:', err);
-        btn.textContent = 'Error';
+        btn.textContent = labels.error;
       }
-      setTimeout(() => { btn.textContent = 'Copy'; }, 1500);
+      setTimeout(() => { btn.textContent = labels.copy; }, 1500);
     });
   });
 }

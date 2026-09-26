@@ -5,25 +5,7 @@ $pageDescription = 'See what is built on OpenRTMP: verified interoperability wit
 $canonicalPath = '/showcase/';
 include_once __DIR__ . '/../includes/header.php';
 
-// Community showcase entries. Anyone running OpenRTMP in a real project,
-// deployment, or integration can add themselves here.
-//
-// How to add your project:
-//   1. Open a submission: https://github.com/OpenRTMP/community/issues/new?template=showcase_submission.yml
-//   2. Or open a pull request against this file directly, adding one entry
-//      below (alphabetically by name) in the same shape as the example:
-//
-//   [
-//     'name' => 'Your project name',
-//     'url' => 'https://example.com',
-//     'description' => 'One or two sentences on what it is and how it uses OpenRTMP.',
-//     'tag' => 'Deployment', // Deployment, Integration, Library, or Community project
-//   ],
-//
-// Keep descriptions factual and first-person-verifiable (what you actually
-// built or run), not marketing copy. Logos/screenshots are not required.
-$showcaseEntries = [
-];
+require_once __DIR__ . '/../includes/showcase-entries.php';
 
 $interopEntries = [
   [
@@ -73,7 +55,7 @@ $interopEntries = [
           <span class="guide-tag"><?php echo htmlspecialchars($entry['tag'], ENT_QUOTES, 'UTF-8'); ?></span>
           <h2><?php echo htmlspecialchars($entry['name'], ENT_QUOTES, 'UTF-8'); ?></h2>
           <p><?php echo htmlspecialchars($entry['description'], ENT_QUOTES, 'UTF-8'); ?></p>
-          <a href="<?php echo htmlspecialchars($entry['url'], ENT_QUOTES, 'UTF-8'); ?>" class="text-link"<?php echo str_starts_with($entry['url'], 'http') ? ' target="_blank" rel="noopener"' : ''; ?>>See the evidence &rarr;</a>
+          <a href="<?php echo htmlspecialchars($entry['url'], ENT_QUOTES, 'UTF-8'); ?>" class="text-link"<?php echo strpos($entry['url'], 'http') === 0 ? ' target="_blank" rel="noopener"' : ''; ?>>See the evidence &rarr;</a>
         </article>
         <?php endforeach; ?>
       </div>
@@ -110,7 +92,7 @@ $interopEntries = [
         <p>Running OpenRTMP somewhere real? Open a submission and it will be added here &mdash; no marketing copy required, just what you actually built.</p>
         <div class="hero-actions" style="margin-bottom:0;">
           <a href="https://github.com/OpenRTMP/community/issues/new?template=showcase_submission.yml" target="_blank" rel="noopener" class="btn btn-primary">Submit your project</a>
-          <a href="https://github.com/OpenRTMP/openrtmp.org/blob/main/showcase/index.php" target="_blank" rel="noopener" class="btn btn-ghost">Open a pull request instead</a>
+          <a href="https://github.com/OpenRTMP/openrtmp.org/blob/main/includes/showcase-entries.php" target="_blank" rel="noopener" class="btn btn-ghost">Open a pull request instead</a>
         </div>
       </div>
     </div>
