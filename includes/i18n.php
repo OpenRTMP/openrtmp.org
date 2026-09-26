@@ -8,6 +8,7 @@
 
 $lang = (isset($lang) && $lang === 'de') ? 'de' : 'en';
 
+const OPENRTMP_BASE_URL = 'https://openrtmp.org';
 const OPENRTMP_LANG_PREFIX = ['en' => '', 'de' => '/de'];
 const OPENRTMP_OG_LOCALE = ['en' => 'en_US', 'de' => 'de_DE'];
 
@@ -64,7 +65,7 @@ function lurl(string $path): string
 }
 
 /** Strip a language prefix, returning the language-neutral path. */
-function openrtmp_neutral_path(string $path): string
+function openrtmpNeutralPath(string $path): string
 {
   if ($path === '/de' || strpos($path, '/de/') === 0) {
     return substr($path, 3) ?: '/';
@@ -76,9 +77,9 @@ function openrtmp_neutral_path(string $path): string
  * The URL path of every language version that exists on disk for the given
  * page path, keyed by language code.
  */
-function openrtmp_alternates(string $path): array
+function openrtmpAlternates(string $path): array
 {
-  $neutral = openrtmp_neutral_path($path);
+  $neutral = openrtmpNeutralPath($path);
   $root = dirname(__DIR__);
   $alternates = [];
   foreach (OPENRTMP_LANG_PREFIX as $code => $prefix) {
