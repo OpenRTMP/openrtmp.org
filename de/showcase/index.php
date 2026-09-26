@@ -56,7 +56,7 @@ $interopEntries = [
           <span class="guide-tag"><?php echo htmlspecialchars($entry['tag'], ENT_QUOTES, 'UTF-8'); ?></span>
           <h2><?php echo htmlspecialchars($entry['name'], ENT_QUOTES, 'UTF-8'); ?></h2>
           <p><?php echo htmlspecialchars($entry['description'], ENT_QUOTES, 'UTF-8'); ?></p>
-          <a href="<?php echo htmlspecialchars($entry['url'], ENT_QUOTES, 'UTF-8'); ?>" class="text-link"<?php echo str_starts_with($entry['url'], 'http') ? ' target="_blank" rel="noopener"' : ''; ?>>Zum Nachweis &rarr;</a>
+          <a href="<?php echo htmlspecialchars($entry['url'], ENT_QUOTES, 'UTF-8'); ?>" class="text-link"<?php echo strpos($entry['url'], 'http') === 0 ? ' target="_blank" rel="noopener"' : ''; ?>>Zum Nachweis &rarr;</a>
         </article>
         <?php endforeach; ?>
       </div>

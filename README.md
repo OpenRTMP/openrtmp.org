@@ -65,7 +65,8 @@ scripts/generate-sitemap.sh          # rewrite sitemap.xml
 scripts/generate-sitemap.sh -o -     # preview on stdout
 ```
 
-The URL list, `changefreq`, and `priority` live in the `PAGES` table at the top
+The URL list, `changefreq`, `priority`, and any extra files a page depends on
+(for example the shared showcase entries) live in the `PAGES` table at the top
 of the script. The script fails if an `index.php` exists on disk but is missing
 from that table, and it needs full git history — a shallow clone is rejected
 rather than silently producing wrong dates.

@@ -52,7 +52,7 @@ jobs:
           trap 'kill "$server_pid"' EXIT
           sleep 2
           # Every page on disk, English and German, must render.
-          for page in $(find . -name 'index.php' -not -path './includes/*' | sed 's|^\./||; s|index\.php$||' | sort); do
-            path="/${page}"
+          # './index.php' -> '/', './de/guides/x/index.php' -> '/de/guides/x/'
+          for path in $(find . -name 'index.php' -not -path './includes/*' | sed 's|^\.||; s|index\.php$||' | sort); do
             curl --fail --silent --show-error "http://127.0.0.1:8090${path}" >/dev/null
           done
