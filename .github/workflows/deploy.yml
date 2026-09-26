@@ -37,4 +37,4 @@ jobs:
           password: ${{ secrets.DEPLOY_PASSWORD }}
           localDir: '.'
           remoteDir: ${{ secrets.DEPLOY_REMOTE_PATH }}
-          exclude: '.git/*,.github/*,scripts/*,README.md,AGENTS.md,renovate.json'
+          exclude: '.git/*,.github/*,scripts/*,README.md,AGENTS.md,renovate.json,.sonarcloud.properties'

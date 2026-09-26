@@ -71,12 +71,12 @@ $alternatePaths = openrtmp_alternates($canonicalPath);
       <a href="<?php echo lurl('/docs/'); ?>"><?php echo t('Docs'); ?></a>
       <a href="<?php echo lurl('/download/'); ?>"><?php echo t('Download'); ?></a>
       <a href="https://github.com/OpenRTMP" target="_blank" rel="noopener">GitHub</a>
-      <span class="lang-switch" role="group" aria-label="<?php echo t('Language'); ?>">
+      <span class="lang-switch">
         <?php foreach (['en' => ['EN', 'English'], 'de' => ['DE', 'Deutsch']] as $switchLang => [$switchCode, $switchName]): ?>
           <?php if ($switchLang === $lang): ?>
-            <span class="lang-current" lang="<?php echo $switchLang; ?>" title="<?php echo $switchName; ?>" aria-current="true"><?php echo $switchCode; ?></span>
+            <span class="lang-current" lang="<?php echo $switchLang; ?>" title="<?php echo $switchName; ?>"><?php echo $switchCode; ?></span>
           <?php else: ?>
-            <a href="<?php echo htmlspecialchars($alternatePaths[$switchLang] ?? OPENRTMP_LANG_PREFIX[$switchLang] . '/', ENT_QUOTES, 'UTF-8'); ?>" hreflang="<?php echo $switchLang; ?>" lang="<?php echo $switchLang; ?>" title="<?php echo $switchName; ?>"><?php echo $switchCode; ?></a>
+            <a href="<?php echo htmlspecialchars($alternatePaths[$switchLang] ?? OPENRTMP_LANG_PREFIX[$switchLang] . '/', ENT_QUOTES, 'UTF-8'); ?>" hreflang="<?php echo $switchLang; ?>" lang="<?php echo $switchLang; ?>" aria-label="<?php echo $switchName; ?>" title="<?php echo $switchName; ?>"><?php echo $switchCode; ?></a>
           <?php endif; ?>
         <?php endforeach; ?>
       </span>

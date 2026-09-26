@@ -26,7 +26,6 @@ const OPENRTMP_STRINGS_DE = [
   'View on GitHub' => 'Auf GitHub ansehen',
   'Run with Docker' => 'Mit Docker starten',
   'Toggle navigation' => 'Navigation umschalten',
-  'Language' => 'Sprache',
   // Footer
   'Modern RTMP infrastructure for developers and stream operators: a Rust RTMP/E-RTMP library, a self-hosted RTMP/RTMPS server, REST API, live statistics, and a web control panel.' => 'Moderne RTMP-Infrastruktur für Entwickler und Stream-Betreiber: eine Rust-RTMP/E-RTMP-Bibliothek, ein selbst gehosteter RTMP/RTMPS-Server, REST-API, Live-Statistiken und ein Web-Control-Panel.',
   'Active development, pre-1.0. Pin versions and validate your complete workflow before critical production use.' => 'Aktive Entwicklung, vor 1.0. Versionen fest pinnen und den gesamten Workflow vor kritischem Produktiveinsatz validieren.',
