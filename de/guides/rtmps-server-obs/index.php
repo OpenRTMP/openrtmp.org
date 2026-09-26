@@ -66,7 +66,9 @@ RTMPS_BIND=0.0.0.0:1936</code></pre>
         <pre><code>curl https://api.example.com/api/v1/health</code></pre>
         <p>Die Antwort sollte anzeigen, dass RTMPS aktiviert ist, und den gebundenen Port nennen. Prüfen Sie außerdem das Zertifikat aus dem Netzwerk des Clients:</p>
         <pre><code>openssl s_client -connect stream.example.com:1936 \
-  -servername stream.example.com</code></pre>
+  -servername stream.example.com \
+  -verify_hostname stream.example.com \
+  -verify_return_error</code></pre>
         <p>Achten Sie auf eine erfolgreich validierte Zertifikatskette und einen passenden Hostnamen.</p>
 
         <h2 id="obs">4. OBS über RTMPS verbinden</h2>

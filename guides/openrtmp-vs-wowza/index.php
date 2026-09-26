@@ -26,7 +26,7 @@ include_once __DIR__ . '/../../includes/header.php';
   <section class="content-section" style="padding-top: 0;">
     <div class="container article-layout">
       <article class="prose">
-        <div class="callout"><strong>Summary:</strong> choose Wowza when you need a supported, feature-complete commercial product with built-in transcoding, DRM, and multi-protocol delivery, and the subscription cost is acceptable. Choose OpenRTMP when you want a free, self-hosted, focused RTMP/RTMPS and E-RTMP stack that you can embed, audit, and extend yourself — while accepting its pre-1.0 status and narrower built-in feature set.</div>
+        <div class="callout"><strong>Summary:</strong> choose Wowza when you need a supported, feature-complete commercial product with built-in transcoding, multi-protocol delivery, and DRM integration (through third-party key-management services), and the subscription cost is acceptable. Choose OpenRTMP when you want a free, self-hosted, focused RTMP/RTMPS and E-RTMP stack that you can embed, audit, and extend yourself — while accepting its pre-1.0 status and narrower built-in feature set.</div>
 
         <h2 id="overview">High-level comparison</h2>
         <table class="comparison-table">
@@ -39,7 +39,7 @@ include_once __DIR__ . '/../../includes/header.php';
             <tr><td>WebRTC, SRT</td><td>No</td><td>Yes, documented as first-class ingest/output protocols</td></tr>
             <tr><td>HLS / DASH output</td><td>No built-in HLS/DASH server</td><td>Yes, with adaptive bitrate packaging</td></tr>
             <tr><td>Transcoding</td><td>Not built in</td><td>Built-in adaptive bitrate transcoding</td></tr>
-            <tr><td>DRM / watermarking</td><td>Not built in</td><td>Built-in DRM and watermarking options</td></tr>
+            <tr><td>DRM / watermarking</td><td>Not built in</td><td>DRM through integrations with third-party key-management services (some configurations need an additional paid module); watermarking options</td></tr>
             <tr><td>Administration</td><td>REST API, SQLite, and optional web panel</td><td>REST API plus the Wowza Streaming Engine Manager UI</td></tr>
             <tr><td>Stream credentials</td><td>Separate publish, play, and stats keys per stream</td><td>Configurable authentication modules and token-based security add-ons</td></tr>
             <tr><td>Embeddable protocol library</td><td>Rust crate and C-compatible FFI</td><td>No standalone protocol crate; the server is the product</td></tr>
@@ -59,7 +59,7 @@ include_once __DIR__ . '/../../includes/header.php';
 
         <h2 id="wowza-fit">Choose Wowza when</h2>
         <ul class="check-list">
-          <li>You need built-in transcoding, adaptive bitrate packaging, DRM, or watermarking without assembling separate services.</li>
+          <li>You need built-in transcoding, adaptive bitrate packaging, or watermarking, plus a supported DRM integration path (DRM itself still relies on a third-party key-management service).</li>
           <li>You need WebRTC or SRT ingest/output alongside RTMP from the same product.</li>
           <li>Vendor support, SLAs, and compliance certifications matter more than license cost.</li>
           <li>Your team wants a GUI-managed appliance-style deployment rather than an API-first, code-adjacent server.</li>

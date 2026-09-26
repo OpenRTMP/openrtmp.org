@@ -26,7 +26,7 @@ include_once __DIR__ . '/../../includes/header.php';
   <section class="content-section" style="padding-top: 0;">
     <div class="container article-layout">
       <article class="prose">
-        <div class="callout"><strong>Summary:</strong> choose Ant Media Server when sub-second WebRTC delivery, multi-protocol conversion, and a packaged Community/Enterprise product fit your workflow. Choose OpenRTMP when RTMP/RTMPS and E-RTMP are the actual protocol you need, and you want a small, auditable, Rust-first library and server rather than a larger media platform.</div>
+        <div class="callout"><strong>Summary:</strong> choose Ant Media Server when sub-second WebRTC delivery, multi-protocol conversion, and a packaged Community/Enterprise product fit your workflow — noting that WebRTC playback and several conversion features require the Enterprise Edition. Choose OpenRTMP when RTMP/RTMPS and E-RTMP are the actual protocol you need, and you want a small, auditable, Rust-first library and server rather than a larger media platform.</div>
 
         <h2 id="overview">High-level comparison</h2>
         <table class="comparison-table">
@@ -36,10 +36,10 @@ include_once __DIR__ . '/../../includes/header.php';
             <tr><td>License / cost</td><td>Free and open source</td><td>Community Edition is free and open source; Enterprise Edition is a paid tier with additional features and support</td></tr>
             <tr><td>Project maturity</td><td>Active development (pre-1.0)</td><td>Long-established open-source project with a commercial arm</td></tr>
             <tr><td>RTMP / RTMPS</td><td>Yes / yes</td><td>RTMP is one of several supported ingest protocols; consult current docs for RTMPS specifics</td></tr>
-            <tr><td>WebRTC (WHIP/WHEP)</td><td>No</td><td>Yes — ultra-low-latency WebRTC is the project's primary focus</td></tr>
-            <tr><td>SRT, HLS/LL-HLS, DASH/CMAF</td><td>No built-in support</td><td>Yes, documented as supported protocols</td></tr>
+            <tr><td>WebRTC (WHIP/WHEP)</td><td>No</td><td>Yes — ultra-low-latency WebRTC is the project's primary focus; Community Edition supports WebRTC ingest, WebRTC playback requires Enterprise</td></tr>
+            <tr><td>SRT, HLS/LL-HLS, DASH/CMAF</td><td>No built-in support</td><td>Documented as supported; SRT, LL-HLS, and some packaging options depend on the Enterprise Edition or plugins — check the current edition matrix</td></tr>
             <tr><td>E-RTMP focus</td><td>Explicit protocol-development focus in librtmp2</td><td>Documents HEVC support; verify current Enhanced RTMP coverage against upstream docs</td></tr>
-            <tr><td>Recording / transcoding</td><td>Not built in</td><td>Built-in recording and adaptive bitrate transcoding</td></tr>
+            <tr><td>Recording / transcoding</td><td>Not built in</td><td>Built-in recording; adaptive bitrate transcoding is an Enterprise Edition feature</td></tr>
             <tr><td>Control API</td><td>REST API for stream management plus health/stats</td><td>REST APIs with iOS, Android, Unity, React Native, and JS SDKs</td></tr>
             <tr><td>Stream credentials</td><td>Separate publish, play, and stats keys per stream</td><td>Token-based authentication and IP filtering</td></tr>
             <tr><td>Embeddable protocol library</td><td>Rust crate and C-compatible FFI</td><td>Server application; no standalone protocol crate</td></tr>
@@ -58,7 +58,7 @@ include_once __DIR__ . '/../../includes/header.php';
 
         <h2 id="ant-media-fit">Choose Ant Media Server when</h2>
         <ul class="check-list">
-          <li>Sub-second WebRTC delivery (broadcast, conferencing, interactive streaming) is a core requirement, not an afterthought.</li>
+          <li>Sub-second WebRTC delivery (broadcast, conferencing, interactive streaming) is a core requirement, not an afterthought, and the Enterprise Edition that provides WebRTC playback fits your budget.</li>
           <li>You need RTMP ingest converted into WebRTC, LL-HLS, or DASH/CMAF output from one server.</li>
           <li>You want client SDKs across mobile and web platforms rather than building your own player/publisher integration.</li>
           <li>You may need Enterprise-tier support, clustering, or auto-scaling and are open to that commercial upgrade path.</li>

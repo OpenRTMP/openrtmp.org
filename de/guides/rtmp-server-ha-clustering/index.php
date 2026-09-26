@@ -111,7 +111,7 @@ LRTMP2_DB=/data/node2.db</code></pre>
         <ul class="check-list">
           <li>Nach einem Ausfall des Owners müssen sich Publisher neu mit einem öffentlichen RTMP-Endpunkt verbinden; eine automatische Publisher-Migration ist nicht vorgesehen.</li>
           <li>Peers, die mitten im Stream beitreten, brauchen Init-Cache / <code>stream_init_snapshot</code>, bevor die Wiedergabe funktioniert.</li>
-          <li>Aktivieren Sie für produktive Peer-Verbindungen <code>CLUSTER_TLS_ENABLED</code> mit Zertifikat/Key/CA; die Zertifikats-Subjects müssen <code>lrtmp2-node-{id}</code> enthalten.</li>
+          <li>Aktivieren Sie für produktive Peer-Verbindungen <code>CLUSTER_TLS_ENABLED</code> mit Zertifikat/Key/CA; das Leaf-Zertifikat jedes Nodes muss <code>lrtmp2-node-{id}</code> exakt als CN oder SAN verwenden (ein Wert, der es nur enthält, wird abgelehnt).</li>
           <li>Die Beförderung vom Learner zum Voter erfolgt explizit über die API, nicht automatisch bei jedem Beitritt.</li>
           <li>Betrachten Sie Clustering als HA auf Evaluierungsniveau, bis Sie Ihre Topologie Ende-zu-Ende validiert haben.</li>
         </ul>

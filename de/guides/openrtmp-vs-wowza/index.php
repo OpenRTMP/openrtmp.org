@@ -28,7 +28,7 @@ include_once __DIR__ . '/../../../includes/header.php';
   <section class="content-section" style="padding-top: 0;">
     <div class="container article-layout">
       <article class="prose">
-        <div class="callout"><strong>Kurzfassung:</strong> Wählen Sie Wowza, wenn Sie ein unterstütztes, funktionsvollständiges kommerzielles Produkt mit integriertem Transcoding, DRM und Multiprotokoll-Auslieferung brauchen und die Abokosten akzeptabel sind. Wählen Sie OpenRTMP, wenn Sie einen kostenlosen, selbst gehosteten, fokussierten RTMP/RTMPS- und E-RTMP-Stack möchten, den Sie selbst einbetten, prüfen und erweitern können — und dabei den Status vor 1.0 und den schmaleren integrierten Funktionsumfang akzeptieren.</div>
+        <div class="callout"><strong>Kurzfassung:</strong> Wählen Sie Wowza, wenn Sie ein unterstütztes, funktionsvollständiges kommerzielles Produkt mit integriertem Transcoding, Multiprotokoll-Auslieferung und DRM-Anbindung (über Key-Management-Dienste von Drittanbietern) brauchen und die Abokosten akzeptabel sind. Wählen Sie OpenRTMP, wenn Sie einen kostenlosen, selbst gehosteten, fokussierten RTMP/RTMPS- und E-RTMP-Stack möchten, den Sie selbst einbetten, prüfen und erweitern können — und dabei den Status vor 1.0 und den schmaleren integrierten Funktionsumfang akzeptieren.</div>
 
         <h2 id="overview">Vergleich im Überblick</h2>
         <table class="comparison-table">
@@ -41,7 +41,7 @@ include_once __DIR__ . '/../../../includes/header.php';
             <tr><td>WebRTC, SRT</td><td>Nein</td><td>Ja, als vollwertige Ingest-/Ausgabeprotokolle dokumentiert</td></tr>
             <tr><td>HLS-/DASH-Ausgabe</td><td>Kein integrierter HLS-/DASH-Server</td><td>Ja, mit Adaptive-Bitrate-Paketierung</td></tr>
             <tr><td>Transcoding</td><td>Nicht integriert</td><td>Integriertes Adaptive-Bitrate-Transcoding</td></tr>
-            <tr><td>DRM / Wasserzeichen</td><td>Nicht integriert</td><td>Integrierte DRM- und Wasserzeichen-Optionen</td></tr>
+            <tr><td>DRM / Wasserzeichen</td><td>Nicht integriert</td><td>DRM über Anbindung an Key-Management-Dienste von Drittanbietern (manche Konfigurationen brauchen ein zusätzliches kostenpflichtiges Modul); Wasserzeichen-Optionen</td></tr>
             <tr><td>Administration</td><td>REST-API, SQLite und optionales Web-Panel</td><td>REST-API plus die Oberfläche Wowza Streaming Engine Manager</td></tr>
             <tr><td>Stream-Zugangsdaten</td><td>Getrennte Publish-, Play- und Statistik-Keys pro Stream</td><td>Konfigurierbare Authentifizierungsmodule und tokenbasierte Sicherheits-Add-ons</td></tr>
             <tr><td>Einbettbare Protokollbibliothek</td><td>Rust-Crate und C-kompatibles FFI</td><td>Keine eigenständige Protokoll-Crate; der Server ist das Produkt</td></tr>
@@ -61,7 +61,7 @@ include_once __DIR__ . '/../../../includes/header.php';
 
         <h2 id="wowza-fit">Wählen Sie Wowza, wenn</h2>
         <ul class="check-list">
-          <li>Sie integriertes Transcoding, Adaptive-Bitrate-Paketierung, DRM oder Wasserzeichen brauchen, ohne separate Dienste zusammenzustellen.</li>
+          <li>Sie integriertes Transcoding, Adaptive-Bitrate-Paketierung oder Wasserzeichen sowie einen unterstützten Weg zur DRM-Anbindung brauchen (DRM selbst setzt weiterhin einen Key-Management-Dienst eines Drittanbieters voraus).</li>
           <li>Sie WebRTC- oder SRT-Ingest/-Ausgabe neben RTMP aus demselben Produkt brauchen.</li>
           <li>Herstellersupport, SLAs und Compliance-Zertifizierungen wichtiger sind als Lizenzkosten.</li>
           <li>Ihr Team ein GUI-verwaltetes, appliance-artiges Deployment statt eines API-first-Servers nah am Code möchte.</li>

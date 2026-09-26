@@ -101,14 +101,17 @@ docker compose -f compose.quickstart.yml up -d</code></pre>
 
         <div class="download-card download-card--wide" id="server-only">
           <h3>&#128225; Server-Image allein betreiben</h3>
-          <pre><code>docker run -d \
+          <pre><code>LRTMP2_API_TOKEN="$(openssl rand -hex 32)"
+printf 'API-Token notieren: %s\n' "${LRTMP2_API_TOKEN}"
+
+docker run -d \
   --name librtmp2-server \
   -p 1935:1935 \
   -p 8080:8080 \
-  -e LRTMP2_API_TOKEN="$(openssl rand -hex 32)" \
+  -e LRTMP2_API_TOKEN="${LRTMP2_API_TOKEN}" \
   -v librtmp2-server-data:/data \
   ghcr.io/openrtmp/librtmp2-server:latest</code></pre>
-          <p>Sichern Sie das übergebene Token, bevor Sie den Befehl ausführen. Lassen Sie es weg, finden Sie das erzeugte Token in den Logs des ersten Starts. Pinnen Sie für reproduzierbare Deployments das Image-Tag.</p>
+          <p>Der Server speichert ein übergebenes Token, statt eines auszugeben – notieren Sie also den ausgegebenen Wert. Lassen Sie <code>-e LRTMP2_API_TOKEN</code> weg, finden Sie das erzeugte Token in den Logs des ersten Starts. Pinnen Sie für reproduzierbare Deployments das Image-Tag.</p>
         </div>
 
         <div class="download-card download-card--wide" id="panel-only">

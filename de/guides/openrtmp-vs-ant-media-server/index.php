@@ -28,7 +28,7 @@ include_once __DIR__ . '/../../../includes/header.php';
   <section class="content-section" style="padding-top: 0;">
     <div class="container article-layout">
       <article class="prose">
-        <div class="callout"><strong>Kurzfassung:</strong> Wählen Sie Ant Media Server, wenn WebRTC-Auslieferung unter einer Sekunde, Multiprotokoll-Konvertierung und ein paketiertes Community-/Enterprise-Produkt zu Ihrem Workflow passen. Wählen Sie OpenRTMP, wenn RTMP/RTMPS und E-RTMP das tatsächlich benötigte Protokoll sind und Sie eine kleine, prüfbare, Rust-basierte Bibliothek samt Server statt einer größeren Medienplattform möchten.</div>
+        <div class="callout"><strong>Kurzfassung:</strong> Wählen Sie Ant Media Server, wenn WebRTC-Auslieferung unter einer Sekunde, Multiprotokoll-Konvertierung und ein paketiertes Community-/Enterprise-Produkt zu Ihrem Workflow passen — beachten Sie dabei, dass WebRTC-Wiedergabe und mehrere Konvertierungsfunktionen die Enterprise Edition voraussetzen. Wählen Sie OpenRTMP, wenn RTMP/RTMPS und E-RTMP das tatsächlich benötigte Protokoll sind und Sie eine kleine, prüfbare, Rust-basierte Bibliothek samt Server statt einer größeren Medienplattform möchten.</div>
 
         <h2 id="overview">Vergleich im Überblick</h2>
         <table class="comparison-table">
@@ -38,10 +38,10 @@ include_once __DIR__ . '/../../../includes/header.php';
             <tr><td>Lizenz / Kosten</td><td>Kostenlos und Open Source</td><td>Community Edition ist kostenlos und Open Source; Enterprise Edition ist eine kostenpflichtige Stufe mit zusätzlichen Funktionen und Support</td></tr>
             <tr><td>Reife</td><td>Aktive Entwicklung (vor 1.0)</td><td>Lange etabliertes Open-Source-Projekt mit kommerziellem Zweig</td></tr>
             <tr><td>RTMP / RTMPS</td><td>Ja / ja</td><td>RTMP ist eines von mehreren unterstützten Ingest-Protokollen; Details zu RTMPS in der aktuellen Doku prüfen</td></tr>
-            <tr><td>WebRTC (WHIP/WHEP)</td><td>Nein</td><td>Ja — WebRTC mit ultraniedriger Latenz ist der Hauptfokus des Projekts</td></tr>
-            <tr><td>SRT, HLS/LL-HLS, DASH/CMAF</td><td>Keine integrierte Unterstützung</td><td>Ja, als unterstützte Protokolle dokumentiert</td></tr>
+            <tr><td>WebRTC (WHIP/WHEP)</td><td>Nein</td><td>Ja — WebRTC mit ultraniedriger Latenz ist der Hauptfokus des Projekts; die Community Edition unterstützt WebRTC-Ingest, WebRTC-Wiedergabe erfordert Enterprise</td></tr>
+            <tr><td>SRT, HLS/LL-HLS, DASH/CMAF</td><td>Keine integrierte Unterstützung</td><td>Als unterstützt dokumentiert; SRT, LL-HLS und manche Paketierungsoptionen hängen von der Enterprise Edition oder Plugins ab — aktuelle Editionsmatrix prüfen</td></tr>
             <tr><td>Fokus auf E-RTMP</td><td>Expliziter Schwerpunkt der Protokollentwicklung in librtmp2</td><td>Dokumentiert HEVC-Unterstützung; aktuelle Enhanced-RTMP-Abdeckung anhand der Upstream-Doku prüfen</td></tr>
-            <tr><td>Aufzeichnung / Transcoding</td><td>Nicht integriert</td><td>Integrierte Aufzeichnung und Adaptive-Bitrate-Transcoding</td></tr>
+            <tr><td>Aufzeichnung / Transcoding</td><td>Nicht integriert</td><td>Integrierte Aufzeichnung; Adaptive-Bitrate-Transcoding ist eine Funktion der Enterprise Edition</td></tr>
             <tr><td>Control-API</td><td>REST-API für Stream-Verwaltung plus Health/Statistiken</td><td>REST-APIs mit SDKs für iOS, Android, Unity, React Native und JS</td></tr>
             <tr><td>Stream-Zugangsdaten</td><td>Getrennte Publish-, Play- und Statistik-Keys pro Stream</td><td>Tokenbasierte Authentifizierung und IP-Filter</td></tr>
             <tr><td>Einbettbare Protokollbibliothek</td><td>Rust-Crate und C-kompatibles FFI</td><td>Serveranwendung; keine eigenständige Protokoll-Crate</td></tr>
@@ -60,7 +60,7 @@ include_once __DIR__ . '/../../../includes/header.php';
 
         <h2 id="ant-media-fit">Wählen Sie Ant Media Server, wenn</h2>
         <ul class="check-list">
-          <li>WebRTC-Auslieferung unter einer Sekunde (Broadcast, Konferenzen, interaktives Streaming) eine Kernanforderung ist und kein Nebenaspekt.</li>
+          <li>WebRTC-Auslieferung unter einer Sekunde (Broadcast, Konferenzen, interaktives Streaming) eine Kernanforderung ist und kein Nebenaspekt und die Enterprise Edition, die WebRTC-Wiedergabe bietet, in Ihr Budget passt.</li>
           <li>Sie RTMP-Ingest in WebRTC-, LL-HLS- oder DASH/CMAF-Ausgabe aus einem Server umwandeln müssen.</li>
           <li>Sie Client-SDKs für Mobil- und Webplattformen möchten, statt eigene Player-/Publisher-Integrationen zu bauen.</li>
           <li>Sie womöglich Support, Clustering oder Auto-Scaling der Enterprise-Stufe brauchen und für diesen kommerziellen Upgrade-Pfad offen sind.</li>

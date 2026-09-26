@@ -222,11 +222,14 @@ CLUSTER_MEDIA_ADVERTISE_ADDR=10.0.0.1:1941</code></pre>
 
         <h3>Server only</h3>
         <p>Quickest path &mdash; auto-generated API token on first start:</p>
-        <pre><code>docker run -d \
+        <pre><code>docker network create openrtmp   # shared with the panel examples below
+
+# For RTMPS (TLS_ENABLED=true), also publish -p 1936:1936.
+docker run -d \
   --name librtmp2-server \
+  --network openrtmp \
   -p 1935:1935 \
   -p 8080:8080 \
-  # -p 1936:1936   # RTMPS — only when TLS_ENABLED=true
   -v librtmp2-server-data:/data \
   ghcr.io/openrtmp/librtmp2-server:latest
 
@@ -235,7 +238,7 @@ docker logs librtmp2-server   # copy API token from first-start output</code></p
 
         <h3>Panel only (<code>docker run</code>)</h3>
         <p>Image: <code>ghcr.io/openrtmp/librtmp2-server-panel</code>. Connect to an existing server on the same Docker network (container name <code>librtmp2-server</code>):</p>
-        <pre><code>docker network create openrtmp   # skip if it already exists
+        <pre><code>docker network create openrtmp   # skip if you created it above
 
 docker run -d \
   --name librtmp2-server-panel \
@@ -253,8 +256,9 @@ docker run -d \
         <h3>Full stack (<code>docker run</code>)</h3>
         <p>Server + panel + Redis without Compose. Set a shared API token before the first server start:</p>
         <pre><code>export LRTMP2_API_TOKEN=$(openssl rand -hex 32)
-export PANEL_PASSWORD='your-panel-password'
+export PANEL_PASSWORD="$(openssl rand -base64 24 | tr -d '\n')"
 export PANEL_SECRET=$(python3 -c "import secrets; print(secrets.token_hex(32))")
+printf 'Save this panel password: %s\n' "${PANEL_PASSWORD}"
 
 docker network create openrtmp
 
@@ -283,12 +287,13 @@ docker run -d \
   ghcr.io/openrtmp/librtmp2-server-panel:latest</code></pre>
 
         <h3>Full stack (<code>docker compose</code>)</h3>
-        <p>The panel repo's <code>docker-compose.yml</code> runs the same three services. Set secrets in <code>.env</code> <em>before</em> the first start so the server seeds the shared API token:</p>
+        <p>The panel repo's <code>compose.quickstart.yml</code> runs the same three services from the published images. Set secrets in <code>.env</code> <em>before</em> the first start so the server seeds the shared API token:</p>
         <pre><code>git clone https://github.com/OpenRTMP/librtmp2-server-panel.git
 cd librtmp2-server-panel
 cp .env.example .env
 # Set LRTMP2_API_TOKEN, PASSWORD, SECRET_KEY, LRTMP2_DOMAIN
-docker compose up -d</code></pre>
+docker compose -f compose.quickstart.yml up -d</code></pre>
+        <p>The repo's default <code>docker-compose.yml</code> instead builds the server from a sibling <code>../librtmp2-server</code> checkout; use it only for source development.</p>
         <p>Ports exposed by default (from <code>librtmp2-server-panel/docker-compose.yml</code> and <code>librtmp2-server/.env.example</code>):</p>
         <div class="table-wrap">
           <table>
