@@ -5,7 +5,7 @@ $pageDescription = 'See what is built on OpenRTMP: verified interoperability wit
 $canonicalPath = '/showcase/';
 include_once __DIR__ . '/../includes/header.php';
 
-require __DIR__ . '/../includes/showcase-entries.php';
+require_once __DIR__ . '/../includes/showcase-entries.php';
 
 $interopEntries = [
   [
