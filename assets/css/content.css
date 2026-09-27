@@ -549,6 +549,15 @@
 
 .bench-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
+.bench-subhead {
+  margin: 0 0 12px;
+  color: var(--text);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.bench-load-duo { margin-top: 28px; }
+
 .bench-duels {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -718,7 +727,7 @@
   .bench-panel { padding: 18px 14px; }
   .bench-panel-head > div,
   .js-bench-tabs .bench-tabs { width: 100%; }
-  .js-bench-tabs .bench-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .js-bench-tabs .bench-tabs { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); }
   .bench-tabs button { padding: 7px 4px; font-size: 0.8rem; }
   .bench-row,
   .bench-duo .bench-row {
