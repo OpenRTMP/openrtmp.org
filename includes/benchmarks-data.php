@@ -19,56 +19,56 @@ const OPENRTMP_BENCH_SERVERS = [
 ];
 
 const OPENRTMP_BENCH_VERSIONS = [
-  'openrtmp' => ['0.5.0 (librtmp2 0.10.0)', 'Rust'],
-  'mediamtx' => ['v1.11.3', 'Go'],
+  'openrtmp' => ['0.6.0 (librtmp2 0.10.1)', 'Rust'],
+  'mediamtx' => ['v1.21.1', 'Go'],
   'liveforge' => ['main @ 4e70fb3', 'Go'],
   'srs' => ['v8.0.48', 'C++'],
-  'nginx' => ['nginx 1.24.0 + nginx-rtmp 1.2.2', 'C'],
+  'nginx' => ['nginx 1.31.6 + nginx-rtmp master @ 6c7719d', 'C'],
 ];
 
 // Connect + publish handshake, 120 handshakes at concurrency 30.
 // [handshakes/s, avg ms, p50 ms, p95 ms, p99 ms]
 const OPENRTMP_BENCH_HANDSHAKE = [
-  'openrtmp' => [10446.9, 2.19, 1.89, 4.93, 6.55],
-  'liveforge' => [7195.8, 3.13, 2.76, 6.60, 8.56],
-  'mediamtx' => [5765.9, 4.14, 3.87, 7.75, 8.98],
-  'nginx' => [652.7, 44.55, 44.00, 47.52, 49.50],
-  'srs' => [514.4, 54.78, 55.13, 62.57, 63.49],
+  'openrtmp' => [8804.7, 2.45, 2.15, 5.38, 6.15],
+  'liveforge' => [6719.1, 3.59, 3.42, 6.78, 7.82],
+  'mediamtx' => [6470.3, 3.69, 3.32, 7.06, 9.19],
+  'nginx' => [647.8, 44.27, 44.08, 46.22, 47.87],
+  'srs' => [504.0, 54.64, 54.98, 62.85, 63.87],
 ];
 
 // Join latency (connect -> first frame) per concurrent viewer count.
 // viewers => server => [avg ms, p95 ms, fps per viewer]
 const OPENRTMP_BENCH_JOIN = [
   1 => [
-    'openrtmp' => [1.06, 1.06, 73.1],
-    'liveforge' => [1.15, 1.15, 73.0],
-    'mediamtx' => [1.61, 1.61, 72.8],
-    'srs' => [43.75, 43.75, 72.1],
-    'nginx' => [86.93, 86.93, 73.2],
+    'openrtmp' => [0.82, 0.82, 73.0],
+    'liveforge' => [1.09, 1.09, 73.0],
+    'mediamtx' => [1.37, 1.37, 73.0],
+    'srs' => [45.67, 45.67, 71.9],
+    'nginx' => [86.49, 86.49, 73.2],
   ],
   25 => [
-    'openrtmp' => [2.02, 3.22, 73.1],
-    'mediamtx' => [2.14, 3.21, 73.1],
-    'liveforge' => [4.36, 7.41, 73.1],
-    'srs' => [52.18, 54.56, 72.1],
-    'nginx' => [90.15, 91.74, 73.2],
+    'openrtmp' => [1.76, 3.03, 73.0],
+    'mediamtx' => [3.02, 4.71, 73.1],
+    'liveforge' => [3.99, 6.67, 73.0],
+    'srs' => [50.77, 53.99, 72.0],
+    'nginx' => [88.72, 90.43, 73.1],
   ],
   100 => [
-    'openrtmp' => [3.54, 7.76, 73.1],
-    'mediamtx' => [10.78, 17.93, 73.1],
-    'liveforge' => [13.13, 25.43, 73.1],
-    'srs' => [73.32, 86.84, 71.9],
-    'nginx' => [91.22, 95.40, 73.1],
+    'openrtmp' => [3.42, 6.65, 73.1],
+    'mediamtx' => [6.22, 10.58, 73.1],
+    'liveforge' => [7.41, 17.14, 73.1],
+    'srs' => [71.64, 85.43, 72.4],
+    'nginx' => [89.75, 93.59, 73.1],
   ],
 ];
 
 // Head-to-head rounds against the two closest competitors, average ms.
 // metric key => [decimals, [server => value]]
 const OPENRTMP_BENCH_ROUNDS = [
-  'join_100' => [1, ['openrtmp' => 3.6, 'mediamtx' => 8.1, 'liveforge' => 15.5]],
-  'single_join' => [2, ['openrtmp' => 0.78, 'liveforge' => 1.06, 'mediamtx' => 1.13]],
-  'seq_connect' => [2, ['openrtmp' => 0.30, 'liveforge' => 0.38, 'mediamtx' => 0.45]],
-  'connect_30' => [1, ['openrtmp' => 2.0, 'mediamtx' => 3.0, 'liveforge' => 3.4]],
+  'join_100' => [1, ['openrtmp' => 4.4, 'mediamtx' => 5.5, 'liveforge' => 16.7]],
+  'single_join' => [2, ['openrtmp' => 0.94, 'liveforge' => 1.09, 'mediamtx' => 1.17]],
+  'seq_connect' => [2, ['openrtmp' => 0.32, 'liveforge' => 0.39, 'mediamtx' => 0.46]],
+  'connect_30' => [1, ['openrtmp' => 2.2, 'mediamtx' => 2.6, 'liveforge' => 3.0]],
 ];
 
 /** Format a millisecond value with the page language's decimal separator. */
