@@ -30,7 +30,7 @@ $roundLabels = [
   <div class="page-hero container article-hero">
     <span class="eyebrow">Benchmarks &middot; RTMP-Relay &middot; <?php echo OPENRTMP_BENCH_DATE; ?></span>
     <h1>RTMP-Server-Benchmarks</h1>
-    <p><code>librtmp2-server</code> gegen nginx-rtmp, MediaMTX, SRS 8.0 und LiveForge: dieselbe Maschine, derselbe RTMP-Client, derselbe echte H.264/AAC-Stream. OpenRTMP ist in jeder Latenzmessung der schnellste Server.</p>
+    <p><code>librtmp2-server</code> gegen nginx-rtmp, MediaMTX, SRS 8.0 und LiveForge: dieselbe Maschine, derselbe RTMP-Client, derselbe echte H.264/AAC-Stream. OpenRTMP hat in jedem Test die niedrigste durchschnittliche Latenz.</p>
   </div>
 
   <section class="content-section" style="padding-top: 0;">

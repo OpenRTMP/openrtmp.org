@@ -58,7 +58,7 @@ require_once __DIR__ . '/includes/benchmarks-data.php';
       <div class="section-head">
         <span class="eyebrow">Benchmarks</span>
         <h2>The fastest RTMP server in our comparison</h2>
-        <p><code>librtmp2-server</code> against nginx-rtmp, MediaMTX, SRS 8.0 and LiveForge on the same machine, with the same client and the same real H.264/AAC stream. It leads every latency row.</p>
+        <p><code>librtmp2-server</code> against nginx-rtmp, MediaMTX, SRS 8.0 and LiveForge on the same machine, with the same client and the same real H.264/AAC stream. It has the lowest average latency in every test.</p>
       </div>
       <div class="bench-highlights">
         <div class="bench-highlight">

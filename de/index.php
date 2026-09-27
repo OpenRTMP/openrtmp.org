@@ -61,7 +61,7 @@ require_once __DIR__ . '/../includes/benchmarks-data.php';
       <div class="section-head">
         <span class="eyebrow">Benchmarks</span>
         <h2>Der schnellste RTMP-Server im Vergleich</h2>
-        <p><code>librtmp2-server</code> gegen nginx-rtmp, MediaMTX, SRS 8.0 und LiveForge auf derselben Maschine, mit demselben Client und demselben echten H.264/AAC-Stream. In jeder Latenz-Zeile liegt er vorn.</p>
+        <p><code>librtmp2-server</code> gegen nginx-rtmp, MediaMTX, SRS 8.0 und LiveForge auf derselben Maschine, mit demselben Client und demselben echten H.264/AAC-Stream. In jedem Test hat er die niedrigste durchschnittliche Latenz.</p>
       </div>
       <div class="bench-highlights">
         <div class="bench-highlight">
