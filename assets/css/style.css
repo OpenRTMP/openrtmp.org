@@ -57,6 +57,7 @@ a { color: inherit; text-decoration: none; }
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 24px;
   padding: 14px 0;
 }
 
@@ -76,7 +77,7 @@ a { color: inherit; text-decoration: none; }
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 28px;
+  gap: 24px;
   font-size: 0.95rem;
   color: var(--text-dim);
 }
@@ -644,7 +645,7 @@ td { color: var(--text-dim); }
 .badge-row { display: flex; gap: 10px; flex-wrap: wrap; }
 
 /* ---------- Responsive ---------- */
-@media (max-width: 900px) {
+@media (max-width: 1060px) {
   .nav-links, .nav-cta { display: none; }
   .nav-toggle { display: block; }
   .nav.open .nav-links {
@@ -659,6 +660,9 @@ td { color: var(--text-dim); }
     padding: 20px 24px;
     gap: 16px;
   }
+}
+
+@media (max-width: 900px) {
   .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .grid-2 { grid-template-columns: minmax(0, 1fr); }
   .footer-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
@@ -699,9 +703,6 @@ td { color: var(--text-dim); }
 
 .nav-cta .btn { white-space: nowrap; }
 
-/* The GitHub link is already in the primary nav; drop the duplicate button
-   before the header starts to wrap. */
 @media (max-width: 1100px) {
   .nav-links { gap: 16px; }
-  .nav-cta .btn-ghost { display: none; }
 }

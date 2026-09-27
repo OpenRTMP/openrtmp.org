@@ -21,6 +21,7 @@ const OPENRTMP_STRINGS_DE = [
   'Primary navigation' => 'Hauptnavigation',
   'Quickstart' => 'Schnellstart',
   'Guides' => 'Anleitungen',
+  'Benchmarks' => 'Benchmarks',
   'Showcase' => 'Showcase',
   'Docs' => 'Doku',
   'Download' => 'Download',

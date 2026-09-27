@@ -20,7 +20,7 @@ BASE_URL='https://openrtmp.org'
 # coverage check below fails if a page exists on disk but is missing from this
 # table.
 PAGES='
-/|index.php|weekly|1.0
+/|index.php|weekly|1.0|includes/benchmarks-data.php
 /quickstart/|quickstart/index.php|monthly|0.9
 /guides/|guides/index.php|weekly|0.8
 /guides/self-hosted-rtmp-server-docker/|guides/self-hosted-rtmp-server-docker/index.php|monthly|0.8
@@ -38,11 +38,12 @@ PAGES='
 /guides/openrtmp-vs-wowza/|guides/openrtmp-vs-wowza/index.php|monthly|0.8
 /guides/openrtmp-vs-ant-media-server/|guides/openrtmp-vs-ant-media-server/index.php|monthly|0.8
 /guides/rtmp-server-rust/|guides/rtmp-server-rust/index.php|monthly|0.8
+/benchmarks/|benchmarks/index.php|monthly|0.8|includes/benchmarks-data.php
 /showcase/|showcase/index.php|weekly|0.7|includes/showcase-entries.php
 /docs/|docs/index.php|weekly|0.8
 /download/|download/index.php|weekly|0.8
 /legal/|legal/index.php|yearly|0.2
-/de/|de/index.php|weekly|1.0
+/de/|de/index.php|weekly|1.0|includes/benchmarks-data.php
 /de/quickstart/|de/quickstart/index.php|monthly|0.9
 /de/guides/|de/guides/index.php|weekly|0.8
 /de/guides/self-hosted-rtmp-server-docker/|de/guides/self-hosted-rtmp-server-docker/index.php|monthly|0.8
@@ -60,6 +61,7 @@ PAGES='
 /de/guides/openrtmp-vs-wowza/|de/guides/openrtmp-vs-wowza/index.php|monthly|0.8
 /de/guides/openrtmp-vs-ant-media-server/|de/guides/openrtmp-vs-ant-media-server/index.php|monthly|0.8
 /de/guides/rtmp-server-rust/|de/guides/rtmp-server-rust/index.php|monthly|0.8
+/de/benchmarks/|de/benchmarks/index.php|monthly|0.8|includes/benchmarks-data.php
 /de/showcase/|de/showcase/index.php|weekly|0.7|includes/showcase-entries.php
 /de/docs/|de/docs/index.php|weekly|0.8
 /de/download/|de/download/index.php|weekly|0.8
