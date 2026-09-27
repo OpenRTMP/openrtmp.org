@@ -701,6 +701,10 @@
   .bench-duels,
   .bench-why { grid-template-columns: 1fr; }
   .bench-panel { padding: 18px 14px; }
+  .bench-panel-head > div,
+  .js-bench-tabs .bench-tabs { width: 100%; }
+  .js-bench-tabs .bench-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .bench-tabs button { padding: 7px 4px; font-size: 0.8rem; }
   .bench-row,
   .bench-duo .bench-row {
     grid-template-columns: 24px minmax(0, 1fr) auto;
