@@ -62,19 +62,19 @@ const OPENRTMP_BENCH_JOIN = [
   ],
 ];
 
-// Head-to-head rounds against the two closest competitors.
-// metric key => server => display value
+// Head-to-head rounds against the two closest competitors, average ms.
+// metric key => [decimals, [server => value]]
 const OPENRTMP_BENCH_ROUNDS = [
-  'seq_connect' => ['openrtmp' => '0.30 ms', 'liveforge' => '0.38 ms', 'mediamtx' => '0.45 ms'],
-  'single_join' => ['openrtmp' => '0.78 ms', 'liveforge' => '1.06 ms', 'mediamtx' => '1.13 ms'],
-  'join_100' => ['openrtmp' => '3.6 ms', 'liveforge' => '15.5 ms', 'mediamtx' => '8.1 ms'],
-  'connect_30' => ['openrtmp' => '2.0 ms', 'liveforge' => '3.4 ms', 'mediamtx' => '3.0 ms'],
+  'join_100' => [1, ['openrtmp' => 3.6, 'mediamtx' => 8.1, 'liveforge' => 15.5]],
+  'single_join' => [2, ['openrtmp' => 0.78, 'liveforge' => 1.06, 'mediamtx' => 1.13]],
+  'seq_connect' => [2, ['openrtmp' => 0.30, 'liveforge' => 0.38, 'mediamtx' => 0.45]],
+  'connect_30' => [1, ['openrtmp' => 2.0, 'mediamtx' => 3.0, 'liveforge' => 3.4]],
 ];
 
 /** Format a millisecond value with the page language's decimal separator. */
-function benchMs(float $value, string $lang = 'en'): string
+function benchMs(float $value, string $lang = 'en', int $decimals = 2): string
 {
-  $text = number_format($value, 2, $lang === 'de' ? ',' : '.', $lang === 'de' ? '.' : ',');
+  $text = number_format($value, $decimals, $lang === 'de' ? ',' : '.', $lang === 'de' ? '.' : ',');
   return $text . ' ms';
 }
 
@@ -85,22 +85,39 @@ function benchNum(float $value, int $decimals, string $lang = 'en'): string
 }
 
 /**
- * Render a horizontal bar chart. $rows is server key => numeric value. Bars
- * are scaled linearly to the largest value so the gap between servers is
- * shown as it is.
+ * Render a ranked horizontal bar chart. $rows is server key => numeric value.
+ * Rows are sorted best first, bars are scaled linearly to the largest value,
+ * and every other server shows how far it is behind librtmp2-server.
  */
-function benchBars(array $rows, callable $format): string
+function benchBars(array $rows, callable $format, string $lang = 'en', bool $higherIsBetter = false): string
 {
+  if ($higherIsBetter) {
+    arsort($rows);
+  } else {
+    asort($rows);
+  }
   $max = max($rows);
-  $html = '<div class="bench-bars">';
+  $ours = $rows['openrtmp'];
+  $best = $lang === 'de' ? 'Schnellster' : 'Fastest';
+  $html = '<ol class="bench-bars">';
+  $rank = 0;
   foreach ($rows as $key => $value) {
-    $width = $max > 0 ? max(1.5, round($value / $max * 100, 1)) : 0;
-    $class = $key === 'openrtmp' ? 'bench-row is-openrtmp' : 'bench-row';
-    $html .= '<div class="' . $class . '">'
+    $rank++;
+    $width = $max > 0 ? max(2, round($value / $max * 100, 1)) : 0;
+    $isOurs = $key === 'openrtmp';
+    if ($isOurs) {
+      $delta = '<span class="bench-badge">' . $best . '</span>';
+    } else {
+      $factor = $higherIsBetter ? $ours / $value : $value / $ours;
+      $delta = '<span class="bench-delta">' . benchNum($factor, 1, $lang) . '&times;</span>';
+    }
+    $html .= '<li class="bench-row' . ($isOurs ? ' is-openrtmp' : '') . '">'
+      . '<span class="bench-rank">' . $rank . '</span>'
       . '<span class="bench-name">' . htmlspecialchars(OPENRTMP_BENCH_SERVERS[$key], ENT_QUOTES, 'UTF-8') . '</span>'
       . '<span class="bench-track"><span class="bench-fill" style="width: ' . $width . '%"></span></span>'
       . '<span class="bench-value">' . htmlspecialchars($format($value), ENT_QUOTES, 'UTF-8') . '</span>'
-      . '</div>';
+      . $delta
+      . '</li>';
   }
-  return $html . '</div>';
+  return $html . '</ol>';
 }
