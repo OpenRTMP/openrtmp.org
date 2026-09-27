@@ -80,10 +80,9 @@ require_once __DIR__ . '/../includes/benchmarks-data.php';
           <p>Volle 30 fps Video plus Audio für alle 100 gleichzeitigen Zuschauer, rund 110 Mbit/s weitergeleitet auf 4 vCPUs.</p>
         </div>
       </div>
-      <div class="bench-chart">
-        <h3>Join-Latenz, 100 gleichzeitige Zuschauer</h3>
-        <p class="bench-note">Verbindungsaufbau bis zum ersten Frame, Durchschnitt. Weniger ist besser.</p>
-        <?php echo benchBars(array_map(fn($r) => $r[0], OPENRTMP_BENCH_JOIN[100]), fn($v) => benchMs($v, 'de')); ?>
+      <div class="bench-panel">
+        <div class="bench-panel-head"><div><h3>Join-Latenz, 100 gleichzeitige Zuschauer</h3><p>Verbindungsaufbau bis zum ersten Frame, Durchschnitt. Weniger ist besser.</p></div></div>
+        <?php echo benchBars(array_map(fn($r) => $r[0], OPENRTMP_BENCH_JOIN[100]), fn($v) => benchMs($v, 'de'), 'de'); ?>
       </div>
       <div class="center-link"><a href="/de/benchmarks/" class="btn btn-primary">Alle Benchmark-Ergebnisse ansehen</a></div>
     </div>

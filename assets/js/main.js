@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initCopyButtons();
   initActiveDocsLink();
   initYear();
+  initBenchTabs();
 });
 
 function initNavToggle() {
@@ -79,4 +80,30 @@ function initActiveDocsLink() {
 function initYear() {
   const el = document.getElementById('year');
   if (el) el.textContent = new Date().getFullYear();
+}
+
+function initBenchTabs() {
+  document.querySelectorAll('[data-bench-tabs]').forEach((panel) => {
+    const tabs = Array.from(panel.querySelectorAll('[role="tab"]'));
+    const select = (tab) => {
+      tabs.forEach((t) => {
+        const selected = t === tab;
+        t.setAttribute('aria-selected', String(selected));
+        t.tabIndex = selected ? 0 : -1;
+        document.getElementById(t.getAttribute('aria-controls')).hidden = !selected;
+      });
+    };
+    tabs.forEach((tab, i) => {
+      tab.addEventListener('click', () => select(tab));
+      tab.addEventListener('keydown', (event) => {
+        const step = { ArrowRight: 1, ArrowLeft: -1 }[event.key];
+        if (!step) return;
+        const next = tabs[(i + step + tabs.length) % tabs.length];
+        select(next);
+        next.focus();
+      });
+    });
+    panel.classList.add('js-bench-tabs');
+    select(tabs.find((t) => t.getAttribute('aria-selected') === 'true') || tabs[0]);
+  });
 }

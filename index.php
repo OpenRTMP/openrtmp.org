@@ -77,10 +77,9 @@ require_once __DIR__ . '/includes/benchmarks-data.php';
           <p>Full 30 fps video plus audio for all 100 concurrent viewers, ~110 Mbps relayed on 4 vCPUs.</p>
         </div>
       </div>
-      <div class="bench-chart">
-        <h3>Join latency, 100 concurrent viewers</h3>
-        <p class="bench-note">Connect to first frame, average. Lower is better.</p>
-        <?php echo benchBars(array_map(fn($r) => $r[0], OPENRTMP_BENCH_JOIN[100]), fn($v) => benchMs($v)); ?>
+      <div class="bench-panel">
+        <div class="bench-panel-head"><div><h3>Join latency, 100 concurrent viewers</h3><p>Connect to first frame, average. Lower is better.</p></div></div>
+        <?php echo benchBars(array_map(fn($r) => $r[0], OPENRTMP_BENCH_JOIN[100]), fn($v) => benchMs($v), 'en'); ?>
       </div>
       <div class="center-link"><a href="/benchmarks/" class="btn btn-primary">See all benchmark results</a></div>
     </div>
