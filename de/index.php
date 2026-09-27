@@ -67,12 +67,12 @@ require_once __DIR__ . '/../includes/benchmarks-data.php';
         <div class="bench-highlight">
           <strong><?php echo benchMs(OPENRTMP_BENCH_JOIN[100]['openrtmp'][0], 'de'); ?></strong>
           <span>Join-Latenz bei 100 Zuschauern</span>
-          <p>3&times; schneller als MediaMTX (<?php echo benchMs(OPENRTMP_BENCH_JOIN[100]['mediamtx'][0], 'de'); ?>), 25&times; schneller als nginx-rtmp.</p>
+          <p><?php echo benchNum(OPENRTMP_BENCH_JOIN[100]['mediamtx'][0] / OPENRTMP_BENCH_JOIN[100]['openrtmp'][0], 1, 'de'); ?>&times; schneller als MediaMTX (<?php echo benchMs(OPENRTMP_BENCH_JOIN[100]['mediamtx'][0], 'de'); ?>), <?php echo benchNum(OPENRTMP_BENCH_JOIN[100]['nginx'][0] / OPENRTMP_BENCH_JOIN[100]['openrtmp'][0], 0, 'de'); ?>&times; schneller als nginx-rtmp.</p>
         </div>
         <div class="bench-highlight">
           <strong><?php echo benchNum(OPENRTMP_BENCH_HANDSHAKE['openrtmp'][0], 0, 'de'); ?>/s</strong>
           <span>Connect- und Publish-Handshakes</span>
-          <p>1,8&times; MediaMTX und 16&times; nginx-rtmp, wobei jeder Publish gegen seinen Stream-Key authentifiziert wird.</p>
+          <p><?php echo benchNum(OPENRTMP_BENCH_HANDSHAKE['openrtmp'][0] / OPENRTMP_BENCH_HANDSHAKE['mediamtx'][0], 1, 'de'); ?>&times; MediaMTX und <?php echo benchNum(OPENRTMP_BENCH_HANDSHAKE['openrtmp'][0] / OPENRTMP_BENCH_HANDSHAKE['nginx'][0], 0, 'de'); ?>&times; nginx-rtmp, wobei jeder Publish gegen seinen Stream-Key authentifiziert wird.</p>
         </div>
         <div class="bench-highlight">
           <strong>100&nbsp;%</strong>
