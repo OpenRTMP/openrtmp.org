@@ -405,7 +405,7 @@
 .bench-panel-head p { margin: 0; color: var(--text-dim); font-size: 0.85rem; }
 
 .bench-tabs {
-  display: inline-flex;
+  display: none;
   gap: 4px;
   padding: 4px;
   border: 1px solid var(--border);
@@ -432,8 +432,8 @@
   color: #0a0e14;
 }
 
-/* Without JavaScript all viewer counts are shown with their own title. */
-.bench-tabs { display: none; }
+/* Without JavaScript the tabs stay hidden and all viewer counts are shown
+   with their own title. */
 .bench-tabpanel + .bench-tabpanel { margin-top: 28px; }
 .bench-tabpanel-title { margin: 0 0 12px; color: var(--text); font-weight: 600; }
 .js-bench-tabs .bench-tabs { display: inline-flex; }

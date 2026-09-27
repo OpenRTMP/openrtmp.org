@@ -90,5 +90,5 @@ $L = [
   'cta_compare' => 'Funktionsvergleich',
 ];
 
-include __DIR__ . '/../../includes/benchmarks-page.php';
+include_once __DIR__ . '/../../includes/benchmarks-page.php';
 include_once __DIR__ . '/../../includes/footer.php';

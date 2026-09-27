@@ -5,6 +5,7 @@
 $ms = fn(float $v, int $d = 2) => benchMs($v, $lang, $d);
 $num = fn(float $v, int $d) => benchNum($v, $d, $lang);
 $h = fn(string $s) => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
+$rowClass = fn(string $key) => $key === 'openrtmp' ? ' class="is-openrtmp"' : '';
 $viewersLabel = fn(int $n) => $n === 1 ? $L['one_viewer'] : sprintf($L['n_viewers'], $n);
 $join100 = OPENRTMP_BENCH_JOIN[100];
 $hs = OPENRTMP_BENCH_HANDSHAKE;
@@ -135,7 +136,7 @@ $hs = OPENRTMP_BENCH_HANDSHAKE;
           <thead><tr><th>Server</th><th><?php echo $L['col_rate']; ?></th><th>avg</th><th>p50</th><th>p95</th><th>p99</th></tr></thead>
           <tbody>
             <?php foreach ($hs as $key => [$rate, $avg, $p50, $p95, $p99]): ?>
-            <tr<?php echo $key === 'openrtmp' ? ' class="is-openrtmp"' : ''; ?>><td><?php echo OPENRTMP_BENCH_SERVERS[$key]; ?></td><td><?php echo $num($rate, 1); ?></td><td><?php echo $ms($avg); ?></td><td><?php echo $ms($p50); ?></td><td><?php echo $ms($p95); ?></td><td><?php echo $ms($p99); ?></td></tr>
+            <tr<?php echo $rowClass($key); ?>><td><?php echo OPENRTMP_BENCH_SERVERS[$key]; ?></td><td><?php echo $num($rate, 1); ?></td><td><?php echo $ms($avg); ?></td><td><?php echo $ms($p50); ?></td><td><?php echo $ms($p95); ?></td><td><?php echo $ms($p99); ?></td></tr>
             <?php endforeach; ?>
           </tbody>
         </table>
@@ -147,7 +148,7 @@ $hs = OPENRTMP_BENCH_HANDSHAKE;
           <?php foreach (OPENRTMP_BENCH_JOIN as $viewers => $rows): ?>
           <tbody>
             <?php foreach ($rows as $key => [$avg, $p95, $fps]): ?>
-            <tr<?php echo $key === 'openrtmp' ? ' class="is-openrtmp"' : ''; ?>><td><?php echo OPENRTMP_BENCH_SERVERS[$key]; ?></td><td><?php echo $viewers; ?></td><td><?php echo $ms($avg); ?></td><td><?php echo $ms($p95); ?></td><td><?php echo $num($fps, 1); ?></td></tr>
+            <tr<?php echo $rowClass($key); ?>><td><?php echo OPENRTMP_BENCH_SERVERS[$key]; ?></td><td><?php echo $viewers; ?></td><td><?php echo $ms($avg); ?></td><td><?php echo $ms($p95); ?></td><td><?php echo $num($fps, 1); ?></td></tr>
             <?php endforeach; ?>
           </tbody>
           <?php endforeach; ?>
@@ -191,7 +192,7 @@ $hs = OPENRTMP_BENCH_HANDSHAKE;
             <thead><tr><th>Server</th><th>Version</th><th><?php echo $L['col_lang']; ?></th></tr></thead>
             <tbody>
               <?php foreach (OPENRTMP_BENCH_VERSIONS as $key => [$version, $language]): ?>
-              <tr<?php echo $key === 'openrtmp' ? ' class="is-openrtmp"' : ''; ?>><td><?php echo OPENRTMP_BENCH_SERVERS[$key]; ?></td><td><?php echo $h($version); ?></td><td><?php echo $language; ?></td></tr>
+              <tr<?php echo $rowClass($key); ?>><td><?php echo OPENRTMP_BENCH_SERVERS[$key]; ?></td><td><?php echo $h($version); ?></td><td><?php echo $language; ?></td></tr>
               <?php endforeach; ?>
             </tbody>
           </table>
