@@ -18,12 +18,13 @@ const OPENRTMP_BENCH_SERVERS = [
   'nginx' => 'nginx-rtmp',
 ];
 
+// Server key => [version, what it was built with or against, language].
 const OPENRTMP_BENCH_VERSIONS = [
-  'openrtmp' => ['0.6.0 (librtmp2 0.10.1)', 'Rust'],
-  'mediamtx' => ['v1.21.1', 'Go'],
-  'liveforge' => ['main @ 4e70fb3', 'Go'],
-  'srs' => ['v8.0.48', 'C++'],
-  'nginx' => ['nginx 1.31.6 + nginx-rtmp master @ 6c7719d', 'C'],
+  'openrtmp' => ['0.6.0', 'librtmp2 0.10.1', 'Rust'],
+  'mediamtx' => ['v1.21.1', '', 'Go'],
+  'liveforge' => ['main @ 4e70fb3', '', 'Go'],
+  'srs' => ['v8.0.48', '', 'C++'],
+  'nginx' => ['nginx 1.31.6', 'nginx-rtmp master @ 6c7719d', 'C'],
 ];
 
 // Connect + publish handshake, 120 handshakes at concurrency 30.

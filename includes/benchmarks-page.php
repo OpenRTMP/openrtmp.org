@@ -188,11 +188,14 @@ $hs = OPENRTMP_BENCH_HANDSHAKE;
           <?php endforeach; ?>
         </dl>
         <div class="bench-table-wrap">
-          <table class="bench-table">
-            <thead><tr><th>Server</th><th>Version</th><th><?php echo $L['col_lang']; ?></th></tr></thead>
+          <table class="bench-table bench-versions">
+            <thead><tr><th>Server</th><th>Version</th></tr></thead>
             <tbody>
-              <?php foreach (OPENRTMP_BENCH_VERSIONS as $key => [$version, $language]): ?>
-              <tr<?php echo $rowClass($key); ?>><td><?php echo OPENRTMP_BENCH_SERVERS[$key]; ?></td><td><?php echo $h($version); ?></td><td><?php echo $language; ?></td></tr>
+              <?php foreach (OPENRTMP_BENCH_VERSIONS as $key => [$version, $detail, $language]): ?>
+              <tr<?php echo $rowClass($key); ?>>
+                <td><?php echo OPENRTMP_BENCH_SERVERS[$key]; ?><small><?php echo $language; ?></small></td>
+                <td><?php echo $h($version); ?><?php if ($detail !== ''): ?><small><?php echo $h($detail); ?></small><?php endif; ?></td>
+              </tr>
               <?php endforeach; ?>
             </tbody>
           </table>

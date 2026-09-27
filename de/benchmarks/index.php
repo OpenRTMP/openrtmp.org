@@ -80,7 +80,6 @@ $L = [
     ['Stream', 'ffmpeg, H.264 1280x720@30 mit 2,5 Mbit/s + AAC 128 kbit/s, 2 s GOP'],
     ['Ablauf', 'Ein Server nach dem anderen; nginx-rtmp mit <code>worker_processes 1</code>'],
   ],
-  'col_lang' => 'Sprache',
   'src_server' => 'Vollständige BENCHMARKS.md',
   'src_script' => 'Benchmark-Skript',
   'src_lib' => 'librtmp2-Microbenchmarks',

@@ -610,6 +610,7 @@
 
 .bench-table {
   width: 100%;
+  margin: 0;
   border-collapse: collapse;
   font-size: 0.9rem;
 }
@@ -630,11 +631,24 @@
 }
 
 .bench-table th { background: var(--surface-2); color: var(--text); font-size: 0.85rem; }
+.bench-table > thead:first-child th { border-top: 0; }
 .bench-table td { color: var(--text-dim); }
 .bench-table td:not(:first-child) { font-family: var(--mono); }
 .bench-table tbody + tbody tr:first-child td { border-top: 2px solid var(--border); }
 .bench-table tr.is-openrtmp td { color: var(--text); font-weight: 700; background: rgba(255, 92, 53, 0.07); }
 .bench-table tr.is-openrtmp td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
+
+.bench-versions { table-layout: fixed; }
+.bench-versions th:first-child { width: 42%; }
+.bench-versions td { white-space: normal; overflow-wrap: anywhere; vertical-align: top; }
+.bench-versions td small {
+  display: block;
+  margin-top: 3px;
+  color: #7d8b9b;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  font-weight: 400;
+}
 
 .bench-why { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 
