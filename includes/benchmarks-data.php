@@ -30,36 +30,65 @@ const OPENRTMP_BENCH_VERSIONS = [
 // Connect + publish handshake, 120 handshakes at concurrency 30.
 // [handshakes/s, avg ms, p50 ms, p95 ms, p99 ms]
 const OPENRTMP_BENCH_HANDSHAKE = [
-  'openrtmp' => [8804.7, 2.45, 2.15, 5.38, 6.15],
-  'liveforge' => [6719.1, 3.59, 3.42, 6.78, 7.82],
-  'mediamtx' => [6470.3, 3.69, 3.32, 7.06, 9.19],
-  'nginx' => [647.8, 44.27, 44.08, 46.22, 47.87],
-  'srs' => [504.0, 54.64, 54.98, 62.85, 63.87],
+  'openrtmp' => [10421.6, 2.15, 1.84, 4.97, 5.89],
+  'mediamtx' => [7068.5, 3.60, 3.20, 7.79, 8.95],
+  'liveforge' => [6322.5, 3.84, 3.69, 7.36, 8.85],
+  'nginx' => [662.0, 44.08, 43.98, 47.11, 47.68],
+  'srs' => [491.8, 57.09, 57.51, 64.82, 67.86],
 ];
 
 // Join latency (connect -> first frame) per concurrent viewer count.
 // viewers => server => [avg ms, p95 ms, fps per viewer]
 const OPENRTMP_BENCH_JOIN = [
   1 => [
-    'openrtmp' => [0.82, 0.82, 73.0],
-    'liveforge' => [1.09, 1.09, 73.0],
-    'mediamtx' => [1.37, 1.37, 73.0],
-    'srs' => [45.67, 45.67, 71.9],
-    'nginx' => [86.49, 86.49, 73.2],
+    'liveforge' => [1.09, 1.09, 73.1],
+    'openrtmp' => [1.15, 1.15, 73.0],
+    'mediamtx' => [1.20, 1.20, 73.0],
+    'srs' => [44.37, 44.37, 71.9],
+    'nginx' => [86.69, 86.69, 73.2],
   ],
   25 => [
-    'openrtmp' => [1.76, 3.03, 73.0],
-    'mediamtx' => [3.02, 4.71, 73.1],
-    'liveforge' => [3.99, 6.67, 73.0],
-    'srs' => [50.77, 53.99, 72.0],
-    'nginx' => [88.72, 90.43, 73.1],
+    'openrtmp' => [1.81, 3.03, 73.0],
+    'mediamtx' => [2.34, 4.07, 73.1],
+    'liveforge' => [4.43, 7.81, 73.1],
+    'srs' => [50.10, 52.49, 71.8],
+    'nginx' => [87.95, 89.74, 73.1],
   ],
   100 => [
-    'openrtmp' => [3.42, 6.65, 73.1],
-    'mediamtx' => [6.22, 10.58, 73.1],
-    'liveforge' => [7.41, 17.14, 73.1],
-    'srs' => [71.64, 85.43, 72.4],
-    'nginx' => [89.75, 93.59, 73.1],
+    'openrtmp' => [3.40, 7.07, 73.0],
+    'mediamtx' => [7.25, 12.58, 73.1],
+    'liveforge' => [15.33, 28.05, 73.1],
+    'srs' => [69.27, 81.38, 72.5],
+    'nginx' => [89.93, 93.83, 73.1],
+  ],
+];
+
+// Connect + play handshake against a live stream, 120 at concurrency 30.
+// [handshakes/s, avg ms, p50 ms, p95 ms, p99 ms]
+const OPENRTMP_BENCH_PLAY_HANDSHAKE = [
+  'openrtmp' => [10928.1, 2.03, 1.82, 4.28, 5.66],
+  'mediamtx' => [7312.5, 2.96, 2.79, 5.28, 6.79],
+  'liveforge' => [7324.3, 3.00, 2.17, 6.75, 8.89],
+  'srs' => [557.8, 50.63, 50.45, 56.60, 57.29],
+  'nginx' => [335.2, 88.89, 89.12, 91.63, 92.27],
+];
+
+// One stream watched by 500 or 1000 concurrent viewers.
+// viewers => server => [join avg ms, join p95 ms, fps per viewer, server CPU % of one core, peak RSS MiB]
+const OPENRTMP_BENCH_LOAD = [
+  500 => [
+    'mediamtx' => [27.66, 44.53, 73.1, 67.7, 97.6],
+    'liveforge' => [28.61, 70.01, 73.1, 41.3, 91.3],
+    'openrtmp' => [33.80, 71.69, 73.1, 34.3, 35.7],
+    'nginx' => [100.79, 122.47, 73.1, 46.1, 14.1],
+    'srs' => [229.83, 273.55, 72.7, 7.6, 106.2],
+  ],
+  1000 => [
+    'openrtmp' => [42.75, 98.68, 73.1, 64.2, 59.3],
+    'mediamtx' => [49.45, 96.67, 73.1, 137.0, 144.6],
+    'liveforge' => [91.63, 202.32, 73.1, 78.7, 153.6],
+    'nginx' => [111.24, 135.10, 73.1, 76.3, 20.1],
+    'srs' => [484.65, 965.61, 73.1, 14.0, 152.8],
   ],
 ];
 
@@ -88,9 +117,10 @@ function benchNum(float $value, int $decimals, string $lang = 'en'): string
 /**
  * Render a ranked horizontal bar chart. $rows is server key => numeric value.
  * Rows are sorted best first, bars are scaled linearly to the largest value,
- * and every other server shows how far it is behind librtmp2-server.
+ * the leader gets a badge ($bestLabel, "Fastest" by default) and every other
+ * server shows how far it is behind the leader.
  */
-function benchBars(array $rows, callable $format, string $lang = 'en', bool $higherIsBetter = false): string
+function benchBars(array $rows, callable $format, string $lang = 'en', bool $higherIsBetter = false, ?string $bestLabel = null): string
 {
   if ($higherIsBetter) {
     arsort($rows);
@@ -98,20 +128,20 @@ function benchBars(array $rows, callable $format, string $lang = 'en', bool $hig
     asort($rows);
   }
   $max = max($rows);
-  $ours = $rows['openrtmp'];
-  $best = $lang === 'de' ? 'Schnellster' : 'Fastest';
+  $lead = reset($rows);
+  $best = $bestLabel ?? ($lang === 'de' ? 'Schnellster' : 'Fastest');
   $html = '<ol class="bench-bars">';
   $rank = 0;
   foreach ($rows as $key => $value) {
     $rank++;
     $width = $max > 0 ? max(2, round($value / $max * 100, 1)) : 0;
-    $isOurs = $key === 'openrtmp';
-    if ($isOurs) {
+    if ($rank === 1) {
       $delta = '<span class="bench-badge">' . $best . '</span>';
     } else {
-      $factor = $higherIsBetter ? $ours / $value : $value / $ours;
+      $factor = $higherIsBetter ? $lead / $value : $value / $lead;
       $delta = '<span class="bench-delta">' . benchNum($factor, 1, $lang) . '&times;</span>';
     }
+    $isOurs = $key === 'openrtmp';
     $html .= '<li class="bench-row' . ($isOurs ? ' is-openrtmp' : '') . '">'
       . '<span class="bench-rank">' . $rank . '</span>'
       . '<span class="bench-name">' . htmlspecialchars(OPENRTMP_BENCH_SERVERS[$key], ENT_QUOTES, 'UTF-8') . '</span>'

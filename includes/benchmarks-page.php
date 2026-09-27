@@ -9,6 +9,9 @@ $rowClass = fn(string $key) => $key === 'openrtmp' ? ' class="is-openrtmp"' : ''
 $viewersLabel = fn(int $n) => $n === 1 ? $L['one_viewer'] : sprintf($L['n_viewers'], $n);
 $join100 = OPENRTMP_BENCH_JOIN[100];
 $hs = OPENRTMP_BENCH_HANDSHAKE;
+$ph = OPENRTMP_BENCH_PLAY_HANDSHAKE;
+$mib = fn(float $v) => $num($v, 1) . ' MiB';
+$pct = fn(float $v) => $num($v, 1) . ' %';
 ?>
 
 <main class="bench-page">
@@ -97,6 +100,67 @@ $hs = OPENRTMP_BENCH_HANDSHAKE;
     </div>
   </section>
 
+  <section id="play" class="bench-section">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow"><?php echo $L['play_eyebrow']; ?></span>
+        <h2><?php echo $L['play_h2']; ?></h2>
+        <p><?php echo $L['play_p']; ?></p>
+      </div>
+      <div class="bench-duo">
+        <div class="bench-panel">
+          <div class="bench-panel-head"><div><h3><?php echo $L['play_latency']; ?></h3><p><?php echo $L['lower_better']; ?></p></div></div>
+          <?php echo benchBars(array_map(fn($r) => $r[1], $ph), fn($v) => $ms($v), $lang); ?>
+        </div>
+        <div class="bench-panel">
+          <div class="bench-panel-head"><div><h3><?php echo $L['play_rate']; ?></h3><p><?php echo $L['higher_better']; ?></p></div></div>
+          <?php echo benchBars(array_map(fn($r) => $r[0], $ph), fn($v) => $num($v, 0) . '/s', $lang, true); ?>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="load" class="bench-section">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow"><?php echo $L['load_eyebrow']; ?></span>
+        <h2><?php echo $L['load_h2']; ?></h2>
+        <p><?php echo $L['load_p']; ?></p>
+      </div>
+      <div class="bench-panel" data-bench-tabs>
+        <div class="bench-panel-head">
+          <div>
+            <h3><?php echo $L['load_panel']; ?></h3>
+            <p><?php echo $L['lower_better']; ?></p>
+          </div>
+          <div class="bench-tabs" role="tablist" aria-label="<?php echo $L['viewers']; ?>">
+            <?php foreach (array_reverse(array_keys(OPENRTMP_BENCH_LOAD)) as $i => $viewers): ?>
+            <button type="button" role="tab" id="tab-load-<?php echo $viewers; ?>" aria-controls="load-<?php echo $viewers; ?>" aria-selected="<?php echo $i === 0 ? 'true' : 'false'; ?>"><?php echo $viewersLabel($viewers); ?></button>
+            <?php endforeach; ?>
+          </div>
+        </div>
+        <?php foreach (array_reverse(OPENRTMP_BENCH_LOAD, true) as $viewers => $rows): ?>
+        <div class="bench-tabpanel" role="tabpanel" id="load-<?php echo $viewers; ?>" aria-labelledby="tab-load-<?php echo $viewers; ?>">
+          <p class="bench-tabpanel-title"><?php echo $viewersLabel($viewers); ?></p>
+          <h4 class="bench-subhead"><?php echo $L['load_join']; ?></h4>
+          <?php echo benchBars(array_map(fn($r) => $r[0], $rows), fn($v) => $ms($v), $lang); ?>
+          <div class="bench-duo bench-load-duo">
+            <div>
+              <h4 class="bench-subhead"><?php echo $L['load_cpu']; ?></h4>
+              <?php echo benchBars(array_map(fn($r) => $r[3], $rows), $pct, $lang, false, $L['leanest']); ?>
+            </div>
+            <div>
+              <h4 class="bench-subhead"><?php echo $L['load_rss']; ?></h4>
+              <?php echo benchBars(array_map(fn($r) => $r[4], $rows), $mib, $lang, false, $L['leanest']); ?>
+            </div>
+          </div>
+        </div>
+        <?php endforeach; ?>
+        <p class="bench-foot"><?php echo $L['load_foot']; ?></p>
+      </div>
+    </div>
+  </section>
+
   <section id="head-to-head" class="bench-section">
     <div class="container">
       <div class="section-head">
@@ -143,12 +207,36 @@ $hs = OPENRTMP_BENCH_HANDSHAKE;
       </div>
       <div class="bench-table-wrap">
         <table class="bench-table">
+          <caption><?php echo $L['play_h2']; ?></caption>
+          <thead><tr><th>Server</th><th><?php echo $L['col_rate']; ?></th><th>avg</th><th>p50</th><th>p95</th><th>p99</th></tr></thead>
+          <tbody>
+            <?php foreach ($ph as $key => [$rate, $avg, $p50, $p95, $p99]): ?>
+            <tr<?php echo $rowClass($key); ?>><td><?php echo OPENRTMP_BENCH_SERVERS[$key]; ?></td><td><?php echo $num($rate, 1); ?></td><td><?php echo $ms($avg); ?></td><td><?php echo $ms($p50); ?></td><td><?php echo $ms($p95); ?></td><td><?php echo $ms($p99); ?></td></tr>
+            <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div>
+      <div class="bench-table-wrap">
+        <table class="bench-table">
           <caption><?php echo $L['join_h2']; ?></caption>
           <thead><tr><th>Server</th><th><?php echo $L['viewers']; ?></th><th><?php echo $L['col_join_avg']; ?></th><th><?php echo $L['col_join_p95']; ?></th><th><?php echo $L['col_fps']; ?></th></tr></thead>
           <?php foreach (OPENRTMP_BENCH_JOIN as $viewers => $rows): ?>
           <tbody>
             <?php foreach ($rows as $key => [$avg, $p95, $fps]): ?>
             <tr<?php echo $rowClass($key); ?>><td><?php echo OPENRTMP_BENCH_SERVERS[$key]; ?></td><td><?php echo $viewers; ?></td><td><?php echo $ms($avg); ?></td><td><?php echo $ms($p95); ?></td><td><?php echo $num($fps, 1); ?></td></tr>
+            <?php endforeach; ?>
+          </tbody>
+          <?php endforeach; ?>
+        </table>
+      </div>
+      <div class="bench-table-wrap">
+        <table class="bench-table">
+          <caption><?php echo $L['load_h2']; ?></caption>
+          <thead><tr><th>Server</th><th><?php echo $L['viewers']; ?></th><th><?php echo $L['col_join_avg']; ?></th><th><?php echo $L['col_join_p95']; ?></th><th><?php echo $L['col_fps']; ?></th><th><?php echo $L['col_cpu']; ?></th><th><?php echo $L['col_rss']; ?></th></tr></thead>
+          <?php foreach (OPENRTMP_BENCH_LOAD as $viewers => $rows): ?>
+          <tbody>
+            <?php foreach ($rows as $key => [$avg, $p95, $fps, $cpu, $rss]): ?>
+            <tr<?php echo $rowClass($key); ?>><td><?php echo OPENRTMP_BENCH_SERVERS[$key]; ?></td><td><?php echo $viewers; ?></td><td><?php echo $ms($avg); ?></td><td><?php echo $ms($p95); ?></td><td><?php echo $num($fps, 1); ?></td><td><?php echo $pct($cpu); ?></td><td><?php echo $mib($rss); ?></td></tr>
             <?php endforeach; ?>
           </tbody>
           <?php endforeach; ?>

@@ -61,7 +61,7 @@ require_once __DIR__ . '/../includes/benchmarks-data.php';
       <div class="section-head">
         <span class="eyebrow">Benchmarks</span>
         <h2>Der schnellste RTMP-Server im Vergleich</h2>
-        <p><code>librtmp2-server</code> gegen nginx-rtmp, MediaMTX, SRS 8.0 und LiveForge auf derselben Maschine, mit demselben Client und demselben echten H.264/AAC-Stream. In jedem Test hat er die niedrigste durchschnittliche Latenz.</p>
+        <p><code>librtmp2-server</code> gegen nginx-rtmp, MediaMTX, SRS 8.0 und LiveForge auf derselben Maschine, mit demselben Client und demselben echten H.264/AAC-Stream. Er verbindet Publisher und Player am schnellsten und führt beim Join mit 25, 100 und 1000 Zuschauern.</p>
       </div>
       <div class="bench-highlights">
         <div class="bench-highlight">
@@ -77,7 +77,7 @@ require_once __DIR__ . '/../includes/benchmarks-data.php';
         <div class="bench-highlight">
           <strong>100&nbsp;%</strong>
           <span>der Frames an jeden Zuschauer</span>
-          <p>Volle 30 fps Video plus Audio für alle 100 gleichzeitigen Zuschauer, rund 110 Mbit/s weitergeleitet auf 4 vCPUs.</p>
+          <p>Volle 30 fps Video plus Audio für alle 1000 gleichzeitigen Zuschauer, rund 1,1 Gbit/s weitergeleitet auf 4 vCPUs mit <?php echo benchNum(OPENRTMP_BENCH_LOAD[1000]['openrtmp'][3], 0, 'de'); ?>&nbsp;% eines Kerns.</p>
         </div>
       </div>
       <div class="bench-panel">
