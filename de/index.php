@@ -28,6 +28,7 @@ $structuredData = [
   ]
 ];
 include_once __DIR__ . '/../includes/header.php';
+require_once __DIR__ . '/../includes/benchmarks-data.php';
 ?>
 
 <main>
@@ -52,6 +53,39 @@ include_once __DIR__ . '/../includes/header.php';
         <div class="stat"><strong>Rust + C</strong><span>native API und FFI</span></div>
         <div class="stat"><strong>MIT</strong><span>kommerziell nutzbare Lizenz</span></div>
       </div>
+    </div>
+  </section>
+
+  <section id="benchmarks" style="padding-top: 24px;">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Benchmarks</span>
+        <h2>Der schnellste RTMP-Server im Vergleich</h2>
+        <p><code>librtmp2-server</code> gegen nginx-rtmp, MediaMTX, SRS 8.0 und LiveForge auf derselben Maschine, mit demselben Client und demselben echten H.264/AAC-Stream. In jeder Latenz-Zeile liegt er vorn.</p>
+      </div>
+      <div class="bench-highlights">
+        <div class="bench-highlight">
+          <strong><?php echo benchMs(OPENRTMP_BENCH_JOIN[100]['openrtmp'][0], 'de'); ?></strong>
+          <span>Join-Latenz bei 100 Zuschauern</span>
+          <p>3&times; schneller als MediaMTX (<?php echo benchMs(OPENRTMP_BENCH_JOIN[100]['mediamtx'][0], 'de'); ?>), 25&times; schneller als nginx-rtmp.</p>
+        </div>
+        <div class="bench-highlight">
+          <strong><?php echo benchNum(OPENRTMP_BENCH_HANDSHAKE['openrtmp'][0], 0, 'de'); ?>/s</strong>
+          <span>Connect- und Publish-Handshakes</span>
+          <p>1,8&times; MediaMTX und 16&times; nginx-rtmp, wobei jeder Publish gegen seinen Stream-Key authentifiziert wird.</p>
+        </div>
+        <div class="bench-highlight">
+          <strong>100&nbsp;%</strong>
+          <span>der Frames an jeden Zuschauer</span>
+          <p>Volle 30 fps Video plus Audio für alle 100 gleichzeitigen Zuschauer, rund 110 Mbit/s weitergeleitet auf 4 vCPUs.</p>
+        </div>
+      </div>
+      <div class="bench-chart">
+        <h3>Join-Latenz, 100 gleichzeitige Zuschauer</h3>
+        <p class="bench-note">Verbindungsaufbau bis zum ersten Frame, Durchschnitt. Weniger ist besser.</p>
+        <?php echo benchBars(array_map(fn($r) => $r[0], OPENRTMP_BENCH_JOIN[100]), fn($v) => benchMs($v, 'de')); ?>
+      </div>
+      <div class="center-link"><a href="/de/benchmarks/" class="btn btn-primary">Alle Benchmark-Ergebnisse ansehen</a></div>
     </div>
   </section>
 

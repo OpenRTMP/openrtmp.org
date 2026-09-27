@@ -67,6 +67,7 @@ $alternatePaths = openrtmpAlternates($canonicalPath);
     <nav class="nav-links" aria-label="<?php echo t('Primary navigation'); ?>">
       <a href="<?php echo lurl('/quickstart/'); ?>"><?php echo t('Quickstart'); ?></a>
       <a href="<?php echo lurl('/guides/'); ?>"><?php echo t('Guides'); ?></a>
+      <a href="<?php echo lurl('/benchmarks/'); ?>"><?php echo t('Benchmarks'); ?></a>
       <a href="<?php echo lurl('/showcase/'); ?>"><?php echo t('Showcase'); ?></a>
       <a href="<?php echo lurl('/docs/'); ?>"><?php echo t('Docs'); ?></a>
       <a href="<?php echo lurl('/download/'); ?>"><?php echo t('Download'); ?></a>
@@ -82,7 +83,6 @@ $alternatePaths = openrtmpAlternates($canonicalPath);
       </span>
     </nav>
     <div class="nav-cta">
-      <a href="https://github.com/OpenRTMP" target="_blank" rel="noopener" class="btn btn-ghost"><?php echo t('View on GitHub'); ?></a>
       <a href="<?php echo lurl('/quickstart/'); ?>" class="btn btn-primary"><?php echo t('Run with Docker'); ?></a>
     </div>
     <button class="nav-toggle" aria-label="<?php echo t('Toggle navigation'); ?>" aria-expanded="false">&#9776;</button>

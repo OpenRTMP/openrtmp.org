@@ -84,6 +84,7 @@ include_once __DIR__ . '/../../includes/header.php';
         <p>For OpenRTMP-specific testing, see <a href="/guides/hevc-streaming-obs/">HEVC with OBS</a> and <a href="/guides/av1-over-rtmp/">AV1 over RTMP</a>.</p>
 
         <h2 id="benchmarks">Do not choose from feature tables alone</h2>
+        <p>Our own measurements of OpenRTMP, MediaMTX, SRS, nginx-rtmp and LiveForge are on the <a href="/benchmarks/">benchmarks page</a>.</p>
         <p>Run the candidates under the workload you actually care about. Useful measurements include:</p>
         <ul>
           <li>Publisher connection and reconnect behavior.</li>

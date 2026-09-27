@@ -25,6 +25,7 @@ $structuredData = [
   ]
 ];
 include_once __DIR__ . '/includes/header.php';
+require_once __DIR__ . '/includes/benchmarks-data.php';
 ?>
 
 <main>
@@ -49,6 +50,39 @@ include_once __DIR__ . '/includes/header.php';
         <div class="stat"><strong>Rust + C</strong><span>native API and FFI</span></div>
         <div class="stat"><strong>MIT</strong><span>commercial-friendly license</span></div>
       </div>
+    </div>
+  </section>
+
+  <section id="benchmarks" style="padding-top: 24px;">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Benchmarks</span>
+        <h2>The fastest RTMP server in our comparison</h2>
+        <p><code>librtmp2-server</code> against nginx-rtmp, MediaMTX, SRS 8.0 and LiveForge on the same machine, with the same client and the same real H.264/AAC stream. It leads every latency row.</p>
+      </div>
+      <div class="bench-highlights">
+        <div class="bench-highlight">
+          <strong><?php echo benchMs(OPENRTMP_BENCH_JOIN[100]['openrtmp'][0]); ?></strong>
+          <span>join latency with 100 viewers</span>
+          <p>3&times; faster than MediaMTX (<?php echo benchMs(OPENRTMP_BENCH_JOIN[100]['mediamtx'][0]); ?>), 25&times; faster than nginx-rtmp.</p>
+        </div>
+        <div class="bench-highlight">
+          <strong><?php echo benchNum(OPENRTMP_BENCH_HANDSHAKE['openrtmp'][0], 0); ?>/s</strong>
+          <span>connect + publish handshakes</span>
+          <p>1.8&times; MediaMTX and 16&times; nginx-rtmp, with every publish authenticated against its stream key.</p>
+        </div>
+        <div class="bench-highlight">
+          <strong>100%</strong>
+          <span>of frames to every viewer</span>
+          <p>Full 30 fps video plus audio for all 100 concurrent viewers, ~110 Mbps relayed on 4 vCPUs.</p>
+        </div>
+      </div>
+      <div class="bench-chart">
+        <h3>Join latency, 100 concurrent viewers</h3>
+        <p class="bench-note">Connect to first frame, average. Lower is better.</p>
+        <?php echo benchBars(array_map(fn($r) => $r[0], OPENRTMP_BENCH_JOIN[100]), fn($v) => benchMs($v)); ?>
+      </div>
+      <div class="center-link"><a href="/benchmarks/" class="btn btn-primary">See all benchmark results</a></div>
     </div>
   </section>
 
