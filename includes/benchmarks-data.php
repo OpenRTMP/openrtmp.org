@@ -20,7 +20,7 @@ const OPENRTMP_BENCH_SERVERS = [
 
 // Server key => [version, what it was built with or against, language].
 const OPENRTMP_BENCH_VERSIONS = [
-  'openrtmp' => ['0.6.0', 'librtmp2 0.10.2', 'Rust'],
+  'openrtmp' => ['0.6.1', 'librtmp2 0.10.2', 'Rust'],
   'mediamtx' => ['v1.21.1', '', 'Go'],
   'liveforge' => ['main @ 4e70fb3', '', 'Go'],
   'srs' => ['v8.0.48', '', 'C++'],
