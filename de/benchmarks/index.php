@@ -2,7 +2,7 @@
 $lang = 'de';
 $page = 'benchmarks';
 $pageTitle = 'RTMP-Server-Benchmarks — OpenRTMP gegen nginx-rtmp, MediaMTX, SRS und LiveForge';
-$pageDescription = 'librtmp2-server im Benchmark gegen nginx-rtmp, MediaMTX, SRS 8.0 und LiveForge: Publish- und Play-Handshakes, Join-Latenz bei 1, 25 und 100 gleichzeitigen Zuschauern sowie Join-Latenz, CPU und Speicher bei 500 und 1000 Zuschauern.';
+$pageDescription = 'Versionierte librtmp2-server-Benchmarks gegen nginx-rtmp, MediaMTX, SRS und LiveForge: Publish-/Play-Handshakes, Join-Latenz sowie CPU und Speicher bis 2000 Zuschauer.';
 $canonicalPath = '/de/benchmarks/';
 $ogType = 'article';
 $structuredData = [
@@ -18,20 +18,28 @@ $structuredData = [
 include_once __DIR__ . '/../../includes/header.php';
 require_once __DIR__ . '/../../includes/benchmarks-data.php';
 
+$requestedBenchRun = isset($_GET['run']) && is_string($_GET['run']) ? $_GET['run'] : null;
+$benchRunId = benchRunId($requestedBenchRun);
+$bench = benchRun($benchRunId);
+
 $L = [
-  'eyebrow' => 'Benchmarks &middot; ' . OPENRTMP_BENCH_DATE,
+  'eyebrow' => 'Benchmarks &middot; ' . $bench['date'],
   'h1' => 'Der schnellste RTMP-Server,',
   'h1_accent' => 'den wir gemessen haben.',
-  'lead' => '<code>librtmp2-server</code> gegen nginx-rtmp, MediaMTX, SRS 8.0 und LiveForge: dieselbe Maschine, derselbe RTMP-Client, derselbe echte H.264/AAC-Stream. Er verbindet Publisher und Player am schnellsten und führt beim Join mit 1, 25, 100 und 1000 Zuschauern.',
+  'lead' => '<code>librtmp2-server</code> gegen nginx-rtmp, MediaMTX, SRS und LiveForge: dieselbe Maschine, derselbe RTMP-Client, derselbe echte H.264/AAC-Stream. Wähle einen Benchmark-Snapshot, um die exakt verwendeten Server- und Bibliotheksversionen zu sehen.',
   'cta_results' => 'Zu den Ergebnissen',
   'cta_try' => 'Selbst ausprobieren',
+  'snapshot_eyebrow' => 'Benchmark-Historie',
+  'snapshot_h2' => 'Gemessene Version auswählen',
+  'snapshot_p' => 'Jeder Snapshot behält seine eigenen Versionen von librtmp2-server, librtmp2 und den Vergleichsservern. Werte aus unterschiedlichen Läufen werden nicht vermischt.',
+  'snapshot_latest' => 'Neuester',
   'kpi_join' => 'Join mit 100 Zuschauern',
   'kpi_handshake' => 'Connect + Publish',
   'kpi_rate' => 'Handshakes pro Sekunde',
   'kpi_frames' => 'Frames zugestellt',
   'kpi_faster' => '%s&times; schneller als %s',
   'kpi_more' => '%s&times; mehr als %s',
-  'kpi_frames_note' => 'an alle 1000 Zuschauer, ohne Verluste',
+  'kpi_frames_note' => 'an alle %d OpenRTMP-Zuschauer, ohne Verluste',
   'join_eyebrow' => 'Wiedergabe',
   'join_h2' => 'Join-Latenz der Zuschauer',
   'join_p' => 'Ein Publisher, dann verbinden sich 1, 25 oder 100 Zuschauer gleichzeitig. Gemessen vom Verbindungsaufbau bis zum ersten empfangenen Frame.',
@@ -52,9 +60,16 @@ $L = [
   'play_p' => '120 Connect- und Play-Handshakes mit 30 gleichzeitigen Verbindungen gegen einen laufenden Stream, bis <code>NetStream.Play.Start</code>. librtmp2-server prüft jeden Play gegen seinen eigenen Play-Key.',
   'play_latency' => 'Durchschnittliche Play-Handshake-Latenz',
   'play_rate' => 'Play-Handshakes pro Sekunde',
+  'lib_eyebrow' => 'Protokollbibliothek',
+  'lib_h2' => 'librtmp2 %s Microbenchmarks',
+  'lib_protocol' => 'Protokoll- und Codec-Pfade',
+  'lib_relay' => 'In-Process-Relay-Harness',
+  'lib_time' => 'Zeit',
+  'lib_throughput' => 'Durchsatz',
+  'lib_environment' => 'Umgebung',
   'load_eyebrow' => 'Unter Last',
-  'load_h2' => '500 und 1000 Zuschauer auf einem Stream',
-  'load_p' => 'Jeder Server hat jedem Zuschauer den vollständigen Stream geliefert, bei 1000 Zuschauern rund 1,1 Gbit/s. Der Unterschied liegt darin, wie schnell die Zuschauer drin sind und was der Server dafür braucht.',
+  'load_h2' => 'Lasttest auf einem Stream',
+  'load_p' => 'Laufspezifische Hinweise zur vollständigen Frame-Zustellung stehen beim ausgewählten Benchmark-Snapshot.',
   'load_panel' => 'Join-Latenz, CPU und Speicher',
   'load_join' => 'Durchschnittliche Join-Latenz',
   'load_cpu' => 'Server-CPU (100 % = ein Kern)',
