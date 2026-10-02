@@ -384,6 +384,80 @@
 
 .bench-section { padding: 72px 0; }
 
+.bench-snapshot-section {
+  padding: 48px 0 12px;
+}
+
+.bench-snapshot-section .section-head {
+  margin-bottom: 20px;
+}
+
+.bench-snapshots {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.bench-snapshot {
+  display: grid;
+  gap: 5px;
+  padding: 18px 20px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--text);
+  text-decoration: none;
+  transition: border-color 160ms ease, transform 160ms ease, background 160ms ease;
+}
+
+.bench-snapshot:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 176, 46, 0.45);
+}
+
+.bench-snapshot.is-selected {
+  border-color: rgba(255, 92, 53, 0.55);
+  background: linear-gradient(135deg, rgba(255, 92, 53, 0.12), rgba(255, 176, 46, 0.04));
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.bench-snapshot-version {
+  font-family: var(--mono);
+  font-weight: 700;
+}
+
+.bench-snapshot-lib {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+}
+
+.bench-snapshot-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+  color: #7d8b9b;
+  font-size: 0.78rem;
+}
+
+.bench-snapshot-meta span {
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--surface-2);
+}
+
+.bench-snapshot-note {
+  margin: 14px 0 0;
+  padding: 14px 16px;
+  border-left: 3px solid var(--accent-2);
+  border-radius: 0 10px 10px 0;
+  background: var(--surface);
+  color: var(--text-dim);
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+
 .bench-panel {
   padding: 28px;
   border: 1px solid var(--border);
