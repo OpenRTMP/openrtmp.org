@@ -83,7 +83,6 @@ $maybeNum = fn($v, int $d) => $v === null ? '—' : $num((float) $v, $d);
           <span class="bench-snapshot-meta">
             <time datetime="<?php echo $h($run['date']); ?>"><?php echo $h($run['date']); ?></time>
             <?php if ($runId === OPENRTMP_BENCH_LATEST): ?><span><?php echo $L['snapshot_latest']; ?></span><?php endif; ?>
-            <?php if (!$run['published_server_release']): ?><span><?php echo $L['snapshot_main']; ?></span><?php endif; ?>
           </span>
         </a>
         <?php endforeach; ?>
