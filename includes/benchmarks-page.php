@@ -19,6 +19,9 @@ $versions = $bench['versions'];
 $maxLoadViewers = max(array_keys($loadData));
 $noteKey = $lang === 'de' ? 'note_de' : 'note_en';
 $loadNoteKey = $lang === 'de' ? 'load_note_de' : 'load_note_en';
+$libBenchNoteKey = $lang === 'de' ? 'lib_bench_note_de' : 'lib_bench_note_en';
+$libProtocol = $bench['lib_protocol'];
+$libRelay = $bench['lib_relay'];
 $mib = fn(float $v) => $num($v, 1) . ' MiB';
 $pct = fn(float $v) => $num($v, 1) . ' %';
 $maybeMs = fn($v) => $v === null ? '—' : $ms((float) $v);
@@ -156,6 +159,41 @@ $maybeNum = fn($v, int $d) => $v === null ? '—' : $num((float) $v, $d);
           <?php echo benchBars(array_map(fn($r) => $r[0], $ph), fn($v) => $num($v, 0) . '/s', $lang, true); ?>
         </div>
       </div>
+    </div>
+  </section>
+
+  <section id="library" class="bench-section">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow"><?php echo $L['lib_eyebrow']; ?></span>
+        <h2><?php echo sprintf($L['lib_h2'], $h($bench['lib_version'])); ?></h2>
+        <p><?php echo $h($bench[$libBenchNoteKey]); ?></p>
+      </div>
+      <div class="bench-duo">
+        <div class="bench-table-wrap">
+          <table class="bench-table">
+            <caption><?php echo $L['lib_protocol']; ?></caption>
+            <thead><tr><th>Benchmark</th><th><?php echo $L['lib_time']; ?></th><th><?php echo $L['lib_throughput']; ?></th></tr></thead>
+            <tbody>
+              <?php foreach ($libProtocol as [$name, $time, $throughput]): ?>
+              <tr><td><code><?php echo $h($name); ?></code></td><td><?php echo $h($time); ?></td><td><?php echo $h($throughput); ?></td></tr>
+              <?php endforeach; ?>
+            </tbody>
+          </table>
+        </div>
+        <div class="bench-table-wrap">
+          <table class="bench-table">
+            <caption><?php echo $L['lib_relay']; ?></caption>
+            <thead><tr><th>Benchmark</th><th><?php echo $L['lib_time']; ?></th><th><?php echo $L['lib_throughput']; ?></th></tr></thead>
+            <tbody>
+              <?php foreach ($libRelay as [$name, $time, $throughput]): ?>
+              <tr><td><code><?php echo $h($name); ?></code></td><td><?php echo $h($time); ?></td><td><?php echo $h($throughput); ?></td></tr>
+              <?php endforeach; ?>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <p class="bench-foot"><?php echo $L['lib_environment']; ?>: <?php echo $h($bench['lib_bench_environment']); ?></p>
     </div>
   </section>
 
@@ -349,7 +387,7 @@ $maybeNum = fn($v, int $d) => $v === null ? '—' : $num((float) $v, $d);
       <div class="bench-sources">
         <a href="<?php echo $h($bench['source_url']); ?>" target="_blank" rel="noopener" class="btn btn-ghost"><?php echo $L['src_server']; ?></a>
         <a href="<?php echo OPENRTMP_BENCH_SCRIPT_URL; ?>" target="_blank" rel="noopener" class="btn btn-ghost"><?php echo $L['src_script']; ?></a>
-        <a href="<?php echo OPENRTMP_BENCH_LIB_SOURCE_URL; ?>" target="_blank" rel="noopener" class="btn btn-ghost"><?php echo $L['src_lib']; ?></a>
+        <a href="<?php echo $h($bench['lib_bench_source_url']); ?>" target="_blank" rel="noopener" class="btn btn-ghost"><?php echo $L['src_lib']; ?></a>
       </div>
     </div>
   </section>
