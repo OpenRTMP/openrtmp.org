@@ -27,7 +27,7 @@ include_once __DIR__ . '/../../../includes/header.php';
   <section class="content-section" style="padding-top: 0;">
     <div class="container article-layout">
       <article class="prose">
-        <div class="callout warning"><strong>Status des Clusterings:</strong> Clustering kam mit Server und Panel <code>0.2.0</code> und sollte weiterhin sorgfältig validiert werden. Testen Sie Failover, Publisher-Reconnect und Firewall-Pfade gründlich. Eine ungültige Cluster-Konfiguration lässt den Start hart fehlschlagen — es gibt keinen stillen Rückfall auf Standalone.</div>
+        <div class="callout warning"><strong>Status des Clusterings:</strong> Clustering kam mit Server <code>0.2.0</code> und sollte weiterhin sorgfältig validiert werden. Testen Sie Failover, Publisher-Reconnect und Firewall-Pfade gründlich. Eine ungültige Cluster-Konfiguration lässt den Start hart fehlschlagen — es gibt keinen stillen Rückfall auf Standalone.</div>
 
         <h2 id="what-it-is">Was Clustering bietet</h2>
         <p>Mit <code>CLUSTER_ENABLED=true</code> behält jeder Node seine eigene SQLite-Datei, während dauerhafte Änderungen (Streams, Zuschauer, Tokens, Ownership) über Raft laufen. Live-Frames verlassen den Publisher-Owner über das Media-Mesh, sodass sich Player mit anderen gesunden Nodes verbinden können.</p>
@@ -52,7 +52,7 @@ include_once __DIR__ . '/../../../includes/header.php';
         <p>Geben Sie <code>1940</code> und <code>1941</code> zwischen den Cluster-Peers frei. Halten Sie die Admin-API eingeschränkt; für die RTMP-Freigabe gelten dieselben Regeln wie bei einem Standalone-Deployment.</p>
 
         <h2 id="bootstrap">1. Ersten Voter bootstrappen</h2>
-        <p>Starten Sie den ersten Node mit einem Shared Secret (mindestens 16 Zeichen) und veröffentlichen Sie Adressen, die Peers erreichen können:</p>
+        <p>Starten Sie den ersten Node mit einem Shared Secret (32-256 Zeichen: ASCII-Buchstaben, Ziffern, Bindestrich oder Unterstrich) und veröffentlichen Sie Adressen, die Peers erreichen können:</p>
         <pre><code>CLUSTER_ENABLED=true
 CLUSTER_NODE_ID=1
 CLUSTER_BOOTSTRAP=true
