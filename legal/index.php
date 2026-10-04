@@ -2,6 +2,7 @@
 $page = 'legal';
 $pageTitle = 'Legal Notice — OpenRTMP';
 $pageDescription = 'Contact information for openrtmp.org (OpenRTMP).';
+$canonicalPath = '/legal/';
 include_once __DIR__ . '/../includes/header.php';
 ?>
 

@@ -1,6 +1,19 @@
+DirectoryIndex index.php index.html
+
 RewriteEngine On
+
 RewriteCond %{HTTP_HOST} ^www.openrtmp.org [NC]
 RewriteRule ^(.*)$ https://openrtmp.org/$1 [L,R=301]
+
+# Old extension-based URLs -> clean directory URLs
+RewriteCond %{THE_REQUEST} \s/+index\.php(?:[?\s])
+RewriteRule ^index\.php$ / [R=301,L]
+RewriteRule ^docs\.php$ /docs/ [R=301,L]
+RewriteRule ^download\.php$ /download/ [R=301,L]
+RewriteCond %{THE_REQUEST} \s/+docs/index\.php(?:[?\s])
+RewriteRule ^docs/index\.php$ /docs/ [R=301,L]
+RewriteCond %{THE_REQUEST} \s/+download/index\.php(?:[?\s])
+RewriteRule ^download/index\.php$ /download/ [R=301,L]
 
 # ===== BLOCK REPO METADATA FILES =====
 <FilesMatch "(\.md$|^renovate\.json$|^\.sftp_upload_action_hashes$)">
