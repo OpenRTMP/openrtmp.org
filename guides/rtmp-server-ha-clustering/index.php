@@ -25,7 +25,7 @@ include_once __DIR__ . '/../../includes/header.php';
   <section class="content-section" style="padding-top: 0;">
     <div class="container article-layout">
       <article class="prose">
-        <div class="callout warning"><strong>Clustering status:</strong> clustering landed in server and panel <code>0.2.0</code> and remains an area that should be validated carefully. Test failover, publisher reconnect, and firewall paths thoroughly. Invalid cluster configuration fails startup hard — there is no silent fallback to standalone.</div>
+        <div class="callout warning"><strong>Clustering status:</strong> clustering landed in server <code>0.2.0</code> and remains an area that should be validated carefully. Test failover, publisher reconnect, and firewall paths thoroughly. Invalid cluster configuration fails startup hard — there is no silent fallback to standalone.</div>
 
         <h2 id="what-it-is">What clustering provides</h2>
         <p>With <code>CLUSTER_ENABLED=true</code>, each node keeps its own SQLite file while durable mutations (streams, viewers, tokens, ownership) go through Raft. Live frames leave the publisher owner over the media mesh so players can attach to other healthy nodes.</p>
@@ -50,7 +50,7 @@ include_once __DIR__ . '/../../includes/header.php';
         <p>Expose <code>1940</code> and <code>1941</code> between cluster peers. Keep the admin API restricted; RTMP exposure follows the same rules as a standalone deploy.</p>
 
         <h2 id="bootstrap">1. Bootstrap the first voter</h2>
-        <p>Start the first node with a shared secret (at least 16 characters) and advertise addresses peers can dial:</p>
+        <p>Start the first node with a shared secret (32-256 characters: ASCII letters, digits, hyphen or underscore) and advertise addresses peers can dial:</p>
         <pre><code>CLUSTER_ENABLED=true
 CLUSTER_NODE_ID=1
 CLUSTER_BOOTSTRAP=true
