@@ -74,6 +74,8 @@ let config = ServerConfig {
     tls_key_file: std::ptr::null(),
     tls_ca_file: std::ptr::null(),
     tls_insecure: 0,
+    max_pending_tls_per_addr: 0,
+    max_connections_per_addr: 0,
 };
 
 let mut server = Server::new(config)?;
@@ -83,9 +85,10 @@ server.listen("0.0.0.0:1935")?;
 while running {
     server.poll(100)?;
 }</code></pre>
-        <p>Für Sanitizer-Builds während der Entwicklung:</p>
-        <pre><code>RUSTFLAGS="-Z sanitizer=address" cargo test
-RUSTFLAGS="-Z sanitizer=undefined" cargo test</code></pre>
+        <p>Für Sanitizer-Builds während der Entwicklung (AddressSanitizer benötigt Nightly und <code>-Zbuild-std</code>):</p>
+        <pre><code>RUSTFLAGS="-Zsanitizer=address" cargo +nightly test --lib -Zbuild-std \
+  --target x86_64-unknown-linux-gnu --all-features</code></pre>
+        <p><code>rustc</code> kennt keinen <code>undefined</code>-Sanitizer-Wert; auf Stable stattdessen Overflow-Checks verwenden (<code>RUSTFLAGS="-C overflow-checks=on" cargo test --lib --all-features</code>).</p>
 
         <h2 id="state-machine">Verbindungs-Zustandsautomat</h2>
         <p>Jede Verbindung durchläuft eine feste Folge von Zuständen, während Handshake, Capability-Aushandlung und Stream-Lebenszyklus fortschreiten:</p>
@@ -196,10 +199,10 @@ CLUSTER_MEDIA_ADVERTISE_ADDR=10.0.0.1:1941</code></pre>
             <tbody>
               <tr><td>Stream-Verwaltung</td><td>Streams über <code>/api/v1/streams</code> anlegen und löschen</td></tr>
               <tr><td>Kopieren mit einem Klick</td><td>Publish-URL, Stream-Key, Play-URL und Statistik-URL</td></tr>
-              <tr><td>Live-Statistiken</td><td>Bitrate, Auflösung, Codec, Laufzeit, RTT, abgefragt von <code>/stats?key=...</code></td></tr>
+              <tr><td>Live-Statistiken</td><td>Bitrate, Auflösung, Codec, Laufzeit, RTT, abgefragt von <code>/api/v1/streams/{id}/stats</code> (Bearer-authentifiziert)</td></tr>
               <tr><td>Cluster-UI</td><td>wenn Health <code>cluster.enabled=true</code> meldet: Quorum-Übersicht, Node Drain/Resume/Remove, Stream-Owner/Epoch-Platzierung</td></tr>
               <tr><td>Login-Sperre</td><td>optionaler Admin-Login (standardmäßig <code>REQUIRE_LOGIN=True</code>)</td></tr>
-              <tr><td>Sicherheit</td><td>CSRF-Schutz, Rate-Limiting (in Docker Redis-gestützt), verschlüsselte Key-Anzeige</td></tr>
+              <tr><td>Sicherheit</td><td>CSRF-Schutz, Rate-Limiting (in Docker Redis-gestützt)</td></tr>
             </tbody>
           </table>
         </div>
@@ -310,7 +313,7 @@ docker compose -f compose.quickstart.yml up -d</code></pre>
             </tbody>
           </table>
         </div>
-        <p>Um RTMPS zusätzlich zu unverschlüsseltem RTMP zu aktivieren, setzen Sie <code>LRTMP2_TLS_ENABLED=true</code> (oder <code>TLS_ENABLED=true</code> in <code>.env</code>), mounten Zertifikat- und Key-Dateien, geben Port <code>1936</code> frei und setzen <code>RTMPS_BIND=0.0.0.0:1936</code> wie in <code>librtmp2-server/docker-compose.yml</code>. Das Panel zeigt <code>rtmps://</code>-URLs nur an, wenn <code>GET /api/v1/health</code> <code>rtmps_enabled: true</code> meldet (und nutzt <code>LRTMP2_RTMPS_PORT</code>, Standard <code>1936</code>).</p>
+        <p>Um RTMPS zusätzlich zu unverschlüsseltem RTMP zu aktivieren, setzen Sie <code>LRTMP2_TLS_ENABLED=true</code> (oder <code>TLS_ENABLED=true</code> in <code>.env</code>), mounten Zertifikat- und Key-Dateien, geben Port <code>1936</code> frei und setzen <code>LRTMP2_RTMPS_BIND=0.0.0.0:1936</code> wie in <code>librtmp2-server/docker-compose.yml</code>. Das Panel zeigt <code>rtmps://</code>-URLs nur an, wenn <code>GET /api/v1/health</code> <code>rtmps_enabled: true</code> meldet (und nutzt <code>LRTMP2_RTMPS_PORT</code>, Standard <code>1936</code>).</p>
         <p>Für einen Multi-Node-Cluster geben Sie <code>1940</code> und <code>1941</code> zwischen den Peers frei, setzen die unter <a href="#cluster">HA-Clustering</a> beschriebenen <code>CLUSTER_*</code>-Variablen und geben jedem Node ein eigenes SQLite-Volume. Bootstrap- und Join-Schritte stehen in der <a href="/de/guides/rtmp-server-ha-clustering/">Clustering-Anleitung</a>.</p>
 
         <h2 id="abi">API &amp; Versionierung</h2>

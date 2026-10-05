@@ -73,6 +73,8 @@ let config = ServerConfig {
     tls_key_file: std::ptr::null(),
     tls_ca_file: std::ptr::null(),
     tls_insecure: 0,
+    max_pending_tls_per_addr: 0,
+    max_connections_per_addr: 0,
 };
 
 let mut server = Server::new(config)?;
@@ -82,9 +84,10 @@ server.listen("0.0.0.0:1935")?;
 while running {
     server.poll(100)?;
 }</code></pre>
-        <p>For sanitizer builds during development:</p>
-        <pre><code>RUSTFLAGS="-Z sanitizer=address" cargo test
-RUSTFLAGS="-Z sanitizer=undefined" cargo test</code></pre>
+        <p>For sanitizer builds during development (AddressSanitizer requires nightly and <code>-Zbuild-std</code>):</p>
+        <pre><code>RUSTFLAGS="-Zsanitizer=address" cargo +nightly test --lib -Zbuild-std \
+  --target x86_64-unknown-linux-gnu --all-features</code></pre>
+        <p><code>rustc</code> has no <code>undefined</code> sanitizer value; on stable use overflow checks instead (<code>RUSTFLAGS="-C overflow-checks=on" cargo test --lib --all-features</code>).</p>
 
         <h2 id="state-machine">Connection State Machine</h2>
         <p>Every connection moves through a fixed set of states as the handshake, capability negotiation, and stream lifecycle progress:</p>
@@ -195,10 +198,10 @@ CLUSTER_MEDIA_ADVERTISE_ADDR=10.0.0.1:1941</code></pre>
             <tbody>
               <tr><td>Stream management</td><td>create and delete streams via <code>/api/v1/streams</code></td></tr>
               <tr><td>One-click copy</td><td>publish URL, stream key, play URL, and stats URL</td></tr>
-              <tr><td>Live stats</td><td>bitrate, resolution, codec, uptime, RTT polled from <code>/stats?key=...</code></td></tr>
+              <tr><td>Live stats</td><td>bitrate, resolution, codec, uptime, RTT polled from <code>/api/v1/streams/{id}/stats</code> (Bearer-authenticated)</td></tr>
               <tr><td>Cluster UI</td><td>when health reports <code>cluster.enabled=true</code>: quorum overview, node drain/resume/remove, stream owner/epoch placement</td></tr>
               <tr><td>Login gate</td><td>optional admin login (<code>REQUIRE_LOGIN=True</code> by default)</td></tr>
-              <tr><td>Security</td><td>CSRF protection, rate limiting (Redis-backed in Docker), encrypted key display</td></tr>
+              <tr><td>Security</td><td>CSRF protection, rate limiting (Redis-backed in Docker)</td></tr>
             </tbody>
           </table>
         </div>
@@ -309,7 +312,7 @@ docker compose -f compose.quickstart.yml up -d</code></pre>
             </tbody>
           </table>
         </div>
-        <p>To enable RTMPS alongside plaintext RTMP, set <code>LRTMP2_TLS_ENABLED=true</code> (or <code>TLS_ENABLED=true</code> in <code>.env</code>), mount cert/key files, expose port <code>1936</code>, and set <code>RTMPS_BIND=0.0.0.0:1936</code> as in <code>librtmp2-server/docker-compose.yml</code>. The panel shows <code>rtmps://</code> URLs only when <code>GET /api/v1/health</code> reports <code>rtmps_enabled: true</code> (and uses <code>LRTMP2_RTMPS_PORT</code>, default <code>1936</code>).</p>
+        <p>To enable RTMPS alongside plaintext RTMP, set <code>LRTMP2_TLS_ENABLED=true</code> (or <code>TLS_ENABLED=true</code> in <code>.env</code>), mount cert/key files, expose port <code>1936</code>, and set <code>LRTMP2_RTMPS_BIND=0.0.0.0:1936</code> as in <code>librtmp2-server/docker-compose.yml</code>. The panel shows <code>rtmps://</code> URLs only when <code>GET /api/v1/health</code> reports <code>rtmps_enabled: true</code> (and uses <code>LRTMP2_RTMPS_PORT</code>, default <code>1936</code>).</p>
         <p>For a multi-node cluster, expose <code>1940</code> and <code>1941</code> between peers, set the <code>CLUSTER_*</code> variables described under <a href="#cluster">HA clustering</a>, and keep each node on its own SQLite volume. See the <a href="/guides/rtmp-server-ha-clustering/">clustering guide</a> for bootstrap and join steps.</p>
 
         <h2 id="abi">API &amp; Versioning</h2>
