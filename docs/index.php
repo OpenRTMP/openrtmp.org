@@ -85,8 +85,8 @@ while running {
     server.poll(100)?;
 }</code></pre>
         <p>The two per-address limits are <em>not</em> unlimited when left at <code>0</code>. Zero means &ldquo;use the built-in default&rdquo;, which is <strong>4</strong> (<code>DEFAULT_MAX_CONNECTIONS_PER_ADDR</code>, and <code>DEFAULT_MAX_PENDING_TLS_PER_ADDR</code> tracks it). With the values above a fifth client from the same source IP is rejected, and the same cap applies to incomplete TLS handshakes once TLS is enabled. Raise them explicitly when many clients share one address &mdash; behind NAT, a load balancer or a reverse proxy &mdash; or lower them to stop a single peer monopolising the connection table.</p>
-        <p>For sanitizer builds during development (AddressSanitizer requires nightly and <code>-Zbuild-std</code>). Cargo cannot rebuild the standard library without the <code>rust-src</code> component, so install it first:</p>
-        <pre><code>rustup component add rust-src --toolchain nightly</code></pre>
+        <p>For sanitizer builds during development (AddressSanitizer requires nightly and <code>-Zbuild-std</code>). Cargo cannot rebuild the standard library for <code>-Zbuild-std</code> without the <code>rust-src</code> component, so install the nightly toolchain with it:</p>
+        <pre><code>rustup toolchain install nightly --component rust-src</code></pre>
         <pre><code>RUSTFLAGS="-Zsanitizer=address" cargo +nightly test --lib -Zbuild-std \
   --target x86_64-unknown-linux-gnu --all-features</code></pre>
         <p><code>rustc</code> has no <code>undefined</code> sanitizer value; on stable use overflow checks instead (<code>RUSTFLAGS="-C overflow-checks=on" cargo test --lib --all-features</code>).</p>
