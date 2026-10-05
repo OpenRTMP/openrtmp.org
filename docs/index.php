@@ -84,7 +84,8 @@ server.listen("0.0.0.0:1935")?;
 while running {
     server.poll(100)?;
 }</code></pre>
-        <p>For sanitizer builds during development (AddressSanitizer requires nightly and <code>-Zbuild-std</code>):</p>
+        <p>For sanitizer builds during development (AddressSanitizer requires nightly and <code>-Zbuild-std</code>). Cargo cannot rebuild the standard library without the <code>rust-src</code> component, so install it first:</p>
+        <pre><code>rustup component add rust-src --toolchain nightly</code></pre>
         <pre><code>RUSTFLAGS="-Zsanitizer=address" cargo +nightly test --lib -Zbuild-std \
   --target x86_64-unknown-linux-gnu --all-features</code></pre>
         <p><code>rustc</code> has no <code>undefined</code> sanitizer value; on stable use overflow checks instead (<code>RUSTFLAGS="-C overflow-checks=on" cargo test --lib --all-features</code>).</p>
