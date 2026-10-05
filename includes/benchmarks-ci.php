@@ -31,32 +31,36 @@ function benchCiBase(): string
   return rtrim(defined('OPENRTMP_BENCH_DATA_BASE') ? OPENRTMP_BENCH_DATA_BASE : 'https://raw.githubusercontent.com/OpenRTMP', '/');
 }
 
+/** Read a document through the file stream wrapper (file:// bases in tests, or no curl). */
+function benchCiReadStream(string $url): string|false
+{
+  $context = str_starts_with($url, 'file://') ? null : stream_context_create(['http' => ['timeout' => 5]]);
+  return @file_get_contents($url, false, $context, 0, OPENRTMP_BENCH_CI_MAX_BYTES + 1);
+}
+
+function benchCiReadCurl(string $url): string|false
+{
+  $ch = curl_init($url);
+  curl_setopt_array($ch, [
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_CONNECTTIMEOUT => 3,
+    CURLOPT_TIMEOUT => 5,
+    CURLOPT_FOLLOWLOCATION => false,
+    CURLOPT_FAILONERROR => true,
+    CURLOPT_USERAGENT => 'openrtmp.org benchmark preview',
+  ]);
+  $body = curl_exec($ch);
+  curl_close($ch);
+  return $body;
+}
+
 /** GET a small document; null on any failure. */
 function benchCiHttpGet(string $url): ?string
 {
-  $body = false;
-  if (str_starts_with($url, 'file://')) {
-    $body = @file_get_contents($url, false, null, 0, OPENRTMP_BENCH_CI_MAX_BYTES + 1);
-  } elseif (function_exists('curl_init')) {
-    $ch = curl_init($url);
-    curl_setopt_array($ch, [
-      CURLOPT_RETURNTRANSFER => true,
-      CURLOPT_CONNECTTIMEOUT => 3,
-      CURLOPT_TIMEOUT => 5,
-      CURLOPT_FOLLOWLOCATION => false,
-      CURLOPT_FAILONERROR => true,
-      CURLOPT_USERAGENT => 'openrtmp.org benchmark preview',
-    ]);
-    $body = curl_exec($ch);
-    curl_close($ch);
-  } else {
-    $context = stream_context_create(['http' => ['timeout' => 5, 'ignore_errors' => false]]);
-    $body = @file_get_contents($url, false, $context, 0, OPENRTMP_BENCH_CI_MAX_BYTES + 1);
-  }
-  if (!is_string($body) || $body === '' || strlen($body) > OPENRTMP_BENCH_CI_MAX_BYTES) {
-    return null;
-  }
-  return $body;
+  $viaCurl = !str_starts_with($url, 'file://') && function_exists('curl_init');
+  $body = $viaCurl ? benchCiReadCurl($url) : benchCiReadStream($url);
+  $usable = is_string($body) && $body !== '' && strlen($body) <= OPENRTMP_BENCH_CI_MAX_BYTES;
+  return $usable ? $body : null;
 }
 
 function benchCiDecode(?string $body): ?array
@@ -71,7 +75,7 @@ function benchCiDecode(?string $body): ?array
 /** Fetch one JSON document with an on-disk cache; null if unavailable. */
 function benchCiFetchJson(string $url): ?array
 {
-  $cache = sys_get_temp_dir() . '/openrtmp-bench-' . md5($url) . '.json';
+  $cache = sys_get_temp_dir() . '/openrtmp-bench-' . hash('sha256', $url) . '.json';
   $failed = $cache . '.failed';
   $age = is_file($cache) ? time() - (int) @filemtime($cache) : PHP_INT_MAX;
   if ($age < OPENRTMP_BENCH_CI_TTL) {
@@ -181,31 +185,30 @@ function benchCiEnv($env): ?array
 
 function benchCiTime(float $ns): string
 {
-  if ($ns < 1e3) {
-    return ($ns < 10 ? number_format($ns, 2) : number_format($ns, 0)) . ' ns';
-  }
-  if ($ns < 1e6) {
-    return number_format($ns / 1e3, 2) . ' µs';
-  }
-  if ($ns < 1e9) {
-    return number_format($ns / 1e6, 1) . ' ms';
+  // [upper bound in ns, divisor, decimals, unit]
+  foreach ([[1e3, 1, $ns < 10 ? 2 : 0, 'ns'], [1e6, 1e3, 2, 'µs'], [1e9, 1e6, 1, 'ms']] as [$limit, $divisor, $decimals, $unit]) {
+    if ($ns < $limit) {
+      return number_format($ns / $divisor, $decimals) . ' ' . $unit;
+    }
   }
   return number_format($ns / 1e9, 2) . ' s';
+}
+
+/** Items per second for a per-iteration count, or null if it is not a positive number. */
+function benchCiRate($count, float $ns): ?float
+{
+  return is_numeric($count) && $count > 0 && $ns > 0 ? $count / ($ns * 1e-9) : null;
 }
 
 function benchCiThroughput(array $b): string
 {
   $ns = (float) ($b['ns'] ?? 0);
-  if ($ns <= 0) {
-    return '—';
+  $bytes = benchCiRate($b['bytes'] ?? null, $ns);
+  $elements = benchCiRate($b['elements'] ?? null, $ns);
+  if ($bytes !== null) {
+    return '~' . number_format($bytes / 1048576, 0, '.', '') . ' MiB/s';
   }
-  if (isset($b['bytes']) && is_numeric($b['bytes']) && $b['bytes'] > 0) {
-    return '~' . number_format($b['bytes'] / ($ns * 1e-9) / 1048576, 0, '.', '') . ' MiB/s';
-  }
-  if (isset($b['elements']) && is_numeric($b['elements']) && $b['elements'] > 0) {
-    return '~' . number_format($b['elements'] / ($ns * 1e-9), 0, '.', '') . ' elem/s';
-  }
-  return '—';
+  return $elements !== null ? '~' . number_format($elements, 0, '.', '') . ' elem/s' : '—';
 }
 
 /** @return list<array{string,string,string}> */
@@ -225,44 +228,40 @@ function benchCiLibRows($suite): array
 }
 
 /**
- * Build the preview snapshot from the two results files, or null if the
- * librtmp2-server file does not carry a usable sweep.
+ * Validate the sweep and pull out the rows the page needs; null if anything
+ * the page relies on is missing.
  */
-function benchCiSnapshot(array $srv, ?array $lib): ?array
+function benchCiSweepRows(array $srv): ?array
 {
-  if (($srv['schema'] ?? null) !== 1 || !is_array($srv['sweep'] ?? null)) {
-    return null;
-  }
-  $sweep = $srv['sweep'];
-  $handshake = benchCiRows($sweep['handshake'] ?? null, 5);
-  $playHandshake = benchCiRows($sweep['play_handshake'] ?? null, 5);
-  $join = benchCiTiers($sweep['join'] ?? null, 3);
-  $load = benchCiTiers($sweep['load'] ?? null, 5);
+  $sweep = $srv['sweep'] ?? null;
   $env = benchCiEnv($srv['environment'] ?? null);
-  if (!isset($handshake['openrtmp'], $playHandshake['openrtmp'], $join[100]['openrtmp']) || $load === [] || $env === null) {
+  $valid = ($srv['schema'] ?? null) === 1 && is_array($sweep) && $env !== null
+    && preg_match('/^\d{4}-\d{2}-\d{2}/', (string) ($srv['date'] ?? ''), $m) === 1;
+  if (!$valid) {
     return null;
   }
-  foreach ($load as $rows) {
-    if (!isset($rows['openrtmp'])) {
-      return null;
-    }
-  }
-  if (!preg_match('/^\d{4}-\d{2}-\d{2}/', (string) ($srv['date'] ?? ''), $m)) {
-    return null;
-  }
-  $date = $m[0];
-  $sha = benchCiSha($srv['commit'] ?? '');
-  $serverVersion = benchCiString($srv['version'] ?? '', 40);
-  $depLib = benchCiString($srv['deps']['librtmp2'] ?? '', 40);
+  $rows = [
+    'handshake' => benchCiRows($sweep['handshake'] ?? null, 5),
+    'play_handshake' => benchCiRows($sweep['play_handshake'] ?? null, 5),
+    'join' => benchCiTiers($sweep['join'] ?? null, 3),
+    'load' => benchCiTiers($sweep['load'] ?? null, 5),
+  ];
+  $complete = isset($rows['handshake']['openrtmp'], $rows['play_handshake']['openrtmp'], $rows['join'][100]['openrtmp'])
+    && $rows['load'] !== []
+    && count(array_filter($rows['load'], fn($tier) => isset($tier['openrtmp']))) === count($rows['load']);
+  return $complete ? $rows + ['env' => $env, 'date' => $m[0], 'versions' => $sweep['versions'] ?? []] : null;
+}
 
-  // Server versions: only servers that actually have rows in this run.
-  $present = array_keys($handshake + $playHandshake);
+/** Per-server version rows for the setup table; only servers that have rows in this run. */
+function benchCiVersions(array $rows, string $sha, string $serverVersion): array
+{
+  $present = array_keys($rows['handshake'] + $rows['play_handshake']);
   $versions = [];
   foreach (array_keys(OPENRTMP_BENCH_SERVERS) as $key) {
     if (!in_array($key, $present, true)) {
       continue;
     }
-    $v = $sweep['versions'][$key] ?? [];
+    $v = $rows['versions'][$key] ?? [];
     $row = [
       benchCiString($v['version'] ?? '—', 80),
       benchCiString($v['detail'] ?? '', 120),
@@ -271,64 +270,97 @@ function benchCiSnapshot(array $srv, ?array $lib): ?array
     if ($key === 'openrtmp') {
       $row[0] = 'main @ ' . ($sha !== '' ? $sha : '?') . ($serverVersion !== '' ? ' (' . $serverVersion . ')' : '');
       if ($sha !== '') {
-        $row[] = 'https://github.com/OpenRTMP/librtmp2-server/commit/' . benchCiSha($srv['commit']);
+        $row[] = 'https://github.com/OpenRTMP/librtmp2-server/commit/' . $sha;
       }
     }
     $versions[$key] = $row;
   }
+  return $versions;
+}
 
-  // Library microbenchmarks come from librtmp2's own latest run, if available.
-  $libOk = $lib !== null && ($lib['schema'] ?? null) === 1 && is_array($lib['suites'] ?? null);
-  $libEnv = $libOk ? benchCiEnv($lib['environment'] ?? null) : null;
-  $libSha = $libOk ? benchCiSha($lib['commit'] ?? '') : '';
-  $libVersion = $libOk ? benchCiString($lib['version'] ?? '', 40) : '';
-  $libLabel = $libOk && $libVersion !== ''
-    ? $libVersion . ($libSha !== '' ? ' (main @ ' . $libSha . ')' : '')
-    : ($depLib !== '' ? $depLib : '—');
+/** Library microbenchmark data from librtmp2's own latest run, if usable. */
+function benchCiLibInfo(?array $lib, string $depLib): array
+{
+  $ok = $lib !== null && ($lib['schema'] ?? null) === 1 && is_array($lib['suites'] ?? null);
+  $env = $ok ? benchCiEnv($lib['environment'] ?? null) : null;
+  $sha = $ok ? benchCiSha($lib['commit'] ?? '') : '';
+  $version = $ok ? benchCiString($lib['version'] ?? '', 40) : '';
+  $label = $depLib !== '' ? $depLib : '—';
+  if ($version !== '') {
+    $label = $version . ($sha !== '' ? ' (main @ ' . $sha . ')' : '');
+  }
+  $envLine = $env === null ? '—' : sprintf(
+    '%s, %d vCPUs, %s GiB RAM, %s, rustc %s, %s',
+    $env['cpu'], $env['vcpus'], $env['ram'], $env['kernel'], $env['rustc'], $env['runner']
+  );
+  return [
+    'sha' => $sha,
+    'label' => $label,
+    'env_line' => $envLine,
+    'protocol' => $ok ? benchCiLibRows($lib['suites']['protocol'] ?? null) : [],
+    'relay' => $ok ? benchCiLibRows($lib['suites']['relay'] ?? null) : [],
+  ];
+}
 
+/** The English and German note shown under the snapshot cards. */
+function benchCiNotes(array $env, string $sha, string $date): array
+{
   $runner = $env['runner'] !== '' ? $env['runner'] : 'CI runner';
   $machine = sprintf('%s, %d vCPUs, %s GiB RAM', $env['cpu'], $env['vcpus'], $env['ram']);
-  $noteEn = sprintf(
-    'Next-release preview: the latest automated run on main (librtmp2-server %s, %s), measured on %s: %s. It shows what the next release may look like, but it is one sweep on a shared CI machine and is not comparable with the release snapshots, which were measured on a different, dedicated machine. Compare the servers with each other inside this run; every value is replaced after the next merge.',
-    $sha !== '' ? $sha : 'main', $date, $runner, $machine
-  );
-  $noteDe = sprintf(
-    'Vorschau auf das nächste Release: der neueste automatische Lauf auf main (librtmp2-server %s, %s), gemessen auf %s: %s. Er zeigt, was das nächste Release erwarten lässt, ist aber ein einzelner Sweep auf einer geteilten CI-Maschine und nicht mit den Release-Snapshots vergleichbar, die auf einer anderen, dedizierten Maschine gemessen wurden. Server innerhalb dieses Laufs vergleichen; jeder Wert wird nach dem nächsten Merge ersetzt.',
-    $sha !== '' ? $sha : 'main', $date, $runner, $machine
-  );
-  $loadNoteEn = 'Servers that delivered fewer frames per viewer than the source rate were overloaded at that step, so those rows are a stress indicator rather than a clean comparison.';
-  $loadNoteDe = 'Server, die weniger Bilder pro Zuschauer lieferten als die Quellrate, waren in diesem Schritt überlastet; diese Zeilen sind daher eher ein Stresstest als ein sauberer Vergleich.';
+  $ref = $sha !== '' ? $sha : 'main';
+  return [
+    'en' => sprintf(
+      'Next-release preview: the latest automated run on main (librtmp2-server %s, %s), measured on %s: %s. It shows what the next release may look like, but it is one sweep on a shared CI machine and is not comparable with the release snapshots, which were measured on a different, dedicated machine. Compare the servers with each other inside this run; every value is replaced after the next merge.',
+      $ref, $date, $runner, $machine
+    ),
+    'de' => sprintf(
+      'Vorschau auf das nächste Release: der neueste automatische Lauf auf main (librtmp2-server %s, %s), gemessen auf %s: %s. Er zeigt, was das nächste Release erwarten lässt, ist aber ein einzelner Sweep auf einer geteilten CI-Maschine und nicht mit den Release-Snapshots vergleichbar, die auf einer anderen, dedizierten Maschine gemessen wurden. Server innerhalb dieses Laufs vergleichen; jeder Wert wird nach dem nächsten Merge ersetzt.',
+      $ref, $date, $runner, $machine
+    ),
+  ];
+}
 
-  $libEnvLine = $libEnv !== null
-    ? sprintf('%s, %d vCPUs, %s GiB RAM, %s, rustc %s, %s', $libEnv['cpu'], $libEnv['vcpus'], $libEnv['ram'], $libEnv['kernel'], $libEnv['rustc'], $libEnv['runner'])
-    : '—';
+/**
+ * Build the preview snapshot from the two results files, or null if the
+ * librtmp2-server file does not carry a usable sweep.
+ */
+function benchCiSnapshot(array $srv, ?array $lib): ?array
+{
+  $rows = benchCiSweepRows($srv);
+  if ($rows === null) {
+    return null;
+  }
+  $sha = benchCiSha($srv['commit'] ?? '');
+  $libInfo = benchCiLibInfo($lib, benchCiString($srv['deps']['librtmp2'] ?? '', 40));
+  $notes = benchCiNotes($rows['env'], $sha, $rows['date']);
+  $commitUrl = fn(string $repo, string $ref) => $ref !== '' ? 'https://github.com/OpenRTMP/' . $repo . '/commit/' . $ref : null;
 
   return [
     'kind' => 'ci',
-    'date' => $date,
+    'date' => $rows['date'],
     'server_version' => 'main @ ' . ($sha !== '' ? $sha : '?'),
-    'lib_version' => $libLabel,
+    'lib_version' => $libInfo['label'],
     'published_server_release' => false,
     'source_url' => 'https://github.com/OpenRTMP/librtmp2-server/blob/main/BENCHMARKS.md',
-    'server_ref_url' => $sha !== '' ? 'https://github.com/OpenRTMP/librtmp2-server/commit/' . $sha : null,
-    'lib_ref_url' => $libSha !== '' ? 'https://github.com/OpenRTMP/librtmp2/commit/' . $libSha : null,
+    'server_ref_url' => $commitUrl('librtmp2-server', $sha),
+    'lib_ref_url' => $commitUrl('librtmp2', $libInfo['sha']),
     'lib_bench_source_url' => 'https://github.com/OpenRTMP/librtmp2/blob/main/BENCHMARKS.md',
-    'lib_bench_environment' => $libEnvLine,
+    'lib_bench_environment' => $libInfo['env_line'],
     'lib_bench_note_en' => 'Criterion microbenchmarks from the latest automated librtmp2 run on main. They ran on a shared CI machine, so read them as indicative.',
     'lib_bench_note_de' => 'Criterion-Microbenchmarks aus dem neuesten automatischen librtmp2-Lauf auf main. Sie liefen auf einer geteilten CI-Maschine und sind daher nur als Richtwert zu lesen.',
-    'lib_protocol' => $libOk ? benchCiLibRows($lib['suites']['protocol'] ?? null) : [],
-    'lib_relay' => $libOk ? benchCiLibRows($lib['suites']['relay'] ?? null) : [],
-    'note_en' => $noteEn,
-    'note_de' => $noteDe,
-    'load_note_en' => $loadNoteEn,
-    'load_note_de' => $loadNoteDe,
-    'versions' => $versions,
-    'handshake' => $handshake,
-    'join' => $join,
-    'play_handshake' => $playHandshake,
-    'load' => $load,
+    'lib_protocol' => $libInfo['protocol'],
+    'lib_relay' => $libInfo['relay'],
+    'note_en' => $notes['en'],
+    'note_de' => $notes['de'],
+    'load_note_en' => 'Servers that delivered fewer frames per viewer than the source rate were overloaded at that step, so those rows are a stress indicator rather than a clean comparison.',
+    'load_note_de' => 'Server, die weniger Bilder pro Zuschauer lieferten als die Quellrate, waren in diesem Schritt überlastet; diese Zeilen sind daher eher ein Stresstest als ein sauberer Vergleich.',
+    'versions' => benchCiVersions($rows, $sha, benchCiString($srv['version'] ?? '', 40)),
+    'handshake' => $rows['handshake'],
+    'join' => $rows['join'],
+    'play_handshake' => $rows['play_handshake'],
+    'load' => $rows['load'],
     'rounds' => [],
-    'environment' => $env,
+    'environment' => $rows['env'],
   ];
 }
 
