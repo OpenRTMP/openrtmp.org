@@ -50,11 +50,27 @@ $kpiRef = function (array $rows, string $prefer): ?string {
 // Release snapshots were checked by hand to deliver every frame to every
 // viewer. A preview is automatic, so derive the figure: the OpenRTMP rate at
 // the largest load step relative to the highest rate any server delivered.
+// Measurement jitter of a couple of percent is not a dropped frame, so
+// anything within 2 % of the best rate counts as the full rate.
 $framesPct = 100;
 if ($isPreview) {
   $nominalFps = max(array_merge(...array_map(fn($rows) => array_map(fn($r) => $r[2], $rows), array_values($loadData))));
-  $framesPct = $nominalFps > 0 ? min(100, (int) floor($loadData[$maxLoadViewers]['openrtmp'][2] / $nominalFps * 100)) : 0;
+  $ratio = $nominalFps > 0 ? $loadData[$maxLoadViewers]['openrtmp'][2] / $nominalFps : 0;
+  $framesPct = $ratio >= 0.98 ? 100 : (int) floor($ratio * 100);
 }
+// KPI wording follows the measured direction: a preview can be slower than a
+// competitor, and must then say so instead of "0.8x faster". $ours/$theirs are
+// latencies (lower is better) unless $higherIsBetter.
+$kpiVs = function (float $ours, float $theirs, string $ref, bool $higherIsBetter, string $lead, string $trail) use ($L, $lang, $num) {
+  if ($ours <= 0 || $theirs <= 0) {
+    return '';
+  }
+  $ratio = $higherIsBetter ? $ours / $theirs : $theirs / $ours;
+  $ci = benchCiStrings($lang);
+  $template = $ratio >= 1 ? $L[$lead] : $ci[$trail];
+  $factor = $ratio >= 1 ? $ratio : 1 / $ratio;
+  return sprintf($template, $num($factor, $factor >= 10 ? 0 : 1), OPENRTMP_BENCH_SERVERS[$ref]);
+};
 $refJoin = $kpiRef($join100, 'mediamtx');
 $refHs = $kpiRef($hs, 'nginx');
 $refRate = $kpiRef($hs, 'mediamtx');
@@ -77,17 +93,17 @@ $maybeNum = fn($v, int $d) => $v === null ? '—' : $num((float) $v, $d);
         <div class="bench-kpi">
           <span class="bench-kpi-label"><?php echo $L['kpi_join']; ?></span>
           <strong><?php echo $ms($join100['openrtmp'][0]); ?></strong>
-          <?php if ($refJoin !== null): ?><span class="bench-vs"><?php echo sprintf($L['kpi_faster'], $num($join100[$refJoin][0] / $join100['openrtmp'][0], 1), OPENRTMP_BENCH_SERVERS[$refJoin]); ?></span><?php endif; ?>
+          <?php if ($refJoin !== null): ?><span class="bench-vs"><?php echo $kpiVs($join100['openrtmp'][0], $join100[$refJoin][0], $refJoin, false, 'kpi_faster', 'kpi_slower'); ?></span><?php endif; ?>
         </div>
         <div class="bench-kpi">
           <span class="bench-kpi-label"><?php echo $L['kpi_handshake']; ?></span>
           <strong><?php echo $ms($hs['openrtmp'][1]); ?></strong>
-          <?php if ($refHs !== null): ?><span class="bench-vs"><?php echo sprintf($L['kpi_faster'], $num($hs[$refHs][1] / $hs['openrtmp'][1], $hs[$refHs][1] / $hs['openrtmp'][1] >= 10 ? 0 : 1), OPENRTMP_BENCH_SERVERS[$refHs]); ?></span><?php endif; ?>
+          <?php if ($refHs !== null): ?><span class="bench-vs"><?php echo $kpiVs($hs['openrtmp'][1], $hs[$refHs][1], $refHs, false, 'kpi_faster', 'kpi_slower'); ?></span><?php endif; ?>
         </div>
         <div class="bench-kpi">
           <span class="bench-kpi-label"><?php echo $L['kpi_rate']; ?></span>
           <strong><?php echo $num($hs['openrtmp'][0], 0); ?><small>/s</small></strong>
-          <?php if ($refRate !== null): ?><span class="bench-vs"><?php echo sprintf($L['kpi_more'], $num($hs['openrtmp'][0] / $hs[$refRate][0], 1), OPENRTMP_BENCH_SERVERS[$refRate]); ?></span><?php endif; ?>
+          <?php if ($refRate !== null): ?><span class="bench-vs"><?php echo $kpiVs($hs['openrtmp'][0], $hs[$refRate][0], $refRate, true, 'kpi_more', 'kpi_fewer'); ?></span><?php endif; ?>
         </div>
         <div class="bench-kpi">
           <span class="bench-kpi-label"><?php echo $L['kpi_frames']; ?></span>

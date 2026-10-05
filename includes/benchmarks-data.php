@@ -322,8 +322,9 @@ function benchBars(array $rows, callable $format, string $lang = 'en', bool $hig
     if ($rank === 1) {
       $delta = '<span class="bench-badge">' . $best . '</span>';
     } else {
-      $factor = $higherIsBetter ? $lead / $value : $value / $lead;
-      $delta = '<span class="bench-delta">' . benchNum($factor, 1, $lang) . '&times;</span>';
+      // A zero value cannot be put in proportion; show no factor instead of dividing by it.
+      $factor = $value > 0 && $lead > 0 ? ($higherIsBetter ? $lead / $value : $value / $lead) : null;
+      $delta = $factor === null ? '' : '<span class="bench-delta">' . benchNum($factor, 1, $lang) . '&times;</span>';
     }
     $isOurs = $key === 'openrtmp';
     $html .= '<li class="bench-row' . ($isOurs ? ' is-openrtmp' : '') . '">'
