@@ -4,7 +4,9 @@
 // Source of truth: BENCHMARKS.md in OpenRTMP/librtmp2-server. Keep benchmark
 // snapshots immutable once published so visitors can switch between measured
 // librtmp2-server/librtmp2 version pairs without mixing values from different
-// runs.
+// runs. The one exception is the "next release preview" (see
+// benchmarks-ci.php): the latest automated CI run on main, fetched at request
+// time and replaced after every merge.
 
 const OPENRTMP_BENCH_SOURCE_URL = 'https://github.com/OpenRTMP/librtmp2-server/blob/main/BENCHMARKS.md';
 const OPENRTMP_BENCH_LIB_SOURCE_URL = 'https://github.com/OpenRTMP/librtmp2/blob/main/BENCHMARKS.md';
@@ -245,19 +247,42 @@ define('OPENRTMP_BENCH_LOAD', $openrtmpLatestBench['load']);
 define('OPENRTMP_BENCH_ROUNDS', $openrtmpLatestBench['rounds']);
 unset($openrtmpLatestBench);
 
-/** Resolve a requested benchmark snapshot, falling back to the newest one. */
+require_once __DIR__ . '/benchmarks-ci.php';
+
+/**
+ * All selectable snapshots: the immutable release snapshots (newest first)
+ * followed, when available, by the latest automated run on main as a
+ * "next release preview" under the key OPENRTMP_BENCH_CI_ID.
+ */
+function benchRuns(): array
+{
+  static $all = null;
+  if ($all === null) {
+    $all = OPENRTMP_BENCH_RUNS;
+    $ci = benchCiRun();
+    if ($ci !== null) {
+      $all[OPENRTMP_BENCH_CI_ID] = $ci;
+    }
+  }
+  return $all;
+}
+
+/** Resolve a requested benchmark snapshot, falling back to the newest release. */
 function benchRunId(?string $requested = null): string
 {
+  if ($requested === OPENRTMP_BENCH_CI_ID) {
+    return array_key_exists(OPENRTMP_BENCH_CI_ID, benchRuns()) ? $requested : OPENRTMP_BENCH_LATEST;
+  }
   if ($requested !== null && array_key_exists($requested, OPENRTMP_BENCH_RUNS)) {
     return $requested;
   }
   return OPENRTMP_BENCH_LATEST;
 }
 
-/** Return one immutable benchmark snapshot. */
+/** Return one benchmark snapshot. */
 function benchRun(?string $requested = null): array
 {
-  return OPENRTMP_BENCH_RUNS[benchRunId($requested)];
+  return benchRuns()[benchRunId($requested)];
 }
 
 /** Format a millisecond value with the page language's decimal separator. */

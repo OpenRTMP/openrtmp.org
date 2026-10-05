@@ -112,6 +112,22 @@ second language and mirrors every page below `/de/` (for example
    `scripts/generate-sitemap.sh` and commit the regenerated `sitemap.xml`.
 7. Run PHP lint and review mobile table/code overflow.
 
+## Benchmark data
+
+`includes/benchmarks-data.php` holds the immutable release snapshots shown on
+`/benchmarks/` (EN + DE); add a new one by hand after a release, using the
+`bench-results-<tag>.json` / `BENCHMARKS-<tag>.md` attached to the GitHub
+Release of `librtmp2-server` and `librtmp2` as the source.
+
+The third card, **Preview** (`?run=ci`), is not stored here.
+`includes/benchmarks-ci.php` reads `latest.json` from the `bench-data` branch of
+`OpenRTMP/librtmp2-server` and `OpenRTMP/librtmp2` (written by their
+`benchmarks.yml` after every merge to `main`), validates it, caches it in the
+system temp directory for 15 minutes and renders it like a snapshot. If GitHub
+cannot be reached a stale copy is used for up to a week; without any copy the
+card is simply not shown. Set `OPENRTMP_BENCH_DATA_BASE` (e.g. to a `file://`
+directory with the same layout) to test it offline.
+
 ## Deployment
 
 Deploy the repository contents to a PHP-capable web root. The server should route directory requests such as `/quickstart/` to the corresponding `index.php` and serve XML/TXT/CSS/JS/image files directly.

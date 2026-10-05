@@ -421,6 +421,10 @@
   box-shadow: inset 3px 0 0 var(--accent);
 }
 
+.bench-snapshot.is-preview {
+  border-style: dashed;
+}
+
 .bench-snapshot-version {
   font-family: var(--mono);
   font-weight: 700;
