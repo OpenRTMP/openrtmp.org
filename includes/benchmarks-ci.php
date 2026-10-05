@@ -72,33 +72,48 @@ function benchCiDecode(?string $body): ?array
   return is_array($data) ? $data : null;
 }
 
+/** Age of a file in seconds, or null if it does not exist. */
+function benchCiAge(string $path): ?int
+{
+  return is_file($path) ? time() - (int) @filemtime($path) : null;
+}
+
+/** The cached document if it is younger than $maxAge seconds, else null. */
+function benchCiCached(string $cache, int $maxAge): ?array
+{
+  $age = benchCiAge($cache);
+  return $age !== null && $age < $maxAge ? benchCiDecode(@file_get_contents($cache) ?: null) : null;
+}
+
+/** Download a document and store it in the cache; null (and a back-off marker) on failure. */
+function benchCiRefresh(string $url, string $cache): ?array
+{
+  $failed = $cache . '.failed';
+  $failedAge = benchCiAge($failed);
+  if ($failedAge !== null && $failedAge < OPENRTMP_BENCH_CI_FAIL_TTL) {
+    return null;
+  }
+  $body = benchCiHttpGet($url);
+  $data = benchCiDecode($body);
+  if ($data === null) {
+    @touch($failed);
+    return null;
+  }
+  $tmp = $cache . '.' . getmypid() . '.tmp';
+  if (@file_put_contents($tmp, $body) !== false) {
+    @rename($tmp, $cache);
+  }
+  @unlink($failed);
+  return $data;
+}
+
 /** Fetch one JSON document with an on-disk cache; null if unavailable. */
 function benchCiFetchJson(string $url): ?array
 {
   $cache = sys_get_temp_dir() . '/openrtmp-bench-' . hash('sha256', $url) . '.json';
-  $failed = $cache . '.failed';
-  $age = is_file($cache) ? time() - (int) @filemtime($cache) : PHP_INT_MAX;
-  if ($age < OPENRTMP_BENCH_CI_TTL) {
-    return benchCiDecode(@file_get_contents($cache) ?: null);
-  }
-  $recentlyFailed = is_file($failed) && time() - (int) @filemtime($failed) < OPENRTMP_BENCH_CI_FAIL_TTL;
-  if (!$recentlyFailed) {
-    $body = benchCiHttpGet($url);
-    $data = benchCiDecode($body);
-    if ($data !== null) {
-      $tmp = $cache . '.' . getmypid() . '.tmp';
-      if (@file_put_contents($tmp, $body) !== false) {
-        @rename($tmp, $cache);
-      }
-      @unlink($failed);
-      return $data;
-    }
-    @touch($failed);
-  }
-  if ($age < OPENRTMP_BENCH_CI_STALE_TTL) {
-    return benchCiDecode(@file_get_contents($cache) ?: null);
-  }
-  return null;
+  return benchCiCached($cache, OPENRTMP_BENCH_CI_TTL)
+    ?? benchCiRefresh($url, $cache)
+    ?? benchCiCached($cache, OPENRTMP_BENCH_CI_STALE_TTL);
 }
 
 /** @param mixed $row */
