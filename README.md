@@ -125,8 +125,9 @@ The third card, **Preview** (`?run=ci`), is not stored here.
 `benchmarks.yml` after every merge to `main`), validates it, caches it in the
 system temp directory for 15 minutes and renders it like a snapshot. If GitHub
 cannot be reached a stale copy is used for up to a week; without any copy the
-card is simply not shown. Set `OPENRTMP_BENCH_DATA_BASE` (e.g. to a `file://`
-directory with the same layout) to test it offline.
+card is simply not shown. To test it offline, define the constant `OPENRTMP_BENCH_DATA_BASE` (e.g. a
+`file://` directory with the same layout) from a `php -d auto_prepend_file=…`
+file; it is deliberately not read from the environment or the request.
 
 ## Deployment
 

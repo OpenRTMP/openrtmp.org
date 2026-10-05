@@ -20,11 +20,15 @@ const OPENRTMP_BENCH_CI_STALE_TTL = 604800; // seconds a stale copy may still be
 const OPENRTMP_BENCH_CI_FAIL_TTL = 300;     // back off this long after a failed fetch
 const OPENRTMP_BENCH_CI_MAX_BYTES = 2097152;
 
-/** Base URL of the raw `bench-data` files; overridable (tests) via OPENRTMP_BENCH_DATA_BASE. */
+/**
+ * Base URL of the raw `bench-data` files. A constant, never request or
+ * environment input, so the outgoing request target cannot be influenced by a
+ * visitor. Tests define OPENRTMP_BENCH_DATA_BASE (e.g. a file:// directory)
+ * from an auto_prepend_file before this file is included.
+ */
 function benchCiBase(): string
 {
-  $base = getenv('OPENRTMP_BENCH_DATA_BASE');
-  return rtrim(is_string($base) && $base !== '' ? $base : 'https://raw.githubusercontent.com/OpenRTMP', '/');
+  return rtrim(defined('OPENRTMP_BENCH_DATA_BASE') ? OPENRTMP_BENCH_DATA_BASE : 'https://raw.githubusercontent.com/OpenRTMP', '/');
 }
 
 /** GET a small document; null on any failure. */
