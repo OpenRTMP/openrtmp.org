@@ -82,7 +82,11 @@ function benchCiAge(string $path): ?int
 function benchCiCached(string $cache, int $maxAge): ?array
 {
   $age = benchCiAge($cache);
-  return $age !== null && $age < $maxAge ? benchCiDecode(@file_get_contents($cache) ?: null) : null;
+  if ($age === null || $age >= $maxAge) {
+    return null;
+  }
+  $body = @file_get_contents($cache);
+  return benchCiDecode($body === false ? null : $body);
 }
 
 /** Download a document and store it in the cache; null (and a back-off marker) on failure. */
