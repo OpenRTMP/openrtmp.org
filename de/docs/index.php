@@ -85,6 +85,7 @@ server.listen("0.0.0.0:1935")?;
 while running {
     server.poll(100)?;
 }</code></pre>
+        <p>Die beiden Limits pro Adresse sind bei <code>0</code> <em>nicht</em> unbegrenzt. Null bedeutet &bdquo;eingebauten Standard verwenden&ldquo;, und der ist <strong>4</strong> (<code>DEFAULT_MAX_CONNECTIONS_PER_ADDR</code>, <code>DEFAULT_MAX_PENDING_TLS_PER_ADDR</code> richtet sich danach). Mit den Werten oben wird also ein fünfter Client von derselben Quell-IP abgewiesen, und dieselbe Grenze gilt für unvollständige TLS-Handshakes, sobald TLS aktiv ist. Erhöhen Sie sie explizit, wenn viele Clients eine Adresse teilen &mdash; hinter NAT, Load Balancer oder Reverse Proxy &mdash; oder senken Sie sie, damit ein einzelner Peer die Verbindungstabelle nicht blockiert.</p>
         <p>Für Sanitizer-Builds während der Entwicklung (AddressSanitizer benötigt Nightly und <code>-Zbuild-std</code>). Cargo kann die Standardbibliothek ohne die Komponente <code>rust-src</code> nicht neu bauen, daher zuerst installieren:</p>
         <pre><code>rustup component add rust-src --toolchain nightly</code></pre>
         <pre><code>RUSTFLAGS="-Zsanitizer=address" cargo +nightly test --lib -Zbuild-std \
