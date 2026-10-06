@@ -4,7 +4,7 @@
 //
 // Both OpenRTMP/librtmp2-server and OpenRTMP/librtmp2 run their benchmarks in
 // GitHub Actions after every merge to main and store the result as
-// `latest.json` on the `bench-data` branch (see docs/ci-benchmarks.md in those
+// `bench/latest.json` on main (see docs/ci-benchmarks.md in those
 // repositories). This file reads those two files, validates them and turns
 // them into a snapshot with the same shape as the entries of
 // OPENRTMP_BENCH_RUNS, so the page renders it like any other snapshot.
@@ -21,7 +21,7 @@ const OPENRTMP_BENCH_CI_FAIL_TTL = 300;     // back off this long after a failed
 const OPENRTMP_BENCH_CI_MAX_BYTES = 2097152;
 
 /**
- * Base URL of the raw `bench-data` files. A constant, never request or
+ * Base URL of the raw `bench/latest.json` files. A constant, never request or
  * environment input, so the outgoing request target cannot be influenced by a
  * visitor. Tests define OPENRTMP_BENCH_DATA_BASE (e.g. a file:// directory)
  * from an auto_prepend_file before this file is included.
@@ -413,10 +413,10 @@ function benchCiSnapshot(array $srv, ?array $lib): ?array
     'server_version' => 'main @ ' . ($sha !== '' ? $sha : '?'),
     'lib_version' => $libInfo['label'],
     'published_server_release' => false,
-    'source_url' => 'https://github.com/OpenRTMP/librtmp2-server/blob/bench-data/latest.json',
+    'source_url' => 'https://github.com/OpenRTMP/librtmp2-server/blob/main/bench/latest.json',
     'server_ref_url' => $commitUrl('librtmp2-server', $sha),
     'lib_ref_url' => $commitUrl('librtmp2', $libInfo['sha']),
-    'lib_bench_source_url' => 'https://github.com/OpenRTMP/librtmp2/blob/bench-data/latest.json',
+    'lib_bench_source_url' => 'https://github.com/OpenRTMP/librtmp2/blob/main/bench/latest.json',
     'lib_bench_environment' => $libInfo['env_line'],
     'lib_bench_note_en' => 'Criterion microbenchmarks from the latest automated librtmp2 run on main. They ran on a shared CI machine, so read them as indicative.',
     'lib_bench_note_de' => 'Criterion-Microbenchmarks aus dem neuesten automatischen librtmp2-Lauf auf main. Sie liefen auf einer geteilten CI-Maschine und sind daher nur als Richtwert zu lesen.',
@@ -457,11 +457,11 @@ function benchCiRun(): ?array
   }
   $done = true;
   $base = benchCiBase();
-  $srv = benchCiFetchJson($base . '/librtmp2-server/bench-data/latest.json', 'benchCiValidServer');
+  $srv = benchCiFetchJson($base . '/librtmp2-server/main/bench/latest.json', 'benchCiValidServer');
   if ($srv === null) {
     return null;
   }
-  $lib = benchCiFetchJson($base . '/librtmp2/bench-data/latest.json', 'benchCiValidLib');
+  $lib = benchCiFetchJson($base . '/librtmp2/main/bench/latest.json', 'benchCiValidLib');
   return $run = benchCiSnapshot($srv, $lib);
 }
 

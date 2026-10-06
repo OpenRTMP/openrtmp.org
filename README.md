@@ -120,7 +120,7 @@ second language and mirrors every page below `/de/` (for example
 Release of `librtmp2-server` and `librtmp2` as the source.
 
 The third card, **Preview** (`?run=ci`), is not stored here.
-`includes/benchmarks-ci.php` reads `latest.json` from the `bench-data` branch of
+`includes/benchmarks-ci.php` reads `bench/latest.json` on `main` of
 `OpenRTMP/librtmp2-server` and `OpenRTMP/librtmp2` (written by their
 `benchmarks.yml` after every merge to `main`), validates it, caches it in the
 system temp directory for 15 minutes and renders it like a snapshot. If GitHub
