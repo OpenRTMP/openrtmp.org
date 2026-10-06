@@ -4,7 +4,9 @@
 // Source of truth: BENCHMARKS.md in OpenRTMP/librtmp2-server. Keep benchmark
 // snapshots immutable once published so visitors can switch between measured
 // librtmp2-server/librtmp2 version pairs without mixing values from different
-// runs.
+// runs. The one exception is the "next release preview" (see
+// benchmarks-ci.php): the latest automated CI run on main, fetched at request
+// time and replaced after every merge.
 
 const OPENRTMP_BENCH_SOURCE_URL = 'https://github.com/OpenRTMP/librtmp2-server/blob/main/BENCHMARKS.md';
 const OPENRTMP_BENCH_LIB_SOURCE_URL = 'https://github.com/OpenRTMP/librtmp2/blob/main/BENCHMARKS.md';
@@ -245,19 +247,42 @@ define('OPENRTMP_BENCH_LOAD', $openrtmpLatestBench['load']);
 define('OPENRTMP_BENCH_ROUNDS', $openrtmpLatestBench['rounds']);
 unset($openrtmpLatestBench);
 
-/** Resolve a requested benchmark snapshot, falling back to the newest one. */
+require_once __DIR__ . '/benchmarks-ci.php';
+
+/**
+ * All selectable snapshots: the immutable release snapshots (newest first)
+ * followed, when available, by the latest automated run on main as a
+ * "next release preview" under the key OPENRTMP_BENCH_CI_ID.
+ */
+function benchRuns(): array
+{
+  static $all = null;
+  if ($all === null) {
+    $all = OPENRTMP_BENCH_RUNS;
+    $ci = benchCiRun();
+    if ($ci !== null) {
+      $all[OPENRTMP_BENCH_CI_ID] = $ci;
+    }
+  }
+  return $all;
+}
+
+/** Resolve a requested benchmark snapshot, falling back to the newest release. */
 function benchRunId(?string $requested = null): string
 {
+  if ($requested === OPENRTMP_BENCH_CI_ID) {
+    return array_key_exists(OPENRTMP_BENCH_CI_ID, benchRuns()) ? $requested : OPENRTMP_BENCH_LATEST;
+  }
   if ($requested !== null && array_key_exists($requested, OPENRTMP_BENCH_RUNS)) {
     return $requested;
   }
   return OPENRTMP_BENCH_LATEST;
 }
 
-/** Return one immutable benchmark snapshot. */
+/** Return one benchmark snapshot. */
 function benchRun(?string $requested = null): array
 {
-  return OPENRTMP_BENCH_RUNS[benchRunId($requested)];
+  return benchRuns()[benchRunId($requested)];
 }
 
 /** Format a millisecond value with the page language's decimal separator. */
@@ -271,6 +296,41 @@ function benchMs(float $value, string $lang = 'en', int $decimals = 2): string
 function benchNum(float $value, int $decimals, string $lang = 'en'): string
 {
   return number_format($value, $decimals, $lang === 'de' ? ',' : '.', $lang === 'de' ? '.' : ',');
+}
+
+/**
+ * How many times worse than the leader a value is, or null when either side is
+ * zero (a zero cannot be put in proportion; the caller then shows no factor).
+ */
+function benchBarFactor(float $value, float $lead, bool $higherIsBetter): ?float
+{
+  if ($value <= 0 || $lead <= 0) {
+    return null;
+  }
+  return $higherIsBetter ? $lead / $value : $value / $lead;
+}
+
+/** The badge for the leader, the "n.n×" factor for everyone else. */
+function benchBarDelta(int $rank, float $value, float $lead, bool $higherIsBetter, string $best, string $lang): string
+{
+  if ($rank === 1) {
+    return '<span class="bench-badge">' . $best . '</span>';
+  }
+  $factor = benchBarFactor($value, $lead, $higherIsBetter);
+  return $factor === null ? '' : '<span class="bench-delta">' . benchNum($factor, 1, $lang) . '&times;</span>';
+}
+
+/** One <li> of the bar chart. */
+function benchBarRow(string $key, int $rank, float $width, string $formatted, string $delta): string
+{
+  $class = $key === 'openrtmp' ? 'bench-row is-openrtmp' : 'bench-row';
+  return '<li class="' . $class . '">'
+    . '<span class="bench-rank">' . $rank . '</span>'
+    . '<span class="bench-name">' . htmlspecialchars(OPENRTMP_BENCH_SERVERS[$key], ENT_QUOTES, 'UTF-8') . '</span>'
+    . '<span class="bench-track"><span class="bench-fill" style="width: ' . $width . '%"></span></span>'
+    . '<span class="bench-value">' . htmlspecialchars($formatted, ENT_QUOTES, 'UTF-8') . '</span>'
+    . $delta
+    . '</li>';
 }
 
 /**
@@ -294,20 +354,7 @@ function benchBars(array $rows, callable $format, string $lang = 'en', bool $hig
   foreach ($rows as $key => $value) {
     $rank++;
     $width = $max > 0 ? max(2, round($value / $max * 100, 1)) : 0;
-    if ($rank === 1) {
-      $delta = '<span class="bench-badge">' . $best . '</span>';
-    } else {
-      $factor = $higherIsBetter ? $lead / $value : $value / $lead;
-      $delta = '<span class="bench-delta">' . benchNum($factor, 1, $lang) . '&times;</span>';
-    }
-    $isOurs = $key === 'openrtmp';
-    $html .= '<li class="bench-row' . ($isOurs ? ' is-openrtmp' : '') . '">'
-      . '<span class="bench-rank">' . $rank . '</span>'
-      . '<span class="bench-name">' . htmlspecialchars(OPENRTMP_BENCH_SERVERS[$key], ENT_QUOTES, 'UTF-8') . '</span>'
-      . '<span class="bench-track"><span class="bench-fill" style="width: ' . $width . '%"></span></span>'
-      . '<span class="bench-value">' . htmlspecialchars($format($value), ENT_QUOTES, 'UTF-8') . '</span>'
-      . $delta
-      . '</li>';
+    $html .= benchBarRow($key, $rank, $width, $format($value), benchBarDelta($rank, $value, $lead, $higherIsBetter, $best, $lang));
   }
   return $html . '</ol>';
 }

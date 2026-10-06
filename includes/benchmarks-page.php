@@ -24,6 +24,56 @@ $libProtocol = $bench['lib_protocol'];
 $libRelay = $bench['lib_relay'];
 $mib = fn(float $v) => $num($v, 1) . ' MiB';
 $pct = fn(float $v) => $num($v, 1) . ' %';
+$isPreview = ($bench['kind'] ?? '') === 'ci';
+if ($isPreview) {
+  // The setup section and the load footnote describe the CI runner, not the
+  // dedicated VM the release snapshots were measured on.
+  $ci = benchCiStrings($lang);
+  $env = $bench['environment'];
+  $L['specs'][0][1] = $h(sprintf($ci['hardware'], $env['cpu'], $env['vcpus'], $env['ram']));
+  $L['specs'][1][1] = $h(sprintf($ci['os'], $env['kernel'], $env['runner']));
+  $L['load_foot'] = sprintf($ci['load_foot'], $env['vcpus'], $env['vcpus'] * 100);
+}
+// A competitor missing from a snapshot (e.g. a preview where it failed to
+// build) must not break the KPIs: fall back to any other server that is there.
+$kpiRef = function (array $rows, string $prefer): ?string {
+  if (isset($rows[$prefer])) {
+    return $prefer;
+  }
+  foreach (array_keys($rows) as $key) {
+    if ($key !== 'openrtmp') {
+      return $key;
+    }
+  }
+  return null;
+};
+// Release snapshots were checked by hand to deliver every frame to every
+// viewer. A preview is automatic, so derive the figure: the OpenRTMP rate at
+// the largest load step relative to the highest rate any server delivered.
+// Measurement jitter of a couple of percent is not a dropped frame, so
+// anything within 2 % of the best rate counts as the full rate.
+$framesPct = 100;
+if ($isPreview) {
+  $nominalFps = max(array_merge(...array_map(fn($rows) => array_map(fn($r) => $r[2], $rows), array_values($loadData))));
+  $ratio = $nominalFps > 0 ? $loadData[$maxLoadViewers]['openrtmp'][2] / $nominalFps : 0;
+  $framesPct = $ratio >= 0.98 ? 100 : (int) floor($ratio * 100);
+}
+// KPI wording follows the measured direction: a preview can be slower than a
+// competitor, and must then say so instead of "0.8x faster". $ours/$theirs are
+// latencies (lower is better) unless $higherIsBetter.
+$kpiVs = function (float $ours, float $theirs, string $ref, bool $higherIsBetter, string $lead, string $trail) use ($L, $lang, $num) {
+  if ($ours <= 0 || $theirs <= 0) {
+    return '';
+  }
+  $ratio = $higherIsBetter ? $ours / $theirs : $theirs / $ours;
+  $ci = benchCiStrings($lang);
+  $template = $ratio >= 1 ? $L[$lead] : $ci[$trail];
+  $factor = $ratio >= 1 ? $ratio : 1 / $ratio;
+  return sprintf($template, $num($factor, $factor >= 10 ? 0 : 1), OPENRTMP_BENCH_SERVERS[$ref]);
+};
+$refJoin = $kpiRef($join100, 'mediamtx');
+$refHs = $kpiRef($hs, 'nginx');
+$refRate = $kpiRef($hs, 'mediamtx');
 $maybeMs = fn($v) => $v === null ? '—' : $ms((float) $v);
 $maybeNum = fn($v, int $d) => $v === null ? '—' : $num((float) $v, $d);
 ?>
@@ -43,22 +93,22 @@ $maybeNum = fn($v, int $d) => $v === null ? '—' : $num((float) $v, $d);
         <div class="bench-kpi">
           <span class="bench-kpi-label"><?php echo $L['kpi_join']; ?></span>
           <strong><?php echo $ms($join100['openrtmp'][0]); ?></strong>
-          <span class="bench-vs"><?php echo sprintf($L['kpi_faster'], $num($join100['mediamtx'][0] / $join100['openrtmp'][0], 1), 'MediaMTX'); ?></span>
+          <?php if ($refJoin !== null): ?><span class="bench-vs"><?php echo $kpiVs($join100['openrtmp'][0], $join100[$refJoin][0], $refJoin, false, 'kpi_faster', 'kpi_slower'); ?></span><?php endif; ?>
         </div>
         <div class="bench-kpi">
           <span class="bench-kpi-label"><?php echo $L['kpi_handshake']; ?></span>
           <strong><?php echo $ms($hs['openrtmp'][1]); ?></strong>
-          <span class="bench-vs"><?php echo sprintf($L['kpi_faster'], $num($hs['nginx'][1] / $hs['openrtmp'][1], 0), 'nginx-rtmp'); ?></span>
+          <?php if ($refHs !== null): ?><span class="bench-vs"><?php echo $kpiVs($hs['openrtmp'][1], $hs[$refHs][1], $refHs, false, 'kpi_faster', 'kpi_slower'); ?></span><?php endif; ?>
         </div>
         <div class="bench-kpi">
           <span class="bench-kpi-label"><?php echo $L['kpi_rate']; ?></span>
           <strong><?php echo $num($hs['openrtmp'][0], 0); ?><small>/s</small></strong>
-          <span class="bench-vs"><?php echo sprintf($L['kpi_more'], $num($hs['openrtmp'][0] / $hs['mediamtx'][0], 1), 'MediaMTX'); ?></span>
+          <?php if ($refRate !== null): ?><span class="bench-vs"><?php echo $kpiVs($hs['openrtmp'][0], $hs[$refRate][0], $refRate, true, 'kpi_more', 'kpi_fewer'); ?></span><?php endif; ?>
         </div>
         <div class="bench-kpi">
           <span class="bench-kpi-label"><?php echo $L['kpi_frames']; ?></span>
-          <strong>100<small>&nbsp;%</small></strong>
-          <span class="bench-vs"><?php echo sprintf($L['kpi_frames_note'], $maxLoadViewers); ?></span>
+          <strong><?php echo $framesPct; ?><small>&nbsp;%</small></strong>
+          <span class="bench-vs"><?php echo sprintf($framesPct >= 100 ? $L['kpi_frames_note'] : benchCiStrings($lang)['frames_note_partial'], $maxLoadViewers); ?></span>
         </div>
       </div>
     </div>
@@ -72,9 +122,10 @@ $maybeNum = fn($v, int $d) => $v === null ? '—' : $num((float) $v, $d);
         <p><?php echo $L['snapshot_p']; ?></p>
       </div>
       <div class="bench-snapshots">
-        <?php foreach (OPENRTMP_BENCH_RUNS as $runId => $run): ?>
+        <?php foreach (benchRuns() as $runId => $run): ?>
+        <?php $runIsPreview = ($run['kind'] ?? '') === 'ci'; ?>
         <a
-          class="bench-snapshot<?php echo $runId === $benchRunId ? ' is-selected' : ''; ?>"
+          class="bench-snapshot<?php echo $runId === $benchRunId ? ' is-selected' : ''; ?><?php echo $runIsPreview ? ' is-preview' : ''; ?>"
           href="?run=<?php echo rawurlencode($runId); ?>"
           <?php if ($runId === $benchRunId): ?>aria-current="page"<?php endif; ?>
         >
@@ -83,6 +134,7 @@ $maybeNum = fn($v, int $d) => $v === null ? '—' : $num((float) $v, $d);
           <span class="bench-snapshot-meta">
             <time datetime="<?php echo $h($run['date']); ?>"><?php echo $h($run['date']); ?></time>
             <?php if ($runId === OPENRTMP_BENCH_LATEST): ?><span><?php echo $L['snapshot_latest']; ?></span><?php endif; ?>
+            <?php if ($runIsPreview): ?><span><?php echo benchCiStrings($lang)['badge']; ?></span><?php endif; ?>
           </span>
         </a>
         <?php endforeach; ?>
@@ -161,6 +213,7 @@ $maybeNum = fn($v, int $d) => $v === null ? '—' : $num((float) $v, $d);
     </div>
   </section>
 
+  <?php if ($libProtocol !== [] || $libRelay !== []): ?>
   <section id="library" class="bench-section">
     <div class="container">
       <div class="section-head">
@@ -195,6 +248,7 @@ $maybeNum = fn($v, int $d) => $v === null ? '—' : $num((float) $v, $d);
       <p class="bench-foot"><?php echo $L['lib_environment']; ?>: <?php echo $h($bench['lib_bench_environment']); ?></p>
     </div>
   </section>
+  <?php endif; ?>
 
   <section id="load" class="bench-section">
     <div class="container">
