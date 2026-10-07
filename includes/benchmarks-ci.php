@@ -74,7 +74,7 @@ function benchCiReadCurl(string $url)
     },
   ]);
   $done = curl_exec($ch);
-  curl_close($ch);
+  unset($ch); // curl_close() is a deprecated no-op since PHP 8.5; unset() releases the handle
   return $done === true ? $buffer : false;
 }
 
