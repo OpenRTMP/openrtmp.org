@@ -74,7 +74,6 @@ function benchCiReadCurl(string $url)
     },
   ]);
   $done = curl_exec($ch);
-  curl_close($ch);
   return $done === true ? $buffer : false;
 }
 
