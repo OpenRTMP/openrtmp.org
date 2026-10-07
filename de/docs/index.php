@@ -80,6 +80,8 @@ let config = ServerConfig {
 
 let mut server = Server::new(config)?;
 server.on_frame_cb = Some(on_frame);
+server.on_publish_cb = Some(|_conn_id: u64, _app: &str, _stream_name: &str| true);
+server.on_play_cb = Some(|_conn_id: u64, _app: &str, _stream_name: &str| true);
 server.listen("0.0.0.0:1935")?;
 
 while running {
