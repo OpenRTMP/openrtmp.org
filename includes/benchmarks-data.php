@@ -11,7 +11,7 @@
 const OPENRTMP_BENCH_SOURCE_URL = 'https://github.com/OpenRTMP/librtmp2-server/blob/main/BENCHMARKS.md';
 const OPENRTMP_BENCH_LIB_SOURCE_URL = 'https://github.com/OpenRTMP/librtmp2/blob/main/BENCHMARKS.md';
 const OPENRTMP_BENCH_SCRIPT_URL = 'https://github.com/OpenRTMP/librtmp2-server/blob/main/scripts/run_rtmp_benchmarks.sh';
-const OPENRTMP_BENCH_LATEST = '0.6.2-0.11.0';
+const OPENRTMP_BENCH_LATEST = '0.6.2-0.11.0-2026-10-09';
 
 // Server key => display name. Version-specific details live in each snapshot.
 const OPENRTMP_BENCH_SERVERS = [
@@ -31,6 +31,109 @@ const OPENRTMP_BENCH_SERVERS = [
 // load row:
 //   [join avg ms, join p95 ms, fps/viewer, CPU % of one core, peak RSS MiB]
 const OPENRTMP_BENCH_RUNS = [
+  '0.6.2-0.11.0-2026-10-09' => [
+    'date' => '2026-10-09',
+    'server_version' => '0.6.2',
+    'lib_version' => '0.11.0',
+    'published_server_release' => true,
+    'source_url' => 'https://github.com/OpenRTMP/librtmp2-server/blob/main/BENCHMARKS.md',
+    'server_ref_url' => 'https://github.com/OpenRTMP/librtmp2-server/releases/tag/v0.6.2',
+    'lib_ref_url' => 'https://github.com/OpenRTMP/librtmp2/releases/tag/v0.11.0',
+    'lib_bench_source_url' => 'https://github.com/OpenRTMP/librtmp2/blob/v0.11.0/BENCHMARKS.md',
+    'lib_bench_environment' => 'Intel Xeon @ 2.10 GHz, 4 vCPUs, Linux 6.18 x86_64, rustc 1.97.0',
+    'lib_bench_note_en' => 'Criterion microbenchmarks for librtmp2 0.11.0. The protocol paths are unchanged from 0.10.2; the cross-version differences were measured on a shared VM with a newer rustc and are not a controlled release A/B.',
+    'lib_bench_note_de' => 'Criterion-Microbenchmarks für librtmp2 0.11.0. Die Protokollpfade sind gegenüber 0.10.2 unverändert; die Unterschiede zwischen den Versionen wurden auf einer Shared-VM mit neuerem rustc gemessen und sind kein kontrollierter Release-A/B-Test.',
+    'lib_protocol' => [
+      ['chunk/write_read_roundtrip', '4.55 µs', '~858 MiB/s'],
+      ['amf0_build_connect', '274 ns', '—'],
+      ['flv/video_tag_h264', '1.51 ns', '—'],
+      ['flv/audio_tag_aac', '1.24 ns', '—'],
+      ['fourcc_to_video_codec_avc1', '2.19 ns', '—'],
+      ['server_read_c1', '1.21 µs', '—'],
+    ],
+    'lib_relay' => [
+      ['relay/publish_to_player/100', '99.1 ms', '~1010 elem/s'],
+      ['relay/publish_to_player/500', '101.4 ms', '~4930 elem/s'],
+    ],
+    'note_en' => 'librtmp2-server 0.6.2 on librtmp2 0.11.0 against the newest release of every compared server: MediaMTX v1.21.2, nginx 1.31.6 with nginx-rtmp-module master, SRS 8.0 and LiveForge main.',
+    'note_de' => 'librtmp2-server 0.6.2 auf librtmp2 0.11.0 gegen die neueste Version jedes verglichenen Servers: MediaMTX v1.21.2, nginx 1.31.6 mit nginx-rtmp-module master, SRS 8.0 und LiveForge main.',
+    'load_note_en' => 'At 500 viewers every server delivered the full source rate. From 1000 viewers nginx-rtmp fell below it, and at 2000 viewers MediaMTX and LiveForge did too; only librtmp2-server and SRS delivered every frame at 2000 viewers.',
+    'load_note_de' => 'Bei 500 Zuschauern lieferten alle Server die volle Quellrate. Ab 1000 Zuschauern fiel nginx-rtmp darunter, bei 2000 Zuschauern auch MediaMTX und LiveForge; nur librtmp2-server und SRS lieferten bei 2000 Zuschauern jedes Frame.',
+    'versions' => [
+      'openrtmp' => [
+        '0.6.2',
+        'librtmp2 0.11.0',
+        'Rust',
+        'https://github.com/OpenRTMP/librtmp2-server/releases/tag/v0.6.2',
+        'https://github.com/OpenRTMP/librtmp2/releases/tag/v0.11.0',
+      ],
+      'mediamtx' => ['v1.21.2', 'release binary', 'Go'],
+      'liveforge' => ['main @ 4e70fb3', '', 'Go'],
+      'srs' => ['8.0.48', 'v8.0-d0', 'C++'],
+      'nginx' => ['nginx 1.31.6', 'nginx-rtmp-module @ 6c7719d', 'C'],
+    ],
+    'handshake' => [
+      'openrtmp' => [7256.8, 2.91, 2.72, 5.60, 6.45],
+      'liveforge' => [5290.2, 4.70, 4.26, 9.12, 10.25],
+      'mediamtx' => [4952.5, 4.72, 4.13, 8.75, 10.04],
+      'nginx' => [630.5, 45.94, 45.55, 48.88, 49.41],
+      'srs' => [494.2, 56.64, 56.00, 65.73, 67.72],
+    ],
+    'join' => [
+      1 => [
+        'openrtmp' => [0.89, null, null],
+        'liveforge' => [1.16, null, null],
+        'mediamtx' => [1.49, null, null],
+        'srs' => [43.7, null, null],
+        'nginx' => [88.3, null, null],
+      ],
+      25 => [
+        'openrtmp' => [2.69, 5.03, null],
+        'mediamtx' => [2.76, 4.62, null],
+        'liveforge' => [4.56, 7.97, null],
+        'srs' => [53.5, 57.6, null],
+        'nginx' => [89.2, 92.7, null],
+      ],
+      100 => [
+        'openrtmp' => [4.94, 10.4, null],
+        'mediamtx' => [7.66, 15.8, null],
+        'liveforge' => [12.5, 23.5, null],
+        'srs' => [71.7, 87.6, null],
+        'nginx' => [91.0, 95.7, null],
+      ],
+    ],
+    'play_handshake' => [
+      'openrtmp' => [7035.7, 2.83, 2.23, 6.77, 7.68],
+      'liveforge' => [5276.2, 4.01, 3.29, 9.27, 13.32],
+      'mediamtx' => [4291.6, 5.66, 5.33, 9.96, 12.38],
+      'srs' => [515.6, 54.52, 54.86, 62.56, 63.43],
+      'nginx' => [323.0, 89.44, 88.82, 92.27, 94.08],
+    ],
+    'load' => [
+      500 => [
+        'openrtmp' => [27.2, 68.5, 73.1, 39.4, 22.4],
+        'mediamtx' => [60.8, 114.7, 73.1, 94.6, 104.7],
+        'liveforge' => [62.9, 151.1, 73.1, 56.3, 89.5],
+        'nginx' => [109.0, 134.8, 73.1, 64.3, 18.6],
+        'srs' => [264.6, 324.6, 73.2, 10.3, 106.4],
+      ],
+      1000 => [
+        'openrtmp' => [30.4, 83.8, 73.1, 72.5, 32.1],
+        'mediamtx' => [115.0, 209.4, 73.1, 170.8, 174.7],
+        'nginx' => [166.1, 225.5, 55.0, 79.2, 24.5],
+        'liveforge' => [207.3, 478.4, 73.1, 107.1, 155.7],
+        'srs' => [563.7, 1007.7, 73.1, 20.1, 151.7],
+      ],
+      2000 => [
+        'openrtmp' => [83.2, 308.2, 73.2, 87.9, 51.7],
+        'nginx' => [290.3, 631.2, 43.4, 79.7, 29.1],
+        'mediamtx' => [538.3, 1523.4, 27.0, 146.0, 293.1],
+        'liveforge' => [977.4, 2832.7, 64.9, 129.5, 251.9],
+        'srs' => [1147.8, 2272.2, 73.1, 38.2, 236.3],
+      ],
+    ],
+    'rounds' => [],
+  ],
   '0.6.2-0.11.0' => [
     'date' => '2026-10-02',
     'server_version' => '0.6.2',
