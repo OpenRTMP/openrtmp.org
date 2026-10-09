@@ -106,10 +106,13 @@ function benchCiAge(string $path): ?int
 function benchCiCached(string $cache, int $maxAge, callable $valid): ?array
 {
   $age = benchCiAge($cache);
-  if ($age === null || $age >= $maxAge) {
+  if ($age === null || $age < 0 || $age >= $maxAge) {
     return null;
   }
-  $body = @file_get_contents($cache);
+  $body = @file_get_contents($cache, false, null, 0, OPENRTMP_BENCH_CI_MAX_BYTES + 1);
+  if (!is_string($body) || $body === '' || strlen($body) > OPENRTMP_BENCH_CI_MAX_BYTES) {
+    return null;
+  }
   $data = benchCiDecode($body === false ? null : $body);
   return $data !== null && $valid($data) ? $data : null;
 }
@@ -123,7 +126,7 @@ function benchCiRefresh(string $url, string $cache, callable $valid): ?array
 {
   $failed = $cache . '.failed';
   $failedAge = benchCiAge($failed);
-  if ($failedAge !== null && $failedAge < OPENRTMP_BENCH_CI_FAIL_TTL) {
+  if ($failedAge !== null && $failedAge >= 0 && $failedAge < OPENRTMP_BENCH_CI_FAIL_TTL) {
     return null;
   }
   $body = benchCiHttpGet($url);
@@ -132,9 +135,12 @@ function benchCiRefresh(string $url, string $cache, callable $valid): ?array
     @touch($failed);
     return null;
   }
-  $tmp = $cache . '.' . getmypid() . '.tmp';
-  if (@file_put_contents($tmp, $body) !== false) {
-    @rename($tmp, $cache);
+  $tmp = @tempnam(sys_get_temp_dir(), 'openrtmp-bench-');
+  if ($tmp !== false) {
+    $written = @file_put_contents($tmp, $body);
+    if ($written !== strlen($body) || !@rename($tmp, $cache)) {
+      @unlink($tmp);
+    }
   }
   @unlink($failed);
   return $data;
