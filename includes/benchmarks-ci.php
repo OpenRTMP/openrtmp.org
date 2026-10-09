@@ -109,7 +109,10 @@ function benchCiCached(string $cache, int $maxAge, callable $valid): ?array
   if ($age === null || $age < 0 || $age >= $maxAge) {
     return null;
   }
-  $body = @file_get_contents($cache);
+  $body = @file_get_contents($cache, false, null, 0, OPENRTMP_BENCH_CI_MAX_BYTES + 1);
+  if (!is_string($body) || $body === '' || strlen($body) > OPENRTMP_BENCH_CI_MAX_BYTES) {
+    return null;
+  }
   $data = benchCiDecode($body === false ? null : $body);
   return $data !== null && $valid($data) ? $data : null;
 }
