@@ -106,7 +106,7 @@ function benchCiAge(string $path): ?int
 function benchCiCached(string $cache, int $maxAge, callable $valid): ?array
 {
   $age = benchCiAge($cache);
-  if ($age === null || $age >= $maxAge) {
+  if ($age === null || $age < 0 || $age >= $maxAge) {
     return null;
   }
   $body = @file_get_contents($cache);
@@ -123,7 +123,7 @@ function benchCiRefresh(string $url, string $cache, callable $valid): ?array
 {
   $failed = $cache . '.failed';
   $failedAge = benchCiAge($failed);
-  if ($failedAge !== null && $failedAge < OPENRTMP_BENCH_CI_FAIL_TTL) {
+  if ($failedAge !== null && $failedAge >= 0 && $failedAge < OPENRTMP_BENCH_CI_FAIL_TTL) {
     return null;
   }
   $body = benchCiHttpGet($url);
