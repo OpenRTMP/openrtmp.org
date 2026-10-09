@@ -22,6 +22,30 @@ const OPENRTMP_BENCH_SERVERS = [
   'nginx' => 'nginx-rtmp',
 ];
 
+// librtmp2-server 0.6.2 / librtmp2 0.11.0 release links, and the librtmp2
+// 0.11.0 microbenchmarks, shared by every snapshot of that version pair.
+const OPENRTMP_BENCH_SERVER_0_6_2_URL = 'https://github.com/OpenRTMP/librtmp2-server/releases/tag/v0.6.2';
+const OPENRTMP_BENCH_LIB_0_11_0_URL = 'https://github.com/OpenRTMP/librtmp2/releases/tag/v0.11.0';
+const OPENRTMP_BENCH_LIB_0_11_0 = [
+  'lib_ref_url' => OPENRTMP_BENCH_LIB_0_11_0_URL,
+  'lib_bench_source_url' => 'https://github.com/OpenRTMP/librtmp2/blob/v0.11.0/BENCHMARKS.md',
+  'lib_bench_environment' => 'Intel Xeon @ 2.10 GHz, 4 vCPUs, Linux 6.18 x86_64, rustc 1.97.0',
+  'lib_bench_note_en' => 'Criterion microbenchmarks for librtmp2 0.11.0. The protocol paths are unchanged from 0.10.2; the cross-version differences were measured on a shared VM with a newer rustc and are not a controlled release A/B.',
+  'lib_bench_note_de' => 'Criterion-Microbenchmarks für librtmp2 0.11.0. Die Protokollpfade sind gegenüber 0.10.2 unverändert; die Unterschiede zwischen den Versionen wurden auf einer Shared-VM mit neuerem rustc gemessen und sind kein kontrollierter Release-A/B-Test.',
+  'lib_protocol' => [
+    ['chunk/write_read_roundtrip', '4.55 µs', '~858 MiB/s'],
+    ['amf0_build_connect', '274 ns', '—'],
+    ['flv/video_tag_h264', '1.51 ns', '—'],
+    ['flv/audio_tag_aac', '1.24 ns', '—'],
+    ['fourcc_to_video_codec_avc1', '2.19 ns', '—'],
+    ['server_read_c1', '1.21 µs', '—'],
+  ],
+  'lib_relay' => [
+    ['relay/publish_to_player/100', '99.1 ms', '~1010 elem/s'],
+    ['relay/publish_to_player/500', '101.4 ms', '~4930 elem/s'],
+  ],
+];
+
 // Immutable benchmark snapshots, newest first.
 //
 // handshake/play_handshake row:
@@ -31,30 +55,13 @@ const OPENRTMP_BENCH_SERVERS = [
 // load row:
 //   [join avg ms, join p95 ms, fps/viewer, CPU % of one core, peak RSS MiB]
 const OPENRTMP_BENCH_RUNS = [
-  '0.6.2-0.11.0-2026-10-09' => [
+  '0.6.2-0.11.0-2026-10-09' => OPENRTMP_BENCH_LIB_0_11_0 + [
     'date' => '2026-10-09',
     'server_version' => '0.6.2',
     'lib_version' => '0.11.0',
     'published_server_release' => true,
     'source_url' => 'https://github.com/OpenRTMP/librtmp2-server/blob/main/BENCHMARKS.md',
-    'server_ref_url' => 'https://github.com/OpenRTMP/librtmp2-server/releases/tag/v0.6.2',
-    'lib_ref_url' => 'https://github.com/OpenRTMP/librtmp2/releases/tag/v0.11.0',
-    'lib_bench_source_url' => 'https://github.com/OpenRTMP/librtmp2/blob/v0.11.0/BENCHMARKS.md',
-    'lib_bench_environment' => 'Intel Xeon @ 2.10 GHz, 4 vCPUs, Linux 6.18 x86_64, rustc 1.97.0',
-    'lib_bench_note_en' => 'Criterion microbenchmarks for librtmp2 0.11.0. The protocol paths are unchanged from 0.10.2; the cross-version differences were measured on a shared VM with a newer rustc and are not a controlled release A/B.',
-    'lib_bench_note_de' => 'Criterion-Microbenchmarks für librtmp2 0.11.0. Die Protokollpfade sind gegenüber 0.10.2 unverändert; die Unterschiede zwischen den Versionen wurden auf einer Shared-VM mit neuerem rustc gemessen und sind kein kontrollierter Release-A/B-Test.',
-    'lib_protocol' => [
-      ['chunk/write_read_roundtrip', '4.55 µs', '~858 MiB/s'],
-      ['amf0_build_connect', '274 ns', '—'],
-      ['flv/video_tag_h264', '1.51 ns', '—'],
-      ['flv/audio_tag_aac', '1.24 ns', '—'],
-      ['fourcc_to_video_codec_avc1', '2.19 ns', '—'],
-      ['server_read_c1', '1.21 µs', '—'],
-    ],
-    'lib_relay' => [
-      ['relay/publish_to_player/100', '99.1 ms', '~1010 elem/s'],
-      ['relay/publish_to_player/500', '101.4 ms', '~4930 elem/s'],
-    ],
+    'server_ref_url' => OPENRTMP_BENCH_SERVER_0_6_2_URL,
     'note_en' => 'librtmp2-server 0.6.2 on librtmp2 0.11.0 against the newest release of every compared server: MediaMTX v1.21.2, nginx 1.31.6 with nginx-rtmp-module master, SRS 8.0 and LiveForge main.',
     'note_de' => 'librtmp2-server 0.6.2 auf librtmp2 0.11.0 gegen die neueste Version jedes verglichenen Servers: MediaMTX v1.21.2, nginx 1.31.6 mit nginx-rtmp-module master, SRS 8.0 und LiveForge main.',
     'load_note_en' => 'At 500 viewers every server delivered the full source rate. From 1000 viewers nginx-rtmp fell below it, and at 2000 viewers MediaMTX and LiveForge did too; only librtmp2-server and SRS delivered every frame at 2000 viewers.',
@@ -64,8 +71,8 @@ const OPENRTMP_BENCH_RUNS = [
         '0.6.2',
         'librtmp2 0.11.0',
         'Rust',
-        'https://github.com/OpenRTMP/librtmp2-server/releases/tag/v0.6.2',
-        'https://github.com/OpenRTMP/librtmp2/releases/tag/v0.11.0',
+        OPENRTMP_BENCH_SERVER_0_6_2_URL,
+        OPENRTMP_BENCH_LIB_0_11_0_URL,
       ],
       'mediamtx' => ['v1.21.2', 'release binary', 'Go'],
       'liveforge' => ['main @ 4e70fb3', '', 'Go'],
@@ -134,30 +141,13 @@ const OPENRTMP_BENCH_RUNS = [
     ],
     'rounds' => [],
   ],
-  '0.6.2-0.11.0' => [
+  '0.6.2-0.11.0' => OPENRTMP_BENCH_LIB_0_11_0 + [
     'date' => '2026-10-02',
     'server_version' => '0.6.2',
     'lib_version' => '0.11.0',
     'published_server_release' => true,
     'source_url' => 'https://github.com/OpenRTMP/librtmp2-server/blob/v0.6.2/BENCHMARKS.md',
-    'server_ref_url' => 'https://github.com/OpenRTMP/librtmp2-server/releases/tag/v0.6.2',
-    'lib_ref_url' => 'https://github.com/OpenRTMP/librtmp2/releases/tag/v0.11.0',
-    'lib_bench_source_url' => 'https://github.com/OpenRTMP/librtmp2/blob/v0.11.0/BENCHMARKS.md',
-    'lib_bench_environment' => 'Intel Xeon @ 2.10 GHz, 4 vCPUs, Linux 6.18 x86_64, rustc 1.97.0',
-    'lib_bench_note_en' => 'Criterion microbenchmarks for librtmp2 0.11.0. The protocol paths are unchanged from 0.10.2; the cross-version differences were measured on a shared VM with a newer rustc and are not a controlled release A/B.',
-    'lib_bench_note_de' => 'Criterion-Microbenchmarks für librtmp2 0.11.0. Die Protokollpfade sind gegenüber 0.10.2 unverändert; die Unterschiede zwischen den Versionen wurden auf einer Shared-VM mit neuerem rustc gemessen und sind kein kontrollierter Release-A/B-Test.',
-    'lib_protocol' => [
-      ['chunk/write_read_roundtrip', '4.55 µs', '~858 MiB/s'],
-      ['amf0_build_connect', '274 ns', '—'],
-      ['flv/video_tag_h264', '1.51 ns', '—'],
-      ['flv/audio_tag_aac', '1.24 ns', '—'],
-      ['fourcc_to_video_codec_avc1', '2.19 ns', '—'],
-      ['server_read_c1', '1.21 µs', '—'],
-    ],
-    'lib_relay' => [
-      ['relay/publish_to_player/100', '99.1 ms', '~1010 elem/s'],
-      ['relay/publish_to_player/500', '101.4 ms', '~4930 elem/s'],
-    ],
+    'server_ref_url' => OPENRTMP_BENCH_SERVER_0_6_2_URL,
     'note_en' => 'Release snapshot: librtmp2-server 0.6.2 on librtmp2 0.11.0. The cross-server table is one sweep, and competitor builds differ from the 28 Sep snapshot. Compare servers within this snapshot; do not treat differences between snapshots as an A/B test.',
     'note_de' => 'Release-Snapshot: librtmp2-server 0.6.2 auf librtmp2 0.11.0. Die Cross-Server-Tabelle stammt aus einem einzelnen Sweep, und die Konkurrenz-Builds unterscheiden sich vom Stand vom 28. September. Server innerhalb dieses Snapshots vergleichen; Unterschiede zwischen Snapshots sind kein A/B-Test.',
     'load_note_en' => 'At 500 and 1000 viewers every server delivered the full source rate. At 2000 viewers nginx-rtmp and MediaMTX fell below it, so that step is a stress indicator rather than a clean capacity comparison.',
@@ -167,8 +157,8 @@ const OPENRTMP_BENCH_RUNS = [
         '0.6.2',
         'librtmp2 0.11.0',
         'Rust',
-        'https://github.com/OpenRTMP/librtmp2-server/releases/tag/v0.6.2',
-        'https://github.com/OpenRTMP/librtmp2/releases/tag/v0.11.0',
+        OPENRTMP_BENCH_SERVER_0_6_2_URL,
+        OPENRTMP_BENCH_LIB_0_11_0_URL,
       ],
       'mediamtx' => ['v1.21.1', 'Go module build', 'Go'],
       'liveforge' => ['main @ 4e70fb3', '', 'Go'],
