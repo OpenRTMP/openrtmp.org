@@ -24,6 +24,8 @@ const OPENRTMP_BENCH_SERVERS = [
 
 // librtmp2-server 0.6.2 / librtmp2 0.11.0 release links, and the librtmp2
 // 0.11.0 microbenchmarks, shared by every snapshot of that version pair.
+const OPENRTMP_BENCH_SERVER_0_6_2 = '0.6.2';
+const OPENRTMP_BENCH_LIVEFORGE_4E70FB3 = 'main @ 4e70fb3';
 const OPENRTMP_BENCH_SERVER_0_6_2_URL = 'https://github.com/OpenRTMP/librtmp2-server/releases/tag/v0.6.2';
 const OPENRTMP_BENCH_LIB_0_11_0_URL = 'https://github.com/OpenRTMP/librtmp2/releases/tag/v0.11.0';
 const OPENRTMP_BENCH_LIB_0_11_0 = [
@@ -57,7 +59,7 @@ const OPENRTMP_BENCH_LIB_0_11_0 = [
 const OPENRTMP_BENCH_RUNS = [
   '0.6.2-0.11.0-2026-10-09' => OPENRTMP_BENCH_LIB_0_11_0 + [
     'date' => '2026-10-09',
-    'server_version' => '0.6.2',
+    'server_version' => OPENRTMP_BENCH_SERVER_0_6_2,
     'lib_version' => '0.11.0',
     'published_server_release' => true,
     'source_url' => 'https://github.com/OpenRTMP/librtmp2-server/blob/main/BENCHMARKS.md',
@@ -68,14 +70,14 @@ const OPENRTMP_BENCH_RUNS = [
     'load_note_de' => 'Bei 500 Zuschauern lieferten alle Server die volle Quellrate. Ab 1000 Zuschauern fiel nginx-rtmp darunter, bei 2000 Zuschauern auch MediaMTX und LiveForge; nur librtmp2-server und SRS lieferten bei 2000 Zuschauern jedes Frame.',
     'versions' => [
       'openrtmp' => [
-        '0.6.2',
+        OPENRTMP_BENCH_SERVER_0_6_2,
         'librtmp2 0.11.0',
         'Rust',
         OPENRTMP_BENCH_SERVER_0_6_2_URL,
         OPENRTMP_BENCH_LIB_0_11_0_URL,
       ],
       'mediamtx' => ['v1.21.2', 'release binary', 'Go'],
-      'liveforge' => ['main @ 4e70fb3', '', 'Go'],
+      'liveforge' => [OPENRTMP_BENCH_LIVEFORGE_4E70FB3, '', 'Go'],
       'srs' => ['8.0.48', 'v8.0-d0', 'C++'],
       'nginx' => ['nginx 1.31.6', 'nginx-rtmp-module @ 6c7719d', 'C'],
     ],
@@ -143,7 +145,7 @@ const OPENRTMP_BENCH_RUNS = [
   ],
   '0.6.2-0.11.0' => OPENRTMP_BENCH_LIB_0_11_0 + [
     'date' => '2026-10-02',
-    'server_version' => '0.6.2',
+    'server_version' => OPENRTMP_BENCH_SERVER_0_6_2,
     'lib_version' => '0.11.0',
     'published_server_release' => true,
     'source_url' => 'https://github.com/OpenRTMP/librtmp2-server/blob/v0.6.2/BENCHMARKS.md',
@@ -154,14 +156,14 @@ const OPENRTMP_BENCH_RUNS = [
     'load_note_de' => 'Bei 500 und 1000 Zuschauern lieferten alle Server die volle Quellrate. Bei 2000 Zuschauern fielen nginx-rtmp und MediaMTX darunter; dieser Schritt ist daher eher ein Stresstest als ein sauberer Kapazitätsvergleich.',
     'versions' => [
       'openrtmp' => [
-        '0.6.2',
+        OPENRTMP_BENCH_SERVER_0_6_2,
         'librtmp2 0.11.0',
         'Rust',
         OPENRTMP_BENCH_SERVER_0_6_2_URL,
         OPENRTMP_BENCH_LIB_0_11_0_URL,
       ],
       'mediamtx' => ['v1.21.1', 'Go module build', 'Go'],
-      'liveforge' => ['main @ 4e70fb3', '', 'Go'],
+      'liveforge' => [OPENRTMP_BENCH_LIVEFORGE_4E70FB3, '', 'Go'],
       'srs' => ['7.0.89', 'gitee mirror @ 846bc13', 'C++'],
       'nginx' => ['nginx 1.24.0', 'libnginx-mod-rtmp 1.2.2', 'C'],
     ],
@@ -264,7 +266,7 @@ const OPENRTMP_BENCH_RUNS = [
         'https://github.com/OpenRTMP/librtmp2/releases/tag/v0.10.2',
       ],
       'mediamtx' => ['v1.21.1', '', 'Go'],
-      'liveforge' => ['main @ 4e70fb3', '', 'Go'],
+      'liveforge' => [OPENRTMP_BENCH_LIVEFORGE_4E70FB3, '', 'Go'],
       'srs' => ['v8.0.48', '', 'C++'],
       'nginx' => ['nginx 1.31.6', 'nginx-rtmp master @ 6c7719d', 'C'],
     ],
