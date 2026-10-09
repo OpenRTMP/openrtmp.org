@@ -135,9 +135,11 @@ function benchCiRefresh(string $url, string $cache, callable $valid): ?array
     @touch($failed);
     return null;
   }
-  $tmp = $cache . '.' . getmypid() . '.tmp';
-  if (@file_put_contents($tmp, $body) !== false) {
-    @rename($tmp, $cache);
+  $tmp = @tempnam(sys_get_temp_dir(), 'openrtmp-bench-');
+  if ($tmp !== false) {
+    if (@file_put_contents($tmp, $body) === false || !@rename($tmp, $cache)) {
+      @unlink($tmp);
+    }
   }
   @unlink($failed);
   return $data;
