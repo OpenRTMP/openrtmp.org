@@ -213,7 +213,7 @@ docker compose -f compose.quickstart.yml up -d
       <div class="stack">
         <div class="stack-row"><span class="layer-name">OpenRTMP Control Panel<br><code>librtmp2-server-panel</code></span><span class="layer-desc">Browser UI for stream lifecycle, copyable URLs, keys, live statistics, and optional cluster node management</span></div>
         <div class="stack-arrow">&#8595;</div>
-        <div class="stack-row"><span class="layer-name">OpenRTMP Server<br><code>librtmp2-server</code></span><span class="layer-desc">REST API, authentication, SQLite, statistics, listeners, stream registry, optional recording, HLS, and push relay, and optional HA clustering</span></div>
+        <div class="stack-row"><span class="layer-name">OpenRTMP Server<br><code>librtmp2-server</code></span><span class="layer-desc">REST API, authentication, SQLite, statistics, listeners, stream registry, and optional recording, HLS, push relay, and HA clustering</span></div>
         <div class="stack-arrow">&#8595;</div>
         <div class="stack-row"><span class="layer-name">OpenRTMP Protocol Library<br><code>librtmp2</code></span><span class="layer-desc">RTMP/RTMPS connection, handshake, chunking, AMF commands, relay primitives, and E-RTMP modules</span></div>
         <div class="stack-arrow">&#8595;</div>

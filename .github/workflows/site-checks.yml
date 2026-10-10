@@ -2,10 +2,8 @@ name: Website checks
 
 on:
   pull_request:
-  push:
-    branches:
-      - main
-  # Deploy to production runs these checks first and only uploads when they pass.
+  # Pushes to main run these checks through Deploy to production, which only
+  # uploads when they pass, so they are not triggered here a second time.
   workflow_call:
 
 permissions:
