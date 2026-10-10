@@ -39,8 +39,8 @@ include_once __DIR__ . '/../../../includes/header.php';
             <tr><td>Reife</td><td>Aktive Entwicklung (vor 1.0)</td><td>Lange etabliertes kommerzielles Produkt mit Herstellersupport</td></tr>
             <tr><td>RTMP / RTMPS</td><td>Ja / ja</td><td>Ja / ja</td></tr>
             <tr><td>WebRTC, SRT</td><td>Nein</td><td>Ja, als vollwertige Ingest-/Ausgabeprotokolle dokumentiert</td></tr>
-            <tr><td>HLS-/DASH-Ausgabe</td><td>Kein integrierter HLS-/DASH-Server</td><td>Ja, mit Adaptive-Bitrate-Paketierung</td></tr>
-            <tr><td>Transcoding</td><td>Nicht integriert</td><td>Integriertes Adaptive-Bitrate-Transcoding</td></tr>
+            <tr><td>HLS-/DASH-Ausgabe</td><td>Optionales HLS in einer Auflösung über FFmpeg; kein DASH</td><td>Ja, mit Adaptive-Bitrate-Paketierung</td></tr>
+            <tr><td>Transcoding</td><td>Optionales Transcoding nach H.264/AAC für HLS- und Push-Ausgaben; keine Adaptive-Bitrate-Stufen</td><td>Integriertes Adaptive-Bitrate-Transcoding</td></tr>
             <tr><td>DRM / Wasserzeichen</td><td>Nicht integriert</td><td>DRM über Anbindung an Key-Management-Dienste von Drittanbietern (manche Konfigurationen brauchen ein zusätzliches kostenpflichtiges Modul); Wasserzeichen-Optionen</td></tr>
             <tr><td>Administration</td><td>REST-API, SQLite und optionales Web-Panel</td><td>REST-API plus die Oberfläche Wowza Streaming Engine Manager</td></tr>
             <tr><td>Stream-Zugangsdaten</td><td>Getrennte Publish-, Play- und Statistik-Keys pro Stream</td><td>Konfigurierbare Authentifizierungsmodule und tokenbasierte Sicherheits-Add-ons</td></tr>
@@ -55,7 +55,7 @@ include_once __DIR__ . '/../../../includes/header.php';
           <li>die Lizenzkosten eines kommerziellen Servers das Hindernis sind und Sie selbst gehostete, von der Community unterstützte Software betreiben können.</li>
           <li>Sie eine Rust-Anwendung bauen und wiederverwendbaren RTMP/E-RTMP-Protokollcode statt eines Black-Box-Servers möchten.</li>
           <li>Sie einen kleinen, prüfbaren, API-gesteuerten Server mit getrennten Zugangsdaten für Publishing, Wiedergabe und Monitoring möchten.</li>
-          <li>Ihr Auslieferungspfad durchgängig RTMP/RTMPS ist und Sie daher kein integriertes Transcoding, DRM oder keine Protokollkonvertierung brauchen.</li>
+          <li>Ihr Auslieferungspfad RTMP/RTMPS ist, optional mit einfachem HLS, und Sie daher kein Adaptive-Bitrate-Transcoding, kein DRM und keine weitergehende Protokollkonvertierung brauchen.</li>
           <li>Sie den exakten Publishing-/Wiedergabe-Workflow vor kritischem Produktiveinsatz testen und das Risiko vor 1.0 akzeptieren können.</li>
         </ul>
 
@@ -80,7 +80,7 @@ include_once __DIR__ . '/../../../includes/header.php';
         <p>Wenn Ihr Wowza-Deployment transcodiert, HLS/DASH paketiert, DRM anwendet oder zu WebRTC überbrückt, behalten Sie diese Dienste bei oder ergänzen Sie separate Komponenten, bevor Sie den RTMP-Ingest zu OpenRTMP migrieren.</p>
 
         <h2 id="limitations">Einschränkungen von OpenRTMP, die Sie berücksichtigen sollten</h2>
-        <p>OpenRTMP ist kein direkter Ersatz für Wowza. Es bietet kein integriertes Transcoding, kein DRM, kein WebRTC-/SRT-Bridging und keine HLS-/DASH-Paketierung, und Protokoll sowie öffentliche APIs entwickeln sich vor 1.0 noch weiter. Diese Einschränkungen sind akzeptabel, wenn das Zielsystem ein fokussierter, selbst gehosteter RTMP/RTMPS-Endpunkt ist. Sie sind ein Ausschlusskriterium, wenn das bestehende Wowza-Deployment als vollständige Medienverarbeitungs- und Auslieferungs-Pipeline dient.</p>
+        <p>OpenRTMP ist kein direkter Ersatz für Wowza. Es bietet kein Adaptive-Bitrate-Transcoding, kein DRM, kein WebRTC-/SRT-Bridging und keine DASH-Paketierung (die optionale HLS-Ausgabe hat eine einzige Auflösung), und Protokoll sowie öffentliche APIs entwickeln sich vor 1.0 noch weiter. Diese Einschränkungen sind akzeptabel, wenn das Zielsystem ein fokussierter, selbst gehosteter RTMP/RTMPS-Endpunkt ist. Sie sind ein Ausschlusskriterium, wenn das bestehende Wowza-Deployment als vollständige Medienverarbeitungs- und Auslieferungs-Pipeline dient.</p>
 
         <h2 id="alternatives">Über Wowza hinaus</h2>
         <p>Geht es bei Ihrer Evaluierung eher um Open-Source-Multiprotokoll-Alternativen als speziell um den kommerziellen Funktionsumfang von Wowza, vergleichen Sie <a href="/de/guides/openrtmp-vs-mediamtx-vs-srs/">OpenRTMP vs. MediaMTX vs. SRS</a> und die umfassendere Anleitung <a href="/de/guides/nginx-rtmp-alternatives/">Alternativen zu nginx-rtmp</a>.</p>

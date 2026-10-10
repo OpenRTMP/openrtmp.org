@@ -2,9 +2,9 @@ name: Website checks
 
 on:
   pull_request:
-  push:
-    branches:
-      - main
+  # Pushes to main run these checks through Deploy to production, which only
+  # uploads when they pass, so they are not triggered here a second time.
+  workflow_call:
 
 permissions:
   contents: read
@@ -47,12 +47,30 @@ jobs:
 
       - name: Smoke-test public pages
         run: |
-          php -S 127.0.0.1:8090 >/tmp/openrtmp-site.log 2>&1 &
+          # Log every PHP diagnostic instead of printing it into the page, so a
+          # warning or deprecation fails the job instead of rendering as a 200.
+          php_errors=/tmp/openrtmp-php-errors.log
+          rm -f "$php_errors"
+          php -d display_errors=0 -d log_errors=1 -d error_reporting=-1 \
+            -d error_log="$php_errors" \
+            -S 127.0.0.1:8090 scripts/dev-router.php >/tmp/openrtmp-site.log 2>&1 &
           server_pid=$!
           trap 'kill "$server_pid"' EXIT
-          sleep 2
+          for _ in $(seq 50); do
+            curl --silent --output /dev/null http://127.0.0.1:8090/ && break
+            sleep 0.1
+          done
           # Every page on disk, English and German, must render.
           # './index.php' -> '/', './de/guides/x/index.php' -> '/de/guides/x/'
-          for path in $(find . -name 'index.php' -not -path './includes/*' | sed 's|^\.||; s|index\.php$||' | sort); do
+          paths=$(find . -name 'index.php' -not -path './includes/*' | sed 's|^\.||; s|index\.php$||' | sort)
+          for path in $paths; do
             curl --fail --silent --show-error "http://127.0.0.1:8090${path}" >/dev/null
           done
+          # Internal links and #anchors on those pages must resolve.
+          # shellcheck disable=SC2086
+          python3 scripts/check-links.py http://127.0.0.1:8090 $paths
+          if [ -s "$php_errors" ]; then
+            echo "PHP reported diagnostics while rendering the pages:"
+            cat "$php_errors"
+            exit 1
+          fi

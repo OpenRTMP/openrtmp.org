@@ -216,7 +216,7 @@ docker compose -f compose.quickstart.yml up -d
       <div class="stack">
         <div class="stack-row"><span class="layer-name">OpenRTMP Control Panel<br><code>librtmp2-server-panel</code></span><span class="layer-desc">Browser-UI für den Stream-Lebenszyklus, kopierbare URLs, Keys, Live-Statistiken und optionale Verwaltung von Cluster-Nodes</span></div>
         <div class="stack-arrow">&#8595;</div>
-        <div class="stack-row"><span class="layer-name">OpenRTMP Server<br><code>librtmp2-server</code></span><span class="layer-desc">REST-API, Authentifizierung, SQLite, Statistiken, Listener, Stream-Registry und optionales HA-Clustering</span></div>
+        <div class="stack-row"><span class="layer-name">OpenRTMP Server<br><code>librtmp2-server</code></span><span class="layer-desc">REST-API, Authentifizierung, SQLite, Statistiken, Listener, Stream-Registry sowie optional Aufzeichnung, HLS, Push-Relay und HA-Clustering</span></div>
         <div class="stack-arrow">&#8595;</div>
         <div class="stack-row"><span class="layer-name">OpenRTMP-Protokollbibliothek<br><code>librtmp2</code></span><span class="layer-desc">RTMP/RTMPS-Verbindung, Handshake, Chunking, AMF-Befehle, Relay-Primitive und E-RTMP-Module</span></div>
         <div class="stack-arrow">&#8595;</div>
@@ -248,7 +248,7 @@ docker compose -f compose.quickstart.yml up -d
           <h3>Nutzen Sie eine andere Plattform, wenn Sie brauchen</h3>
           <ul class="check-list muted-list">
             <li>Eine schlüsselfertige öffentliche Videoplattform mit Zuschauer-Website</li>
-            <li>Integriertes HLS, Aufzeichnung, Transcoding oder Push-Relay</li>
+            <li>Adaptive-Bitrate-Transcoding, DASH oder WebRTC-Auslieferung</li>
             <li>Breites Multiprotokoll-Routing über RTMP hinaus</li>
             <li>Schon heute eine garantiert stabile 1.0-API</li>
           </ul>

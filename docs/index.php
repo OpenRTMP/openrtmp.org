@@ -22,7 +22,7 @@ include_once __DIR__ . '/../includes/header.php';
           <li><a href="#getting-started">Getting Started</a></li>
           <li><a href="#state-machine">Connection State Machine</a></li>
           <li><a href="#callbacks">Host Callbacks</a></li>
-          <li><a href="#layers">Module Reference</a></li>
+          <li><a href="#layers">Layer Reference</a></li>
           <li><a href="#server">librtmp2-server</a></li>
           <li><a href="#cluster">HA clustering</a></li>
           <li><a href="#panel">librtmp2-server-panel</a></li>
@@ -114,19 +114,21 @@ while running {
         </div>
 
         <h2 id="layers">Layer Reference</h2>
-        <p>Ingest flows bottom-up through nine layers before reaching your callbacks. See the <a href="/#architecture">architecture overview</a> on the homepage for the full diagram. Key directories in <code>src/</code>:</p>
+        <p>Ingest flows bottom-up through these layers before reaching your callbacks. See the <a href="/#architecture">architecture overview</a> on the homepage for how the library, server, and panel fit together. Key modules in <code>src/</code>:</p>
         <div class="table-wrap">
           <table>
             <thead><tr><th>Directory</th><th>Responsibility</th></tr></thead>
             <tbody>
-              <tr><td><code>core/</code></td><td>alloc hook, growable buffers, byte helpers, logging, errors</td></tr>
-              <tr><td><code>handshake/</code></td><td>C0/C1/C2 &harr; S0/S1/S2, partial-read buffering, version detection</td></tr>
+              <tr><td><code>alloc.rs</code>, <code>buffer.rs</code>, <code>bytes.rs</code>, <code>log.rs</code>, <code>types.rs</code></td><td>alloc hook, growable buffers, big-endian byte helpers, logging, error codes</td></tr>
+              <tr><td><code>net/</code> &amp; <code>transport.rs</code></td><td>OS socket layer for Unix and Windows, plaintext and TLS on one send/receive path</td></tr>
+              <tr><td><code>handshake.rs</code></td><td>C0/C1/C2 &harr; S0/S1/S2, partial-read buffering, version detection</td></tr>
               <tr><td><code>chunk/</code></td><td>chunk_reader/writer, per-csid chunk_state, SetChunkSize/Abort</td></tr>
               <tr><td><code>message/</code></td><td>reassembled message dispatch &amp; AMF command decode/encode</td></tr>
               <tr><td><code>amf/</code></td><td>AMF0 (mandatory) and AMF3 (optional)</td></tr>
               <tr><td><code>flv/</code></td><td>FLV audio/video/script tag parsing</td></tr>
               <tr><td><code>ertmp/</code></td><td>E-RTMP v1 (ExVideo/ExAudio, FourCC, HDR) + v2 (capsEx, reconnect, multitrack, ModEx)</td></tr>
               <tr><td><code>session/</code></td><td>connection object, state machine, stream bookkeeping</td></tr>
+              <tr><td><code>media/</code></td><td>relay delivery hints, late-join init cache, ModEx helpers shared by the session and the server relay</td></tr>
               <tr><td><code>server/</code> &amp; <code>client/</code></td><td>accept loop / per-connection poll &middot; outbound connect &amp; publish/play</td></tr>
             </tbody>
           </table>
@@ -146,6 +148,7 @@ while running {
               <tr><td>REST API</td><td>stream CRUD on <code>/api/v1/streams</code> with Bearer token auth (axum, port <code>8080</code>)</td></tr>
               <tr><td>Stats endpoints</td><td><code>/stats?key=&lt;stats_key&gt;</code> (JSON) and <code>/stats-nginx?key=&lt;stats_key&gt;</code> (nginx-rtmp-compatible XML)</td></tr>
               <tr><td>Frame relay</td><td>forwards publisher frames to all matching players, GOP-aware</td></tr>
+              <tr><td>Media outputs</td><td>optional FLV recording, HLS through FFmpeg (<code>/hls/&lt;stream_id&gt;/index.m3u8?key=&lt;play_key&gt;</code>), RTMP/RTMPS push relay, and publish hooks, all off by default (<code>MEDIA_*</code>, see <a href="https://github.com/OpenRTMP/librtmp2-server/blob/main/docs/media-outputs.md" target="_blank" rel="noopener"><code>docs/media-outputs.md</code></a>)</td></tr>
               <tr><td>HA clustering</td><td>optional multi-node mode (<code>CLUSTER_ENABLED</code>, off by default) with OpenRaft state replication and a media mesh &mdash; see <a href="#cluster">HA clustering</a></td></tr>
             </tbody>
           </table>
@@ -270,7 +273,7 @@ printf 'Save this panel password: %s\n' "${PANEL_PASSWORD}"
 
 docker network create openrtmp
 
-docker run -d --name librtmp2-panel-redis --network openrtmp redis:7-alpine
+docker run -d --name librtmp2-panel-redis --network openrtmp redis:8-alpine
 
 docker run -d \
   --name librtmp2-server \

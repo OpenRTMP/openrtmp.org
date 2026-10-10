@@ -38,10 +38,10 @@ include_once __DIR__ . '/../../../includes/header.php';
             <tr><td>RTMP / RTMPS</td><td>Ja / ja</td><td>Ja / ja</td><td>RTMP ist ein Kernprotokoll; für die genaue Topologie mit verschlüsseltem Ingest die aktuelle SRS-Doku prüfen</td></tr>
             <tr><td>Fokus auf E-RTMP</td><td>Expliziter Schwerpunkt der Protokollentwicklung in librtmp2</td><td>Unterstützt laut aktuellen Codec-Tabellen moderne Codecs in RTMP-Workflows</td><td>Die aktuelle SRS-Doku behandelt Enhanced RTMP für HEVC/AV1, die v7.0-Linie nennt zusätzlich VP9</td></tr>
             <tr><td>RTSP</td><td>Nein</td><td>Ja</td><td>Nicht der Hauptgrund für SRS; für benötigte RTSP-Workflows die aktuelle Release-Doku prüfen</td></tr>
-            <tr><td>HLS</td><td>Kein integrierter HLS-Server</td><td>Ja, einschließlich HLS-Erzeugung</td><td>Ja</td></tr>
+            <tr><td>HLS</td><td>Optional, standardmäßig aus; von FFmpeg erzeugt und mit dem Play-Key des Streams ausgeliefert</td><td>Ja, einschließlich HLS-Erzeugung</td><td>Ja</td></tr>
             <tr><td>WebRTC / WHIP / WHEP</td><td>Nein</td><td>Ja</td><td>Ja</td></tr>
             <tr><td>SRT</td><td>Nein</td><td>Ja</td><td>Ja</td></tr>
-            <tr><td>Aufzeichnung</td><td>Kein integrierter Recorder</td><td>Integrierte Aufzeichnung/Wiedergabe</td><td>In SRS-Workflows verfügbar; den aktuellen Funktionsumfang für das Ziel-Release prüfen</td></tr>
+            <tr><td>Aufzeichnung</td><td>Optionale FLV-Aufzeichnung pro Publisher-Sitzung, standardmäßig aus; keine integrierte Wiedergabe</td><td>Integrierte Aufzeichnung/Wiedergabe</td><td>In SRS-Workflows verfügbar; den aktuellen Funktionsumfang für das Ziel-Release prüfen</td></tr>
             <tr><td>Control-API</td><td>REST-API für Stream-Verwaltung + Health/Statistiken</td><td>Control-API</td><td>HTTP-API</td></tr>
             <tr><td>Metriken / Statistiken</td><td>JSON-Statistiken + nginx-kompatibles XML; Panel-UI</td><td>Prometheus-kompatible Metriken</td><td>HTTP-API und Monitoring-Integrationen</td></tr>
             <tr><td>Authentifizierungsmodell</td><td>Getrennte Publish-, Play- und Statistik-Keys pro Stream + API-Bearer-Token</td><td>Interne, externe HTTP- oder JWT-Authentifizierung</td><td>HTTP-APIs, Callbacks und protokollspezifische Auth-Optionen je nach Workflow</td></tr>

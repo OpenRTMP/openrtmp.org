@@ -14,7 +14,12 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  checks:
+    # The same checks as pull requests; a commit that fails them is not uploaded.
+    uses: ./.github/workflows/site-checks.yml
+
   deploy:
+    needs: checks
     runs-on: ubuntu-latest
     environment: production
     steps:

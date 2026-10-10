@@ -38,7 +38,7 @@ include_once __DIR__ . '/../../../includes/header.php';
         <table class="comparison-table">
           <thead><tr><th>Projekt</th><th>Hauptzweck</th><th>Besondere Stärken</th><th>Wichtiger Kompromiss</th></tr></thead>
           <tbody>
-            <tr><td><strong>OpenRTMP</strong></td><td>Fokussierte RTMP/RTMPS- und E-RTMP-Infrastruktur</td><td>Rust-Bibliothek + Server + REST-API + Keys + Live-Statistiken + optionales HA</td><td>Vor 1.0 und bewusst ohne integriertes HLS, Aufzeichnung, Transcoding und Push-Relay</td></tr>
+            <tr><td><strong>OpenRTMP</strong></td><td>Fokussierte RTMP/RTMPS- und E-RTMP-Infrastruktur</td><td>Rust-Bibliothek + Server + REST-API + Keys + Live-Statistiken + optionales HA</td><td>Vor 1.0; Aufzeichnung, HLS und Push-Relay sind optionale Server-Ausgaben, ohne WebRTC, SRT, DASH oder Adaptive-Bitrate-Transcoding</td></tr>
             <tr><td><strong>MediaMTX</strong></td><td>Kompaktes Multiprotokoll-Routing</td><td>RTSP, RTMP, HLS, WebRTC, SRT, MoQ, Aufzeichnung, Weiterleitung, API, Prometheus-Metriken</td><td>Andere Architektur als nginx; Migration bedeutet Neugestaltung der Konfiguration statt Übersetzung von Direktiven</td></tr>
             <tr><td><strong>SRS</strong></td><td>Breiter Live-Streaming- und WebRTC-Server</td><td>RTMP, WebRTC, HLS, HTTP-FLV, SRT, DASH, APIs und Protokollkonvertierung</td><td>Größerer Funktionsumfang und aufwendigeres Betriebsmodell als ein schmaler reiner RTMP-Server</td></tr>
             <tr><td><strong>nginx-rtmp</strong></td><td>Etablierte nginx-Modul-Workflows</td><td>Ausgereifte Beispiele, HLS, Aufzeichnung, Exec-/Push-Muster, nginx-Integration</td><td>Ältere Modularchitektur und weniger Fokus auf modernes E-RTMP-Anwendungsdesign</td></tr>

@@ -39,7 +39,7 @@ include_once __DIR__ . '/../../../includes/header.php';
             <tr><td>Stream-Zugangsdaten</td><td>Getrennte Publish-, Play- und Statistik-Keys pro Stream</td><td>Meist über Callbacks oder eigene nginx-Konfiguration umgesetzt</td></tr>
             <tr><td>Statistiken</td><td>JSON plus nginx-kompatibles XML</td><td>Klassischer XML-Statistik-Endpunkt mit XSL-Darstellung</td></tr>
             <tr><td>Einbettbare Bibliothek</td><td>Rust-Crate und C-kompatibles FFI</td><td>Keine vergleichbare eigenständige Protokoll-Crate</td></tr>
-            <tr><td>HLS, Aufzeichnung, Exec, Push</td><td>Im aktuellen Server nicht enthalten</td><td>Übliche Funktionen des nginx-rtmp-Moduls</td></tr>
+            <tr><td>HLS, Aufzeichnung, Exec, Push</td><td>Optionale Server-Ausgaben, standardmäßig aus: FLV-Aufzeichnung, HLS über FFmpeg, RTMP/RTMPS-Push-Relay und Publish-Hooks</td><td>Übliche Funktionen des nginx-rtmp-Moduls</td></tr>
             <tr><td>Multi-Node-HA</td><td>Optionales Clustering mit OpenRaft + Media-Mesh (vor 1.0, standardmäßig aus)</td><td>Meist externe Load-Balancer, gemeinsamer Speicher oder eigene Push-Topologie</td></tr>
             <tr><td>Modernes RTMP</td><td>Expliziter Fokus auf RTMPS und Enhanced-RTMP-Bausteine</td><td>Vorwiegend klassische RTMP-Modul-Workflows</td></tr>
           </tbody>
@@ -59,7 +59,7 @@ include_once __DIR__ . '/../../../includes/header.php';
         <h2 id="nginx-fit">Wählen Sie nginx-rtmp, wenn</h2>
         <ul class="check-list">
           <li>Sie nginx bereits betreiben und sein Konfigurationsmodell kennen.</li>
-          <li>Sie auf integrierte HLS-Erzeugung, Aufzeichnung, Exec-Hooks oder Push-Relay angewiesen sind.</li>
+          <li>Sie HLS, DASH, Aufzeichnung, Exec oder Push pro nginx-Application über Direktiven steuern müssen.</li>
           <li>Sie ein ausgereiftes Deployment-Muster mit vielen vorhandenen Beispielen brauchen.</li>
           <li>Ihr Monitoring und Ihre Automatisierung bereits direkt auf das Verhalten von nginx-rtmp zugeschnitten sind.</li>
           <li>Sie keine einbettbare Rust/C-Protokollbibliothek brauchen.</li>
@@ -73,7 +73,7 @@ include_once __DIR__ . '/../../../includes/header.php';
         <h3>Konfigurationsmodell</h3>
         <p>Versuchen Sie nicht, jede nginx-Direktive eins zu eins zu übertragen. OpenRTMP ist kein nginx-Modul und verzichtet bewusst auf mehrere Anwendungsfunktionen von nginx-rtmp.</p>
         <h3>Medienfunktionen</h3>
-        <p>Wenn Ihre nginx-Konfiguration aufzeichnet, transcodiert, HLS paketiert oder an andere Ziele pusht, behalten Sie diese Dienste bei oder ergänzen Sie separate Komponenten, bevor Sie den Ingest migrieren.</p>
+        <p>Der Server kann FLV aufzeichnen, HLS über FFmpeg erzeugen, an RTMP/RTMPS-Ziele pushen und Hooks bei Publish-Start und -Ende ausführen. Alles davon ist standardmäßig aus und wird serverweit über <code>MEDIA_*</code>-Einstellungen konfiguriert (siehe <a href="https://github.com/OpenRTMP/librtmp2-server/blob/main/docs/media-outputs.md" target="_blank" rel="noopener"><code>docs/media-outputs.md</code></a>). Ordnen Sie jede nginx-Direktive <code>record</code>, <code>hls</code>, <code>exec</code> und <code>push</code> diesen Einstellungen zu und behalten Sie separate Dienste für das, was sie nicht abdecken, etwa DASH oder Transcoding in mehrere Auflösungen.</p>
 
         <h2 id="coexist">Beide können parallel laufen</h2>
         <p>Eine Migration muss nicht alles oder nichts sein. Sie können OpenRTMP auf einem separaten Port oder Host testen, das Verhalten von OBS/FFmpeg vergleichen und nginx-rtmp für HLS- oder Relay-Aufgaben behalten, während Sie die API und das Key-Modell von OpenRTMP evaluieren.</p>
@@ -87,7 +87,7 @@ include_once __DIR__ . '/../../../includes/header.php';
         </ol>
 
         <h2 id="limitations">Einschränkungen von OpenRTMP, die Sie berücksichtigen sollten</h2>
-        <p>Der aktuelle Server ist kein direkter Ersatz für nginx-rtmp. Er bietet kein integriertes HLS, Exec, Push-Relay, keine Aufzeichnung und keine vollständige Parität der nginx-Direktiven. Protokoll und öffentliche APIs entwickeln sich vor 1.0 noch weiter.</p>
+        <p>Der aktuelle Server ist kein direkter Ersatz für nginx-rtmp. Aufzeichnung, HLS, Push und Exec werden serverweit statt pro Application konfiguriert, und es gibt keine DASH-Ausgabe, kein Adaptive-Bitrate-Transcoding, keine HTTP-Callbacks mit <code>on_publish</code>/<code>on_play</code> und keine vollständige Parität der nginx-Direktiven. Protokoll und öffentliche APIs entwickeln sich vor 1.0 noch weiter.</p>
         <p>Diese Einschränkungen sind akzeptabel, wenn das Zielsystem ein fokussierter RTMP-Endpunkt oder ein einbettbarer Protokoll-Stack ist. Sie sind ein Ausschlusskriterium, wenn die bestehende nginx-Konfiguration als vollständige Medien-Workflow-Engine dient.</p>
 
         <h2 id="alternatives">Über nginx-rtmp hinaus</h2>

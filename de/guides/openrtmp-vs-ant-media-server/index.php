@@ -39,9 +39,9 @@ include_once __DIR__ . '/../../../includes/header.php';
             <tr><td>Reife</td><td>Aktive Entwicklung (vor 1.0)</td><td>Lange etabliertes Open-Source-Projekt mit kommerziellem Zweig</td></tr>
             <tr><td>RTMP / RTMPS</td><td>Ja / ja</td><td>RTMP ist eines von mehreren unterstützten Ingest-Protokollen; Details zu RTMPS in der aktuellen Doku prüfen</td></tr>
             <tr><td>WebRTC (WHIP/WHEP)</td><td>Nein</td><td>Ja — WebRTC mit ultraniedriger Latenz ist der Hauptfokus des Projekts; die Community Edition unterstützt WebRTC-Ingest, WebRTC-Wiedergabe erfordert Enterprise</td></tr>
-            <tr><td>SRT, HLS/LL-HLS, DASH/CMAF</td><td>Keine integrierte Unterstützung</td><td>Als unterstützt dokumentiert; SRT, LL-HLS und manche Paketierungsoptionen hängen von der Enterprise Edition oder Plugins ab — aktuelle Editionsmatrix prüfen</td></tr>
+            <tr><td>SRT, HLS/LL-HLS, DASH/CMAF</td><td>Optionales HLS (fMP4- oder MPEG-TS-Segmente, erzeugt von FFmpeg); kein SRT, LL-HLS oder DASH/CMAF</td><td>Als unterstützt dokumentiert; SRT, LL-HLS und manche Paketierungsoptionen hängen von der Enterprise Edition oder Plugins ab — aktuelle Editionsmatrix prüfen</td></tr>
             <tr><td>Fokus auf E-RTMP</td><td>Expliziter Schwerpunkt der Protokollentwicklung in librtmp2</td><td>Dokumentiert HEVC-Unterstützung; aktuelle Enhanced-RTMP-Abdeckung anhand der Upstream-Doku prüfen</td></tr>
-            <tr><td>Aufzeichnung / Transcoding</td><td>Nicht integriert</td><td>Integrierte Aufzeichnung; Adaptive-Bitrate-Transcoding ist eine Funktion der Enterprise Edition</td></tr>
+            <tr><td>Aufzeichnung / Transcoding</td><td>Optionale FLV-Aufzeichnung; optionales Transcoding nach H.264/AAC in einer Auflösung für HLS- und Push-Ausgaben, keine Adaptive-Bitrate-Stufen</td><td>Integrierte Aufzeichnung; Adaptive-Bitrate-Transcoding ist eine Funktion der Enterprise Edition</td></tr>
             <tr><td>Control-API</td><td>REST-API für Stream-Verwaltung plus Health/Statistiken</td><td>REST-APIs mit SDKs für iOS, Android, Unity, React Native und JS</td></tr>
             <tr><td>Stream-Zugangsdaten</td><td>Getrennte Publish-, Play- und Statistik-Keys pro Stream</td><td>Tokenbasierte Authentifizierung und IP-Filter</td></tr>
             <tr><td>Einbettbare Protokollbibliothek</td><td>Rust-Crate und C-kompatibles FFI</td><td>Serveranwendung; keine eigenständige Protokoll-Crate</td></tr>
@@ -71,12 +71,12 @@ include_once __DIR__ . '/../../../includes/header.php';
 
         <h2 id="migration">Überlegungen zur Migration</h2>
         <h3>Protokollumfang</h3>
-        <p>Wird Ihr Ant-Media-Deployment rein als RTMP-Ingest-Punkt ohne WebRTC-, SRT- oder HLS-Konvertierung genutzt, ist der Migrationsaufwand zu OpenRTMP kleiner. Tragen WebRTC oder Protokollkonvertierung wesentliche Last, gibt es dafür kein Gegenstück in OpenRTMP; diese Funktionen müssen bleiben oder in einen separaten Dienst wandern.</p>
+        <p>Wird Ihr Ant-Media-Deployment rein als RTMP-Ingest-Punkt ohne WebRTC-, SRT- oder LL-HLS-Konvertierung genutzt, ist der Migrationsaufwand zu OpenRTMP kleiner. Tragen WebRTC oder Protokollkonvertierung wesentliche Last, gibt es dafür kein Gegenstück in OpenRTMP; diese Funktionen müssen bleiben oder in einen separaten Dienst wandern.</p>
         <h3>Authentifizierung</h3>
         <p>Die tokenbasierte Authentifizierung und die IP-Filter von Ant Media lassen sich nicht direkt auf das Key-Modell von OpenRTMP mit Publish-/Play-/Statistik-Keys pro Stream abbilden; die Ausgabe von Zugangsdaten muss rund um das Key-Schema von OpenRTMP neu aufgebaut werden.</p>
 
         <h2 id="limitations">Einschränkungen von OpenRTMP, die Sie berücksichtigen sollten</h2>
-        <p>OpenRTMP bietet kein WebRTC, kein SRT, keine HLS-/DASH-Ausgabe, keine integrierte Aufzeichnung und kein Transcoding. Es ist kein Ersatz für Ant Media Server, wenn der Wert des Deployments in WebRTC-Auslieferung mit niedriger Latenz oder in Protokollkonvertierung liegt. Diese Einschränkungen sind akzeptabel, wenn das Zielsystem ein fokussierter RTMP/RTMPS- und E-RTMP-Endpunkt oder eine einbettbare Protokollbibliothek ist.</p>
+        <p>OpenRTMP bietet kein WebRTC, kein SRT, kein LL-HLS, keine DASH-Ausgabe und kein Adaptive-Bitrate-Transcoding; Aufzeichnung und HLS-Ausgabe sind optionale Serverfunktionen, die standardmäßig aus sind. Es ist kein Ersatz für Ant Media Server, wenn der Wert des Deployments in WebRTC-Auslieferung mit niedriger Latenz oder in Protokollkonvertierung liegt. Diese Einschränkungen sind akzeptabel, wenn das Zielsystem ein fokussierter RTMP/RTMPS- und E-RTMP-Endpunkt oder eine einbettbare Protokollbibliothek ist.</p>
 
         <h2 id="alternatives">Über Ant Media Server hinaus</h2>
         <p>Einen breiteren Blick auf Open-Source-Multiprotokoll-Alternativen bieten <a href="/de/guides/openrtmp-vs-mediamtx-vs-srs/">OpenRTMP vs. MediaMTX vs. SRS</a> und <a href="/de/guides/nginx-rtmp-alternatives/">Alternativen zu nginx-rtmp</a>. Für die kommerzielle Seite dieses Vergleichs siehe <a href="/de/guides/openrtmp-vs-wowza/">OpenRTMP vs. Wowza</a>.</p>
