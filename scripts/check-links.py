@@ -45,43 +45,57 @@ def fetch(url):
         return response.status, response.read().decode("utf-8", "replace")
 
 
-def main():
-    if len(sys.argv) < 3:
-        print(__doc__.strip(), file=sys.stderr)
-        return 2
-    base = sys.argv[1].rstrip("/")
-    paths = sys.argv[2:]
-
+def load_pages(base, paths, errors):
     pages = {}
-    errors = []
     for path in paths:
         page = Page()
         page.feed(fetch(base + path)[1])
         pages[path] = page
         for element_id in page.duplicate_ids:
             errors.append(f"{path}: duplicate id '{element_id}'")
+    return pages
 
-    checked = {}
+
+def status_of(base, path, cache):
+    if path not in cache:
+        try:
+            cache[path] = fetch(base + path)[0]
+        except urllib.error.HTTPError as exc:
+            cache[path] = exc.code
+    return cache[path]
+
+
+def check_ref(base, pages, path, ref, cache):
+    """Return a problem description for one href/src, or None."""
+    if ref.startswith(("mailto:", "tel:", "data:", "javascript:")):
+        return None
+    if ref.startswith(SITE):
+        ref = ref[len(SITE):] or "/"
+    target = urlsplit(urljoin(path, ref))
+    if target.scheme or target.netloc:
+        return None  # external
+    if target.path in pages:
+        if target.fragment and target.fragment not in pages[target.path].ids:
+            return f"{path}: '{ref}' points at a missing anchor"
+        return None
+    status = status_of(base, target.path, cache)
+    return None if status == 200 else f"{path}: '{ref}' returned HTTP {status}"
+
+
+def main():
+    if len(sys.argv) < 3:
+        print(__doc__.strip(), file=sys.stderr)
+        return 2
+    base = sys.argv[1].rstrip("/")
+    errors = []
+    pages = load_pages(base, sys.argv[2:], errors)
+
+    cache = {}
     for path, page in pages.items():
         for ref in page.refs:
-            if ref.startswith(("mailto:", "tel:", "data:", "javascript:")):
-                continue
-            if ref.startswith(SITE):
-                ref = ref[len(SITE):] or "/"
-            target = urlsplit(urljoin(path, ref))
-            if target.scheme or target.netloc:
-                continue  # external
-            if target.path in pages:
-                if target.fragment and target.fragment not in pages[target.path].ids:
-                    errors.append(f"{path}: '{ref}' points at a missing anchor")
-                continue
-            if target.path not in checked:
-                try:
-                    checked[target.path] = fetch(base + target.path)[0]
-                except urllib.error.HTTPError as exc:
-                    checked[target.path] = exc.code
-            if checked[target.path] != 200:
-                errors.append(f"{path}: '{ref}' returned HTTP {checked[target.path]}")
+            problem = check_ref(base, pages, path, ref, cache)
+            if problem:
+                errors.append(problem)
 
     for error in errors:
         print(error, file=sys.stderr)
