@@ -17,7 +17,7 @@ from html import unescape
 from html.parser import HTMLParser
 from urllib.parse import urljoin, urlsplit
 
-SITE = "https://openrtmp.org"
+SITE_HOSTS = {"openrtmp.org", "www.openrtmp.org"}
 
 
 class Page(HTMLParser):
@@ -69,16 +69,17 @@ def check_ref(base, pages, path, ref, cache):
     """Return a problem description for one href/src, or None."""
     if ref.startswith(("mailto:", "tel:", "data:", "javascript:")):
         return None
-    if ref.startswith(SITE):
-        ref = ref[len(SITE):] or "/"
     target = urlsplit(urljoin(path, ref))
-    if target.scheme or target.netloc:
+    if target.netloc and target.hostname not in SITE_HOSTS:
         return None  # external
-    if target.path in pages:
-        if target.fragment and target.fragment not in pages[target.path].ids:
-            return f"{path}: '{ref}' points at a missing anchor"
-        return None
-    status = status_of(base, target.path, cache)
+    local = target.path or "/"
+    if local in pages and target.fragment and target.fragment not in pages[local].ids:
+        return f"{path}: '{ref}' points at a missing anchor"
+    if local in pages and not target.query:
+        return None  # already fetched
+    if target.query:
+        local += "?" + target.query
+    status = status_of(base, local, cache)
     return None if status == 200 else f"{path}: '{ref}' returned HTTP {status}"
 
 

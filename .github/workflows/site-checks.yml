@@ -55,7 +55,7 @@ jobs:
           rm -f "$php_errors"
           php -d display_errors=0 -d log_errors=1 -d error_reporting=-1 \
             -d error_log="$php_errors" \
-            -S 127.0.0.1:8090 >/tmp/openrtmp-site.log 2>&1 &
+            -S 127.0.0.1:8090 scripts/dev-router.php >/tmp/openrtmp-site.log 2>&1 &
           server_pid=$!
           trap 'kill "$server_pid"' EXIT
           for _ in $(seq 50); do

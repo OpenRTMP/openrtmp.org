@@ -33,7 +33,9 @@ Validate PHP files before publishing:
 find . -name '*.php' -print0 | xargs -0 -n1 php -l
 ```
 
-With the local server running, check every internal link and `#anchor`:
+Start the server with `php -S localhost:8090 scripts/dev-router.php` so a path
+with no page behind it answers 404 instead of falling back to the nearest
+`index.php`, then check every internal link and `#anchor`:
 
 ```bash
 scripts/check-links.py http://localhost:8090 $(find . -name index.php -not -path './includes/*' | sed 's|^\.||; s|index\.php$||')
@@ -63,6 +65,7 @@ robots.txt                        Crawler policy
 sitemap.xml                       Indexable public pages (generated)
 scripts/generate-sitemap.sh       Rebuilds sitemap.xml from git history
 scripts/check-links.py            Checks internal links and anchors on a running site
+scripts/dev-router.php            php -S router that answers 404 for missing pages
 ```
 
 ## Sitemap
