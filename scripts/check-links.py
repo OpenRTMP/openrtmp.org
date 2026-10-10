@@ -48,8 +48,13 @@ def fetch(url):
 def load_pages(base, paths, errors):
     pages = {}
     for path in paths:
+        try:
+            body = fetch(base + path)[1]
+        except urllib.error.HTTPError as exc:
+            errors.append(f"{path}: returned HTTP {exc.code}")
+            continue
         page = Page()
-        page.feed(fetch(base + path)[1])
+        page.feed(body)
         pages[path] = page
         for element_id in page.duplicate_ids:
             errors.append(f"{path}: duplicate id '{element_id}'")
