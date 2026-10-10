@@ -54,7 +54,7 @@ $kpiRef = function (array $rows, string $prefer): ?string {
 // anything within 2 % of the best rate counts as the full rate.
 $framesPct = 100;
 if ($isPreview) {
-  $nominalFps = max(array_merge(...array_map(fn($rows) => array_map(fn($r) => $r[2], $rows), array_values($loadData))));
+  $nominalFps = max(array_map(fn($rows) => max(array_column($rows, 2)), array_values($loadData)));
   $ratio = $nominalFps > 0 ? $loadData[$maxLoadViewers]['openrtmp'][2] / $nominalFps : 0;
   $framesPct = $ratio >= 0.98 ? 100 : (int) floor($ratio * 100);
 }
