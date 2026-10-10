@@ -56,7 +56,7 @@ docker compose -f compose.quickstart.yml up -d</code></pre>
           <li>Wählen Sie einen HEVC/H.265-Encoder, sofern OBS einen für die gewählte Ausgabe und den Dienst anbietet.</li>
           <li>Beginnen Sie mit zurückhaltenden Einstellungen für Bitrate, Keyframes und Auflösung, die Ihr Decoder nachweislich verarbeitet.</li>
         </ol>
-        <p>Fehlt HEVC in der Encoder-Auswahl, prüfen Sie, ob die installierte OBS-Version, GPU/Treiber oder Software-Encoder und die gewählte Dienstkonfiguration HEVC fürs Streaming anbieten. Umgehen Sie einen fehlenden Encoder nicht mit der Annahme, der Server könne H.264 in HEVC transcodieren: Der aktuelle OpenRTMP-Server ist ein fokussierter Relay- und Control-Plane-Server, kein Transcoder.</p>
+        <p>Fehlt HEVC in der Encoder-Auswahl, prüfen Sie, ob die installierte OBS-Version, GPU/Treiber oder Software-Encoder und die gewählte Dienstkonfiguration HEVC fürs Streaming anbieten. Umgehen Sie einen fehlenden Encoder nicht mit der Annahme, der Server könne H.264 in HEVC transcodieren: Der OpenRTMP-Server leitet den empfangenen Codec weiter, und sein optionales Transcoding für HLS- und Push-Ausgaben erzeugt nur H.264/AAC.</p>
 
         <h2 id="verify">3. Prüfen, ob tatsächlich HEVC ankommt</h2>
         <p>Nachdem sich OBS verbunden hat, prüfen Sie den Stream über das OpenRTMP-Panel oder den JSON-Statistik-Endpunkt. Das Panel zeigt Live-Bitrate, Codec, Auflösung, Bildrate, RTT, Laufzeit, Publisher und Player.</p>

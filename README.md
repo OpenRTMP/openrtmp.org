@@ -33,6 +33,16 @@ Validate PHP files before publishing:
 find . -name '*.php' -print0 | xargs -0 -n1 php -l
 ```
 
+With the local server running, check every internal link and `#anchor`:
+
+```bash
+scripts/check-links.py http://localhost:8090 $(find . -name index.php -not -path './includes/*' | sed 's|^\.||; s|index\.php$||')
+```
+
+`Website checks` runs the same link check in CI, renders every page with all
+PHP diagnostics enabled and fails on any warning, notice or deprecation. The
+production deploy runs these checks first and uploads nothing when they fail.
+
 ## Structure
 
 ```text
@@ -52,6 +62,7 @@ assets/img/                       Logo and favicon
 robots.txt                        Crawler policy
 sitemap.xml                       Indexable public pages (generated)
 scripts/generate-sitemap.sh       Rebuilds sitemap.xml from git history
+scripts/check-links.py            Checks internal links and anchors on a running site
 ```
 
 ## Sitemap
