@@ -110,7 +110,7 @@ docker compose -f compose.quickstart.yml up -d</code></pre>
 
         <h2 id="fit">When OpenRTMP is the right fit</h2>
         <p>OpenRTMP is a strong candidate for private ingest, focused RTMP experiments, custom control planes, stream-key management, or integrations that want Rust and a small understandable architecture.</p>
-        <p>Choose a broader media platform when you need built-in HLS delivery, recording, transcoding, push relay, a public viewer website, or many non-RTMP protocols without writing additional services.</p>
+        <p>Choose a broader media platform when you need adaptive bitrate transcoding, low-latency browser delivery such as WebRTC or LL-HLS, a public viewer website, or many non-RTMP protocols without writing additional services.</p>
 
         <h2 id="troubleshooting">Troubleshooting</h2>
         <h3>Panel loads, but stream creation fails</h3>

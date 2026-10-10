@@ -37,8 +37,8 @@ include_once __DIR__ . '/../../includes/header.php';
             <tr><td>Project maturity</td><td>Active development (pre-1.0)</td><td>Long-established commercial product with vendor support</td></tr>
             <tr><td>RTMP / RTMPS</td><td>Yes / yes</td><td>Yes / yes</td></tr>
             <tr><td>WebRTC, SRT</td><td>No</td><td>Yes, documented as first-class ingest/output protocols</td></tr>
-            <tr><td>HLS / DASH output</td><td>No built-in HLS/DASH server</td><td>Yes, with adaptive bitrate packaging</td></tr>
-            <tr><td>Transcoding</td><td>Not built in</td><td>Built-in adaptive bitrate transcoding</td></tr>
+            <tr><td>HLS / DASH output</td><td>Optional single-rendition HLS through FFmpeg; no DASH</td><td>Yes, with adaptive bitrate packaging</td></tr>
+            <tr><td>Transcoding</td><td>Optional H.264/AAC transcoding for HLS and push outputs; no adaptive bitrate ladder</td><td>Built-in adaptive bitrate transcoding</td></tr>
             <tr><td>DRM / watermarking</td><td>Not built in</td><td>DRM through integrations with third-party key-management services (some configurations need an additional paid module); watermarking options</td></tr>
             <tr><td>Administration</td><td>REST API, SQLite, and optional web panel</td><td>REST API plus the Wowza Streaming Engine Manager UI</td></tr>
             <tr><td>Stream credentials</td><td>Separate publish, play, and stats keys per stream</td><td>Configurable authentication modules and token-based security add-ons</td></tr>
@@ -53,7 +53,7 @@ include_once __DIR__ . '/../../includes/header.php';
           <li>The license cost of a commercial server is the blocker, and you can operate self-hosted, community-supported software.</li>
           <li>You are building a Rust application and want reusable RTMP/E-RTMP protocol code rather than a black-box server.</li>
           <li>You want a small, auditable, API-driven server with separate publish, playback, and monitoring credentials.</li>
-          <li>Your delivery path is RTMP/RTMPS end to end, so you do not need built-in transcoding, DRM, or protocol conversion.</li>
+          <li>Your delivery path is RTMP/RTMPS, optionally with plain HLS, so you do not need adaptive bitrate transcoding, DRM, or broader protocol conversion.</li>
           <li>You can test the exact publishing/playback workflow before critical production use and accept pre-1.0 risk.</li>
         </ul>
 
@@ -78,7 +78,7 @@ include_once __DIR__ . '/../../includes/header.php';
         <p>If your Wowza deployment transcodes, packages HLS/DASH, applies DRM, or bridges to WebRTC, keep those services or add separate components before migrating RTMP ingest to OpenRTMP.</p>
 
         <h2 id="limitations">OpenRTMP limitations to account for</h2>
-        <p>OpenRTMP is not a drop-in Wowza replacement. It does not provide built-in transcoding, DRM, WebRTC/SRT bridging, or HLS/DASH packaging, and the protocol and public APIs are still evolving before 1.0. Those limitations are acceptable when the desired system is a focused, self-hosted RTMP/RTMPS endpoint. They are blockers when the existing Wowza deployment is acting as a full media processing and delivery pipeline.</p>
+        <p>OpenRTMP is not a drop-in Wowza replacement. It does not provide adaptive bitrate transcoding, DRM, WebRTC/SRT bridging, or DASH packaging (its optional HLS output is a single rendition), and the protocol and public APIs are still evolving before 1.0. Those limitations are acceptable when the desired system is a focused, self-hosted RTMP/RTMPS endpoint. They are blockers when the existing Wowza deployment is acting as a full media processing and delivery pipeline.</p>
 
         <h2 id="alternatives">Looking beyond Wowza</h2>
         <p>If your evaluation is about open-source multi-protocol alternatives rather than specifically about Wowza's commercial feature set, compare <a href="/guides/openrtmp-vs-mediamtx-vs-srs/">OpenRTMP vs MediaMTX vs SRS</a> and the broader <a href="/guides/nginx-rtmp-alternatives/">nginx-rtmp alternatives</a> guide.</p>

@@ -1,0 +1,3 @@
+# Shared partials are included by the pages from disk and are never meant to be
+# requested directly: on their own they render broken fragments or PHP errors.
+Require all denied

@@ -23,7 +23,7 @@ include_once __DIR__ . '/../../includes/header.php';
           <li><a href="#getting-started">Erste Schritte</a></li>
           <li><a href="#state-machine">Verbindungs-Zustandsautomat</a></li>
           <li><a href="#callbacks">Host-Callbacks</a></li>
-          <li><a href="#layers">Modulreferenz</a></li>
+          <li><a href="#layers">Schichtenreferenz</a></li>
           <li><a href="#server">librtmp2-server</a></li>
           <li><a href="#cluster">HA-Clustering</a></li>
           <li><a href="#panel">librtmp2-server-panel</a></li>
@@ -115,19 +115,21 @@ while running {
         </div>
 
         <h2 id="layers">Schichtenreferenz</h2>
-        <p>Eingehende Daten durchlaufen neun Schichten von unten nach oben, bevor sie Ihre Callbacks erreichen. Das vollständige Diagramm finden Sie in der <a href="/de/#architecture">Architekturübersicht</a> auf der Startseite. Wichtige Verzeichnisse in <code>src/</code>:</p>
+        <p>Eingehende Daten durchlaufen diese Schichten von unten nach oben, bevor sie Ihre Callbacks erreichen. Wie Bibliothek, Server und Panel zusammenspielen, zeigt die <a href="/de/#architecture">Architekturübersicht</a> auf der Startseite. Wichtige Module in <code>src/</code>:</p>
         <div class="table-wrap">
           <table>
             <thead><tr><th>Verzeichnis</th><th>Zuständigkeit</th></tr></thead>
             <tbody>
-              <tr><td><code>core/</code></td><td>Alloc-Hook, wachsende Puffer, Byte-Helfer, Logging, Fehler</td></tr>
-              <tr><td><code>handshake/</code></td><td>C0/C1/C2 &harr; S0/S1/S2, Pufferung bei Teil-Reads, Versionserkennung</td></tr>
+              <tr><td><code>alloc.rs</code>, <code>buffer.rs</code>, <code>bytes.rs</code>, <code>log.rs</code>, <code>types.rs</code></td><td>Alloc-Hook, wachsende Puffer, Big-Endian-Byte-Helfer, Logging, Fehlercodes</td></tr>
+              <tr><td><code>net/</code> &amp; <code>transport.rs</code></td><td>Socket-Schicht für Unix und Windows, Klartext und TLS auf einem gemeinsamen Sende-/Empfangspfad</td></tr>
+              <tr><td><code>handshake.rs</code></td><td>C0/C1/C2 &harr; S0/S1/S2, Pufferung bei Teil-Reads, Versionserkennung</td></tr>
               <tr><td><code>chunk/</code></td><td>chunk_reader/writer, chunk_state pro csid, SetChunkSize/Abort</td></tr>
               <tr><td><code>message/</code></td><td>Dispatch zusammengesetzter Nachrichten &amp; AMF-Befehls-Dekodierung/-Kodierung</td></tr>
               <tr><td><code>amf/</code></td><td>AMF0 (verpflichtend) und AMF3 (optional)</td></tr>
               <tr><td><code>flv/</code></td><td>Parsing von FLV-Audio-/Video-/Script-Tags</td></tr>
               <tr><td><code>ertmp/</code></td><td>E-RTMP v1 (ExVideo/ExAudio, FourCC, HDR) + v2 (capsEx, Reconnect, Multitrack, ModEx)</td></tr>
               <tr><td><code>session/</code></td><td>Verbindungsobjekt, Zustandsautomat, Stream-Verwaltung</td></tr>
+              <tr><td><code>media/</code></td><td>Relay-Auslieferung, Init-Cache für späte Zuschauer, ModEx-Helfer für Session und Server-Relay</td></tr>
               <tr><td><code>server/</code> &amp; <code>client/</code></td><td>Accept-Schleife / Poll pro Verbindung &middot; ausgehendes Connect &amp; Publish/Play</td></tr>
             </tbody>
           </table>
@@ -147,6 +149,7 @@ while running {
               <tr><td>REST-API</td><td>Stream-CRUD unter <code>/api/v1/streams</code> mit Bearer-Token-Authentifizierung (axum, Port <code>8080</code>)</td></tr>
               <tr><td>Statistik-Endpunkte</td><td><code>/stats?key=&lt;stats_key&gt;</code> (JSON) und <code>/stats-nginx?key=&lt;stats_key&gt;</code> (nginx-rtmp-kompatibles XML)</td></tr>
               <tr><td>Frame-Relay</td><td>leitet Publisher-Frames GOP-bewusst an alle passenden Player weiter</td></tr>
+              <tr><td>Medien-Ausgaben</td><td>optionale FLV-Aufzeichnung, HLS über FFmpeg (<code>/hls/&lt;stream_id&gt;/index.m3u8?key=&lt;play_key&gt;</code>), RTMP/RTMPS-Push-Relay und Publish-Hooks, alles standardmäßig aus (<code>MEDIA_*</code>, siehe <a href="https://github.com/OpenRTMP/librtmp2-server/blob/main/docs/media-outputs.md" target="_blank" rel="noopener"><code>docs/media-outputs.md</code></a>)</td></tr>
               <tr><td>HA-Clustering</td><td>optionaler Multi-Node-Modus (<code>CLUSTER_ENABLED</code>, standardmäßig aus) mit OpenRaft-Zustandsreplikation und Media-Mesh &mdash; siehe <a href="#cluster">HA-Clustering</a></td></tr>
             </tbody>
           </table>
@@ -271,7 +274,7 @@ printf 'Panel-Passwort notieren: %s\n' "${PANEL_PASSWORD}"
 
 docker network create openrtmp
 
-docker run -d --name librtmp2-panel-redis --network openrtmp redis:7-alpine
+docker run -d --name librtmp2-panel-redis --network openrtmp redis:8-alpine
 
 docker run -d \
   --name librtmp2-server \
