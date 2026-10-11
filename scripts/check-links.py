@@ -45,7 +45,9 @@ def fetch(url):
     try:
         with urllib.request.urlopen(url, timeout=15) as response:
             return response.status, response.read().decode("utf-8", "replace")
-    except (urllib.error.HTTPError, urllib.error.URLError):
+    except urllib.error.URLError:
+        # HTTPError is a URLError subclass, so this preserves both while the
+        # clause below normalizes non-URL transport failures.
         raise
     except (OSError, http.client.HTTPException) as exc:
         # A server that resets or truncates the response after sending its
