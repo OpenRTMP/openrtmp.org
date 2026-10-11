@@ -10,6 +10,7 @@ ids on a page are reported too, because a duplicate makes a fragment ambiguous.
 External links are not fetched.
 """
 
+import http.client
 import sys
 import urllib.error
 import urllib.request
@@ -41,8 +42,17 @@ class Page(HTMLParser):
 
 
 def fetch(url):
-    with urllib.request.urlopen(url, timeout=15) as response:
-        return response.status, response.read().decode("utf-8", "replace")
+    try:
+        with urllib.request.urlopen(url, timeout=15) as response:
+            return response.status, response.read().decode("utf-8", "replace")
+    except (urllib.error.HTTPError, urllib.error.URLError):
+        raise
+    except (OSError, http.client.HTTPException) as exc:
+        # A server that resets or truncates the response after sending its
+        # headers raises from response.read() (ConnectionResetError,
+        # IncompleteRead), not as URLError. Normalize every transport failure to
+        # URLError so callers report it instead of aborting the whole run.
+        raise urllib.error.URLError(exc) from exc
 
 
 def load_pages(base, paths, errors):
@@ -70,11 +80,10 @@ def status_of(base, path, cache):
             cache[path] = fetch(base + path)[0]
         except urllib.error.HTTPError as exc:
             cache[path] = exc.code
-        except urllib.error.URLError:
-            # A transport-level failure (connection refused, timeout, reset)
-            # is not a 200. Record a non-200 sentinel so the reference is
-            # reported as a problem instead of aborting the whole run.
-            cache[path] = 0
+        except urllib.error.URLError as exc:
+            # Preserve the transport reason; 0 is not an HTTP status and would
+            # make the reported problem misleading.
+            cache[path] = f"(transport failure: {exc.reason})"
     return cache[path]
 
 
@@ -93,7 +102,11 @@ def check_ref(base, pages, path, ref, cache):
     if target.query:
         local += "?" + target.query
     status = status_of(base, local, cache)
-    return None if status == 200 else f"{path}: '{ref}' returned HTTP {status}"
+    if status == 200:
+        return None
+    if isinstance(status, str):
+        return f"{path}: '{ref}' {status}"
+    return f"{path}: '{ref}' returned HTTP {status}"
 
 
 def main():
