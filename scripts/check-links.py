@@ -53,6 +53,9 @@ def load_pages(base, paths, errors):
         except urllib.error.HTTPError as exc:
             errors.append(f"{path}: returned HTTP {exc.code}")
             continue
+        except urllib.error.URLError as exc:
+            errors.append(f"{path}: {exc.reason}")
+            continue
         page = Page()
         page.feed(body)
         pages[path] = page
@@ -67,6 +70,11 @@ def status_of(base, path, cache):
             cache[path] = fetch(base + path)[0]
         except urllib.error.HTTPError as exc:
             cache[path] = exc.code
+        except urllib.error.URLError:
+            # A transport-level failure (connection refused, timeout, reset)
+            # is not a 200. Record a non-200 sentinel so the reference is
+            # reported as a problem instead of aborting the whole run.
+            cache[path] = 0
     return cache[path]
 
 
