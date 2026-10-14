@@ -48,6 +48,26 @@ const OPENRTMP_BENCH_LIB_0_11_0 = [
   ],
 ];
 
+// Values repeated across the automatically measured snapshots.
+const OPENRTMP_BENCH_STR_CHUNK_WRITE_READ_ROUNDTRIP = 'chunk/write_read_roundtrip';
+const OPENRTMP_BENCH_STR_AMF0_BUILD_CONNECT = 'amf0_build_connect';
+const OPENRTMP_BENCH_STR_FLV_VIDEO_TAG_H264 = 'flv/video_tag_h264';
+const OPENRTMP_BENCH_STR_FLV_AUDIO_TAG_AAC = 'flv/audio_tag_aac';
+const OPENRTMP_BENCH_STR_FOURCC_TO_VIDEO_CODEC_AVC1 = 'fourcc_to_video_codec_avc1';
+const OPENRTMP_BENCH_STR_SERVER_READ_C1 = 'server_read_c1';
+const OPENRTMP_BENCH_STR_RELAY_PUBLISH_TO_PLAYER_100 = 'relay/publish_to_player/100';
+const OPENRTMP_BENCH_STR_RELAY_PUBLISH_TO_PLAYER_500 = 'relay/publish_to_player/500';
+const OPENRTMP_BENCH_STR_2026_10_14 = '2026-10-14';
+const OPENRTMP_BENCH_STR_AMD_EPYC_7763_64_CORE_PROCESSOR_4_VCPUS = 'AMD EPYC 7763 64-Core Processor, 4 vCPUs, Linux 6.17.0-1022-azure x86_64, rustc 1.99.0';
+const OPENRTMP_BENCH_STR_1_25_NS = '1.25 ns';
+const OPENRTMP_BENCH_STR_V1_21_2 = 'v1.21.2';
+const OPENRTMP_BENCH_STR_NGINX_1_31_6 = 'nginx 1.31.6';
+const OPENRTMP_BENCH_STR_NGINX_RTMP_MODULE_6C7719D = 'nginx-rtmp-module @ 6c7719d';
+const OPENRTMP_BENCH_STR_V8_0_D0 = 'v8.0-d0';
+const OPENRTMP_BENCH_STR_LINUX_6_17_0_1022_AZURE_X86_64 = 'Linux 6.17.0-1022-azure x86_64';
+const OPENRTMP_BENCH_STR_GITHUB_HOSTED_UBUNTU24_IMAGE_20261004_32 = 'GitHub-hosted ubuntu24 (image 20261004.327.1)';
+const OPENRTMP_BENCH_STR_1_99_0 = '1.99.0';
+
 // Immutable benchmark snapshots, newest first.
 //
 // handshake/play_handshake row:
@@ -58,7 +78,7 @@ const OPENRTMP_BENCH_LIB_0_11_0 = [
 //   [join avg ms, join p95 ms, fps/viewer, CPU % of one core, peak RSS MiB]
 const OPENRTMP_BENCH_RUNS = [
   '0.6.5-0.14.0' => [
-    'date' => '2026-10-14',
+    'date' => OPENRTMP_BENCH_STR_2026_10_14,
     'server_version' => '0.6.5',
     'lib_version' => '0.14.0',
     'published_server_release' => true,
@@ -66,20 +86,20 @@ const OPENRTMP_BENCH_RUNS = [
     'server_ref_url' => 'https://github.com/OpenRTMP/librtmp2-server/releases/tag/v0.6.5',
     'lib_ref_url' => 'https://github.com/OpenRTMP/librtmp2/releases/tag/v0.14.0',
     'lib_bench_source_url' => 'https://github.com/OpenRTMP/librtmp2/blob/main/bench/releases/v0.14.0.json',
-    'lib_bench_environment' => 'AMD EPYC 7763 64-Core Processor, 4 vCPUs, Linux 6.17.0-1022-azure x86_64, rustc 1.99.0',
+    'lib_bench_environment' => OPENRTMP_BENCH_STR_AMD_EPYC_7763_64_CORE_PROCESSOR_4_VCPUS,
     'lib_bench_note_en' => 'Criterion microbenchmarks for librtmp2 0.14.0, measured automatically for the release on a shared GitHub Actions runner. Differences from earlier versions are within runner noise and are not a controlled A/B.',
     'lib_bench_note_de' => 'Criterion-Microbenchmarks für librtmp2 0.14.0, automatisch für das Release auf einem geteilten GitHub-Actions-Runner gemessen. Unterschiede zu früheren Versionen liegen im Rauschen des Runners und sind kein kontrollierter A/B-Test.',
     'lib_protocol' => [
-      ['amf0_build_connect', '226 ns', '—'],
-      ['chunk/write_read_roundtrip', '6.87 µs', '~569 MiB/s'],
-      ['flv/audio_tag_aac', '1.25 ns', '—'],
-      ['flv/video_tag_h264', '1.25 ns', '—'],
-      ['fourcc_to_video_codec_avc1', '2.49 ns', '—'],
-      ['server_read_c1', '1.07 µs', '—'],
+      [OPENRTMP_BENCH_STR_AMF0_BUILD_CONNECT, '226 ns', '—'],
+      [OPENRTMP_BENCH_STR_CHUNK_WRITE_READ_ROUNDTRIP, '6.87 µs', '~569 MiB/s'],
+      [OPENRTMP_BENCH_STR_FLV_AUDIO_TAG_AAC, OPENRTMP_BENCH_STR_1_25_NS, '—'],
+      [OPENRTMP_BENCH_STR_FLV_VIDEO_TAG_H264, OPENRTMP_BENCH_STR_1_25_NS, '—'],
+      [OPENRTMP_BENCH_STR_FOURCC_TO_VIDEO_CODEC_AVC1, '2.49 ns', '—'],
+      [OPENRTMP_BENCH_STR_SERVER_READ_C1, '1.07 µs', '—'],
     ],
     'lib_relay' => [
-      ['relay/publish_to_player/100', '96.5 ms', '~1036 elem/s'],
-      ['relay/publish_to_player/500', '98.2 ms', '~5090 elem/s'],
+      [OPENRTMP_BENCH_STR_RELAY_PUBLISH_TO_PLAYER_100, '96.5 ms', '~1036 elem/s'],
+      [OPENRTMP_BENCH_STR_RELAY_PUBLISH_TO_PLAYER_500, '98.2 ms', '~5090 elem/s'],
     ],
     'note_en' => 'librtmp2-server 0.6.5 on librtmp2 0.14.0 against LiveForge, MediaMTX, nginx-rtmp and SRS at the versions listed below. Measured automatically in GitHub Actions on GitHub-hosted ubuntu24 (image 20261004.327.1); AMD EPYC 9V74 80-Core Processor, 4 vCPUs, 15.6 GiB RAM. One sweep, no repetitions on a shared machine, so compare the servers within this snapshot.',
     'note_de' => 'librtmp2-server 0.6.5 auf librtmp2 0.14.0 gegen LiveForge, MediaMTX, nginx-rtmp und SRS in den unten aufgeführten Versionen. Automatisch in GitHub Actions auf GitHub-hosted ubuntu24 (image 20261004.327.1); AMD EPYC 9V74 80-Core Processor, 4 vCPUs, 15.6 GiB RAM. Ein Sweep ohne Wiederholungen auf einer geteilten Maschine, deshalb die Server innerhalb dieses Snapshots vergleichen.',
@@ -87,10 +107,10 @@ const OPENRTMP_BENCH_RUNS = [
     'load_note_de' => 'Bei 500 Zuschauern lieferten alle Server die volle Quellrate. Bei 1000 Zuschauern lieferte nginx-rtmp weniger als die volle Quellrate. Bei 2000 Zuschauern lieferten MediaMTX und nginx-rtmp weniger als die volle Quellrate.',
     'versions' => [
       'openrtmp' => ['0.6.5', 'librtmp2 0.14.0', 'Rust', 'https://github.com/OpenRTMP/librtmp2-server/releases/tag/v0.6.5', 'https://github.com/OpenRTMP/librtmp2/releases/tag/v0.14.0'],
-      'liveforge' => ['main @ 4e70fb3', '', 'Go'],
-      'mediamtx' => ['v1.21.2', '', 'Go'],
-      'nginx' => ['nginx 1.31.6', 'nginx-rtmp-module @ 6c7719d', 'C'],
-      'srs' => ['v8.0-d0', '', 'C++'],
+      'liveforge' => [OPENRTMP_BENCH_LIVEFORGE_4E70FB3, '', 'Go'],
+      'mediamtx' => [OPENRTMP_BENCH_STR_V1_21_2, '', 'Go'],
+      'nginx' => [OPENRTMP_BENCH_STR_NGINX_1_31_6, OPENRTMP_BENCH_STR_NGINX_RTMP_MODULE_6C7719D, 'C'],
+      'srs' => [OPENRTMP_BENCH_STR_V8_0_D0, '', 'C++'],
     ],
     'handshake' => [
       'openrtmp' => [7127.1, 3.35, 3.43, 5.54, 6.46],
@@ -157,13 +177,13 @@ const OPENRTMP_BENCH_RUNS = [
       'cpu' => 'AMD EPYC 9V74 80-Core Processor',
       'vcpus' => 4,
       'ram' => '15.6',
-      'kernel' => 'Linux 6.17.0-1022-azure x86_64',
-      'runner' => 'GitHub-hosted ubuntu24 (image 20261004.327.1)',
-      'rustc' => '1.99.0',
+      'kernel' => OPENRTMP_BENCH_STR_LINUX_6_17_0_1022_AZURE_X86_64,
+      'runner' => OPENRTMP_BENCH_STR_GITHUB_HOSTED_UBUNTU24_IMAGE_20261004_32,
+      'rustc' => OPENRTMP_BENCH_STR_1_99_0,
     ],
   ],
   '0.6.4-0.13.0' => [
-    'date' => '2026-10-14',
+    'date' => OPENRTMP_BENCH_STR_2026_10_14,
     'server_version' => '0.6.4',
     'lib_version' => '0.13.0',
     'published_server_release' => true,
@@ -171,20 +191,20 @@ const OPENRTMP_BENCH_RUNS = [
     'server_ref_url' => 'https://github.com/OpenRTMP/librtmp2-server/releases/tag/v0.6.4',
     'lib_ref_url' => 'https://github.com/OpenRTMP/librtmp2/releases/tag/v0.13.0',
     'lib_bench_source_url' => 'https://github.com/OpenRTMP/librtmp2/blob/main/bench/releases/v0.13.0.json',
-    'lib_bench_environment' => 'AMD EPYC 7763 64-Core Processor, 4 vCPUs, Linux 6.17.0-1022-azure x86_64, rustc 1.99.0',
+    'lib_bench_environment' => OPENRTMP_BENCH_STR_AMD_EPYC_7763_64_CORE_PROCESSOR_4_VCPUS,
     'lib_bench_note_en' => 'Criterion microbenchmarks for librtmp2 0.13.0, measured automatically for the release on a shared GitHub Actions runner. Differences from earlier versions are within runner noise and are not a controlled A/B.',
     'lib_bench_note_de' => 'Criterion-Microbenchmarks für librtmp2 0.13.0, automatisch für das Release auf einem geteilten GitHub-Actions-Runner gemessen. Unterschiede zu früheren Versionen liegen im Rauschen des Runners und sind kein kontrollierter A/B-Test.',
     'lib_protocol' => [
-      ['amf0_build_connect', '218 ns', '—'],
-      ['chunk/write_read_roundtrip', '6.84 µs', '~571 MiB/s'],
-      ['flv/audio_tag_aac', '1.25 ns', '—'],
-      ['flv/video_tag_h264', '1.25 ns', '—'],
-      ['fourcc_to_video_codec_avc1', '2.50 ns', '—'],
-      ['server_read_c1', '1.06 µs', '—'],
+      [OPENRTMP_BENCH_STR_AMF0_BUILD_CONNECT, '218 ns', '—'],
+      [OPENRTMP_BENCH_STR_CHUNK_WRITE_READ_ROUNDTRIP, '6.84 µs', '~571 MiB/s'],
+      [OPENRTMP_BENCH_STR_FLV_AUDIO_TAG_AAC, OPENRTMP_BENCH_STR_1_25_NS, '—'],
+      [OPENRTMP_BENCH_STR_FLV_VIDEO_TAG_H264, OPENRTMP_BENCH_STR_1_25_NS, '—'],
+      [OPENRTMP_BENCH_STR_FOURCC_TO_VIDEO_CODEC_AVC1, '2.50 ns', '—'],
+      [OPENRTMP_BENCH_STR_SERVER_READ_C1, '1.06 µs', '—'],
     ],
     'lib_relay' => [
-      ['relay/publish_to_player/100', '97.3 ms', '~1028 elem/s'],
-      ['relay/publish_to_player/500', '98.8 ms', '~5058 elem/s'],
+      [OPENRTMP_BENCH_STR_RELAY_PUBLISH_TO_PLAYER_100, '97.3 ms', '~1028 elem/s'],
+      [OPENRTMP_BENCH_STR_RELAY_PUBLISH_TO_PLAYER_500, '98.8 ms', '~5058 elem/s'],
     ],
     'note_en' => 'librtmp2-server 0.6.4 on librtmp2 0.13.0 against LiveForge, MediaMTX, nginx-rtmp and SRS at the versions listed below. Measured automatically in GitHub Actions on GitHub-hosted ubuntu24 (image 20261004.327.1); INTEL(R) XEON(R) PLATINUM 8573C, 4 vCPUs, 15.6 GiB RAM. One sweep, no repetitions on a shared machine, so compare the servers within this snapshot.',
     'note_de' => 'librtmp2-server 0.6.4 auf librtmp2 0.13.0 gegen LiveForge, MediaMTX, nginx-rtmp und SRS in den unten aufgeführten Versionen. Automatisch in GitHub Actions auf GitHub-hosted ubuntu24 (image 20261004.327.1); INTEL(R) XEON(R) PLATINUM 8573C, 4 vCPUs, 15.6 GiB RAM. Ein Sweep ohne Wiederholungen auf einer geteilten Maschine, deshalb die Server innerhalb dieses Snapshots vergleichen.',
@@ -192,10 +212,10 @@ const OPENRTMP_BENCH_RUNS = [
     'load_note_de' => 'Bei 500 und 1000 Zuschauern lieferten alle Server die volle Quellrate. Bei 2000 Zuschauern lieferte nginx-rtmp weniger als die volle Quellrate.',
     'versions' => [
       'openrtmp' => ['0.6.4', 'librtmp2 0.13.0', 'Rust', 'https://github.com/OpenRTMP/librtmp2-server/releases/tag/v0.6.4', 'https://github.com/OpenRTMP/librtmp2/releases/tag/v0.13.0'],
-      'liveforge' => ['main @ 4e70fb3', '', 'Go'],
-      'mediamtx' => ['v1.21.2', '', 'Go'],
-      'nginx' => ['nginx 1.31.6', 'nginx-rtmp-module @ 6c7719d', 'C'],
-      'srs' => ['v8.0-d0', '', 'C++'],
+      'liveforge' => [OPENRTMP_BENCH_LIVEFORGE_4E70FB3, '', 'Go'],
+      'mediamtx' => [OPENRTMP_BENCH_STR_V1_21_2, '', 'Go'],
+      'nginx' => [OPENRTMP_BENCH_STR_NGINX_1_31_6, OPENRTMP_BENCH_STR_NGINX_RTMP_MODULE_6C7719D, 'C'],
+      'srs' => [OPENRTMP_BENCH_STR_V8_0_D0, '', 'C++'],
     ],
     'handshake' => [
       'openrtmp' => [11809.9, 1.84, 1.73, 3.4, 3.79],
@@ -262,13 +282,13 @@ const OPENRTMP_BENCH_RUNS = [
       'cpu' => 'INTEL(R) XEON(R) PLATINUM 8573C',
       'vcpus' => 4,
       'ram' => '15.6',
-      'kernel' => 'Linux 6.17.0-1022-azure x86_64',
-      'runner' => 'GitHub-hosted ubuntu24 (image 20261004.327.1)',
-      'rustc' => '1.99.0',
+      'kernel' => OPENRTMP_BENCH_STR_LINUX_6_17_0_1022_AZURE_X86_64,
+      'runner' => OPENRTMP_BENCH_STR_GITHUB_HOSTED_UBUNTU24_IMAGE_20261004_32,
+      'rustc' => OPENRTMP_BENCH_STR_1_99_0,
     ],
   ],
   '0.6.3-0.12.0' => [
-    'date' => '2026-10-14',
+    'date' => OPENRTMP_BENCH_STR_2026_10_14,
     'server_version' => '0.6.3',
     'lib_version' => '0.12.0',
     'published_server_release' => true,
@@ -276,20 +296,20 @@ const OPENRTMP_BENCH_RUNS = [
     'server_ref_url' => 'https://github.com/OpenRTMP/librtmp2-server/releases/tag/v0.6.3',
     'lib_ref_url' => 'https://github.com/OpenRTMP/librtmp2/releases/tag/v0.12.0',
     'lib_bench_source_url' => 'https://github.com/OpenRTMP/librtmp2/blob/main/bench/releases/v0.12.0.json',
-    'lib_bench_environment' => 'AMD EPYC 7763 64-Core Processor, 4 vCPUs, Linux 6.17.0-1022-azure x86_64, rustc 1.99.0',
+    'lib_bench_environment' => OPENRTMP_BENCH_STR_AMD_EPYC_7763_64_CORE_PROCESSOR_4_VCPUS,
     'lib_bench_note_en' => 'Criterion microbenchmarks for librtmp2 0.12.0, measured automatically for the release on a shared GitHub Actions runner. Differences from earlier versions are within runner noise and are not a controlled A/B.',
     'lib_bench_note_de' => 'Criterion-Microbenchmarks für librtmp2 0.12.0, automatisch für das Release auf einem geteilten GitHub-Actions-Runner gemessen. Unterschiede zu früheren Versionen liegen im Rauschen des Runners und sind kein kontrollierter A/B-Test.',
     'lib_protocol' => [
-      ['amf0_build_connect', '219 ns', '—'],
-      ['chunk/write_read_roundtrip', '5.89 µs', '~663 MiB/s'],
-      ['flv/audio_tag_aac', '1.25 ns', '—'],
-      ['flv/video_tag_h264', '1.25 ns', '—'],
-      ['fourcc_to_video_codec_avc1', '2.49 ns', '—'],
-      ['server_read_c1', '1.07 µs', '—'],
+      [OPENRTMP_BENCH_STR_AMF0_BUILD_CONNECT, '219 ns', '—'],
+      [OPENRTMP_BENCH_STR_CHUNK_WRITE_READ_ROUNDTRIP, '5.89 µs', '~663 MiB/s'],
+      [OPENRTMP_BENCH_STR_FLV_AUDIO_TAG_AAC, OPENRTMP_BENCH_STR_1_25_NS, '—'],
+      [OPENRTMP_BENCH_STR_FLV_VIDEO_TAG_H264, OPENRTMP_BENCH_STR_1_25_NS, '—'],
+      [OPENRTMP_BENCH_STR_FOURCC_TO_VIDEO_CODEC_AVC1, '2.49 ns', '—'],
+      [OPENRTMP_BENCH_STR_SERVER_READ_C1, '1.07 µs', '—'],
     ],
     'lib_relay' => [
-      ['relay/publish_to_player/100', '97.0 ms', '~1031 elem/s'],
-      ['relay/publish_to_player/500', '100.3 ms', '~4984 elem/s'],
+      [OPENRTMP_BENCH_STR_RELAY_PUBLISH_TO_PLAYER_100, '97.0 ms', '~1031 elem/s'],
+      [OPENRTMP_BENCH_STR_RELAY_PUBLISH_TO_PLAYER_500, '100.3 ms', '~4984 elem/s'],
     ],
     'note_en' => 'librtmp2-server 0.6.3 on librtmp2 0.12.0 against LiveForge, MediaMTX, nginx-rtmp and SRS at the versions listed below. Measured automatically in GitHub Actions on GitHub-hosted ubuntu24 (image 20261004.327.1); AMD EPYC 9V45 96-Core Processor, 4 vCPUs, 15.6 GiB RAM. One sweep, no repetitions on a shared machine, so compare the servers within this snapshot.',
     'note_de' => 'librtmp2-server 0.6.3 auf librtmp2 0.12.0 gegen LiveForge, MediaMTX, nginx-rtmp und SRS in den unten aufgeführten Versionen. Automatisch in GitHub Actions auf GitHub-hosted ubuntu24 (image 20261004.327.1); AMD EPYC 9V45 96-Core Processor, 4 vCPUs, 15.6 GiB RAM. Ein Sweep ohne Wiederholungen auf einer geteilten Maschine, deshalb die Server innerhalb dieses Snapshots vergleichen.',
@@ -297,10 +317,10 @@ const OPENRTMP_BENCH_RUNS = [
     'load_note_de' => 'Bei 500 und 1000 Zuschauern lieferten alle Server die volle Quellrate. Bei 2000 Zuschauern lieferten MediaMTX und nginx-rtmp weniger als die volle Quellrate.',
     'versions' => [
       'openrtmp' => ['0.6.3', 'librtmp2 0.12.0', 'Rust', 'https://github.com/OpenRTMP/librtmp2-server/releases/tag/v0.6.3', 'https://github.com/OpenRTMP/librtmp2/releases/tag/v0.12.0'],
-      'liveforge' => ['main @ 4e70fb3', '', 'Go'],
-      'mediamtx' => ['v1.21.2', '', 'Go'],
-      'nginx' => ['nginx 1.31.6', 'nginx-rtmp-module @ 6c7719d', 'C'],
-      'srs' => ['v8.0-d0', '', 'C++'],
+      'liveforge' => [OPENRTMP_BENCH_LIVEFORGE_4E70FB3, '', 'Go'],
+      'mediamtx' => [OPENRTMP_BENCH_STR_V1_21_2, '', 'Go'],
+      'nginx' => [OPENRTMP_BENCH_STR_NGINX_1_31_6, OPENRTMP_BENCH_STR_NGINX_RTMP_MODULE_6C7719D, 'C'],
+      'srs' => [OPENRTMP_BENCH_STR_V8_0_D0, '', 'C++'],
     ],
     'handshake' => [
       'openrtmp' => [10073, 2.23, 1.6, 6.54, 7.01],
@@ -367,9 +387,9 @@ const OPENRTMP_BENCH_RUNS = [
       'cpu' => 'AMD EPYC 9V45 96-Core Processor',
       'vcpus' => 4,
       'ram' => '15.6',
-      'kernel' => 'Linux 6.17.0-1022-azure x86_64',
-      'runner' => 'GitHub-hosted ubuntu24 (image 20261004.327.1)',
-      'rustc' => '1.99.0',
+      'kernel' => OPENRTMP_BENCH_STR_LINUX_6_17_0_1022_AZURE_X86_64,
+      'runner' => OPENRTMP_BENCH_STR_GITHUB_HOSTED_UBUNTU24_IMAGE_20261004_32,
+      'rustc' => OPENRTMP_BENCH_STR_1_99_0,
     ],
   ],
   '0.6.2-0.11.0-2026-10-09' => OPENRTMP_BENCH_LIB_0_11_0 + [
