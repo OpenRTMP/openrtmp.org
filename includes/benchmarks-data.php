@@ -11,7 +11,7 @@
 const OPENRTMP_BENCH_SOURCE_URL = 'https://github.com/OpenRTMP/librtmp2-server/blob/main/BENCHMARKS.md';
 const OPENRTMP_BENCH_LIB_SOURCE_URL = 'https://github.com/OpenRTMP/librtmp2/blob/main/BENCHMARKS.md';
 const OPENRTMP_BENCH_SCRIPT_URL = 'https://github.com/OpenRTMP/librtmp2-server/blob/main/scripts/run_rtmp_benchmarks.sh';
-const OPENRTMP_BENCH_LATEST = '0.6.2-0.11.0-2026-10-09';
+const OPENRTMP_BENCH_LATEST = '0.6.5-0.14.0';
 
 // Server key => display name. Version-specific details live in each snapshot.
 const OPENRTMP_BENCH_SERVERS = [
@@ -57,6 +57,103 @@ const OPENRTMP_BENCH_LIB_0_11_0 = [
 // load row:
 //   [join avg ms, join p95 ms, fps/viewer, CPU % of one core, peak RSS MiB]
 const OPENRTMP_BENCH_RUNS = [
+  '0.6.5-0.14.0' => [
+    'date' => '2026-10-14',
+    'server_version' => '0.6.5',
+    'lib_version' => '0.14.0',
+    'published_server_release' => true,
+    'source_url' => 'https://github.com/OpenRTMP/librtmp2-server/blob/main/bench/releases/v0.6.5.json',
+    'server_ref_url' => 'https://github.com/OpenRTMP/librtmp2-server/releases/tag/v0.6.5',
+    'lib_ref_url' => 'https://github.com/OpenRTMP/librtmp2/releases/tag/v0.14.0',
+    'lib_bench_source_url' => 'https://github.com/OpenRTMP/librtmp2/blob/main/bench/releases/v0.14.0.json',
+    'lib_bench_environment' => 'AMD EPYC 7763 64-Core Processor, 4 vCPUs, Linux 6.17.0-1022-azure x86_64, rustc 1.99.0',
+    'lib_bench_note_en' => 'Criterion microbenchmarks for librtmp2 0.14.0, measured automatically for the release on a shared GitHub Actions runner. Differences from earlier versions are within runner noise and are not a controlled A/B.',
+    'lib_bench_note_de' => 'Criterion-Microbenchmarks für librtmp2 0.14.0, automatisch für das Release auf einem geteilten GitHub-Actions-Runner gemessen. Unterschiede zu früheren Versionen liegen im Rauschen des Runners und sind kein kontrollierter A/B-Test.',
+    'lib_protocol' => [
+      ['amf0_build_connect', '226 ns', '—'],
+      ['chunk/write_read_roundtrip', '6.87 µs', '~569 MiB/s'],
+      ['flv/audio_tag_aac', '1.25 ns', '—'],
+      ['flv/video_tag_h264', '1.25 ns', '—'],
+      ['fourcc_to_video_codec_avc1', '2.49 ns', '—'],
+      ['server_read_c1', '1.07 µs', '—'],
+    ],
+    'lib_relay' => [
+      ['relay/publish_to_player/100', '96.5 ms', '~1036 elem/s'],
+      ['relay/publish_to_player/500', '98.2 ms', '~5090 elem/s'],
+    ],
+    'note_en' => 'librtmp2-server 0.6.5 on librtmp2 0.14.0 against LiveForge, MediaMTX, nginx-rtmp and SRS at the versions listed below. Measured automatically in GitHub Actions on GitHub-hosted ubuntu24 (image 20261004.327.1); AMD EPYC 9V74 80-Core Processor, 4 vCPUs, 15.6 GiB RAM. One sweep, no repetitions on a shared machine, so compare the servers within this snapshot.',
+    'note_de' => 'librtmp2-server 0.6.5 auf librtmp2 0.14.0 gegen LiveForge, MediaMTX, nginx-rtmp und SRS in den unten aufgeführten Versionen. Automatisch in GitHub Actions auf GitHub-hosted ubuntu24 (image 20261004.327.1); AMD EPYC 9V74 80-Core Processor, 4 vCPUs, 15.6 GiB RAM. Ein Sweep ohne Wiederholungen auf einer geteilten Maschine, deshalb die Server innerhalb dieses Snapshots vergleichen.',
+    'load_note_en' => 'At 500 viewers every server delivered the full source rate. At 1000 viewers nginx-rtmp fell below the source rate. At 2000 viewers MediaMTX and nginx-rtmp fell below the source rate.',
+    'load_note_de' => 'Bei 500 Zuschauern lieferten alle Server die volle Quellrate. Bei 1000 Zuschauern lieferte nginx-rtmp weniger als die volle Quellrate. Bei 2000 Zuschauern lieferten MediaMTX und nginx-rtmp weniger als die volle Quellrate.',
+    'versions' => [
+      'openrtmp' => ['0.6.5', 'librtmp2 0.14.0', 'Rust', 'https://github.com/OpenRTMP/librtmp2-server/releases/tag/v0.6.5', 'https://github.com/OpenRTMP/librtmp2/releases/tag/v0.14.0'],
+      'liveforge' => ['main @ 4e70fb3', '', 'Go'],
+      'mediamtx' => ['v1.21.2', '', 'Go'],
+      'nginx' => ['nginx 1.31.6', 'nginx-rtmp-module @ 6c7719d', 'C'],
+      'srs' => ['v8.0-d0', '', 'C++'],
+    ],
+    'handshake' => [
+      'openrtmp' => [7127.1, 3.35, 3.43, 5.54, 6.46],
+      'liveforge' => [5883.7, 4.3, 4.13, 8.28, 9.33],
+      'mediamtx' => [5294.6, 4.67, 4.49, 7.58, 8.11],
+      'nginx' => [686.9, 42.28, 42.34, 43.57, 44.66],
+      'srs' => [556.1, 48.95, 47.97, 55.42, 57.37],
+    ],
+    'join' => [
+      1 => [
+        'openrtmp' => [0.57, 0.57, 72.94],
+        'liveforge' => [0.7, 0.7, 73.1],
+        'mediamtx' => [0.85, 0.85, 73.11],
+        'nginx' => [82.49, 82.49, 73.23],
+        'srs' => [41.27, 41.27, 71.66],
+      ],
+      25 => [
+        'openrtmp' => [1.38, 2.09, 73.1],
+        'liveforge' => [6.49, 10.51, 73.11],
+        'mediamtx' => [3.01, 4.11, 73.13],
+        'nginx' => [82.79, 83.63, 73.17],
+        'srs' => [47.03, 49.58, 71.7],
+      ],
+      100 => [
+        'openrtmp' => [3.05, 5.92, 73.11],
+        'liveforge' => [13.52, 28.96, 73.09],
+        'mediamtx' => [6.65, 11.23, 73.1],
+        'nginx' => [85.11, 86.84, 72.93],
+        'srs' => [60, 72.48, 72.33],
+      ],
+    ],
+    'play_handshake' => [
+      'openrtmp' => [5703.5, 3.83, 2.96, 9.73, 12.58],
+      'liveforge' => [4862.2, 5.26, 5.13, 10.28, 13.25],
+      'mediamtx' => [4453.5, 5.38, 5.62, 9.6, 10.1],
+      'nginx' => [354.1, 83.59, 83.38, 85.35, 85.89],
+      'srs' => [585, 47.48, 48.54, 52.52, 55.27],
+    ],
+    'load' => [
+      500 => [
+        'openrtmp' => [15.64, 39.4, 73.11, 38, 22.5],
+        'liveforge' => [113.9, 213.7, 73.12, 59.9, 94.1],
+        'mediamtx' => [37.74, 65.49, 73.08, 91.7, 110.5],
+        'nginx' => [97.74, 111, 73.1, 55.6, 23.6],
+        'srs' => [221.81, 268.67, 73.14, 8.1, 136.4],
+      ],
+      1000 => [
+        'openrtmp' => [19.71, 53.06, 73.13, 71, 32.4],
+        'liveforge' => [327.75, 808.19, 73.11, 120.7, 151.4],
+        'mediamtx' => [112.34, 204.41, 73.12, 180.9, 157.1],
+        'nginx' => [135.28, 214.5, 58.32, 87.2, 29.6],
+        'srs' => [456.89, 1135.9, 73.15, 16.4, 183.3],
+      ],
+      2000 => [
+        'openrtmp' => [87, 290.75, 73.23, 111.9, 53.1],
+        'liveforge' => [1465.69, 3483.81, 74.26, 157.8, 261.5],
+        'mediamtx' => [363.78, 1042.86, 41.27, 176.8, 308.1],
+        'nginx' => [2476.37, 7374.62, 21.93, 54.5, 42],
+        'srs' => [858.19, 1366.32, 73.33, 34.6, 261.8],
+      ],
+    ],
+    'rounds' => [],
+  ],
   '0.6.2-0.11.0-2026-10-09' => OPENRTMP_BENCH_LIB_0_11_0 + [
     'date' => '2026-10-09',
     'server_version' => OPENRTMP_BENCH_SERVER_0_6_2,
