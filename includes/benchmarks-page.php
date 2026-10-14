@@ -24,10 +24,13 @@ $libProtocol = $bench['lib_protocol'];
 $libRelay = $bench['lib_relay'];
 $mib = fn(float $v) => $num($v, 1) . ' MiB';
 $pct = fn(float $v) => $num($v, 1) . ' %';
-$isPreview = ($bench['kind'] ?? '') === 'ci';
-if ($isPreview) {
+// A snapshot measured automatically in GitHub Actions (the CI preview and the
+// release snapshots since 0.6.3) carries its machine in 'environment'; the
+// older hand-measured release snapshots do not and use the static setup text.
+$hasEnvironment = is_array($bench['environment'] ?? null);
+if ($hasEnvironment) {
   // The setup section and the load footnote describe the CI runner, not the
-  // dedicated VM the release snapshots were measured on.
+  // dedicated VM the older release snapshots were measured on.
   $ci = benchCiStrings($lang);
   $env = $bench['environment'];
   $L['specs'][0][1] = $h(sprintf($ci['hardware'], $env['cpu'], $env['vcpus'], $env['ram']));
@@ -47,13 +50,13 @@ $kpiRef = function (array $rows, string $prefer): ?string {
   }
   return null;
 };
-// Release snapshots were checked by hand to deliver every frame to every
-// viewer. A preview is automatic, so derive the figure: the OpenRTMP rate at
+// The older release snapshots were checked by hand to deliver every frame to
+// every viewer. Automatic snapshots derive the figure: the OpenRTMP rate at
 // the largest load step relative to the highest rate any server delivered.
 // Measurement jitter of a couple of percent is not a dropped frame, so
 // anything within 2 % of the best rate counts as the full rate.
 $framesPct = 100;
-if ($isPreview) {
+if ($hasEnvironment) {
   $nominalFps = max(array_map(fn($rows) => max(array_column($rows, 2)), array_values($loadData)));
   $ratio = $nominalFps > 0 ? $loadData[$maxLoadViewers]['openrtmp'][2] / $nominalFps : 0;
   $framesPct = $ratio >= 0.98 ? 100 : (int) floor($ratio * 100);
