@@ -28,26 +28,6 @@ const OPENRTMP_BENCH_SERVER_0_6_2 = '0.6.2';
 const OPENRTMP_BENCH_LIVEFORGE_4E70FB3 = 'main @ 4e70fb3';
 const OPENRTMP_BENCH_SERVER_0_6_2_URL = 'https://github.com/OpenRTMP/librtmp2-server/releases/tag/v0.6.2';
 const OPENRTMP_BENCH_LIB_0_11_0_URL = 'https://github.com/OpenRTMP/librtmp2/releases/tag/v0.11.0';
-const OPENRTMP_BENCH_LIB_0_11_0 = [
-  'lib_ref_url' => OPENRTMP_BENCH_LIB_0_11_0_URL,
-  'lib_bench_source_url' => 'https://github.com/OpenRTMP/librtmp2/blob/v0.11.0/BENCHMARKS.md',
-  'lib_bench_environment' => 'Intel Xeon @ 2.10 GHz, 4 vCPUs, Linux 6.18 x86_64, rustc 1.97.0',
-  'lib_bench_note_en' => 'Criterion microbenchmarks for librtmp2 0.11.0. The protocol paths are unchanged from 0.10.2; the cross-version differences were measured on a shared VM with a newer rustc and are not a controlled release A/B.',
-  'lib_bench_note_de' => 'Criterion-Microbenchmarks für librtmp2 0.11.0. Die Protokollpfade sind gegenüber 0.10.2 unverändert; die Unterschiede zwischen den Versionen wurden auf einer Shared-VM mit neuerem rustc gemessen und sind kein kontrollierter Release-A/B-Test.',
-  'lib_protocol' => [
-    ['chunk/write_read_roundtrip', '4.55 µs', '~858 MiB/s'],
-    ['amf0_build_connect', '274 ns', '—'],
-    ['flv/video_tag_h264', '1.51 ns', '—'],
-    ['flv/audio_tag_aac', '1.24 ns', '—'],
-    ['fourcc_to_video_codec_avc1', '2.19 ns', '—'],
-    ['server_read_c1', '1.21 µs', '—'],
-  ],
-  'lib_relay' => [
-    ['relay/publish_to_player/100', '99.1 ms', '~1010 elem/s'],
-    ['relay/publish_to_player/500', '101.4 ms', '~4930 elem/s'],
-  ],
-];
-
 // Values repeated across the automatically measured snapshots.
 const OPENRTMP_BENCH_STR_CHUNK_WRITE_READ_ROUNDTRIP = 'chunk/write_read_roundtrip';
 const OPENRTMP_BENCH_STR_AMF0_BUILD_CONNECT = 'amf0_build_connect';
@@ -67,6 +47,26 @@ const OPENRTMP_BENCH_STR_V8_0_D0 = 'v8.0-d0';
 const OPENRTMP_BENCH_STR_LINUX_6_17_0_1022_AZURE_X86_64 = 'Linux 6.17.0-1022-azure x86_64';
 const OPENRTMP_BENCH_STR_GITHUB_HOSTED_UBUNTU24_IMAGE_20261004_32 = 'GitHub-hosted ubuntu24 (image 20261004.327.1)';
 const OPENRTMP_BENCH_STR_1_99_0 = '1.99.0';
+
+const OPENRTMP_BENCH_LIB_0_11_0 = [
+  'lib_ref_url' => OPENRTMP_BENCH_LIB_0_11_0_URL,
+  'lib_bench_source_url' => 'https://github.com/OpenRTMP/librtmp2/blob/v0.11.0/BENCHMARKS.md',
+  'lib_bench_environment' => 'Intel Xeon @ 2.10 GHz, 4 vCPUs, Linux 6.18 x86_64, rustc 1.97.0',
+  'lib_bench_note_en' => 'Criterion microbenchmarks for librtmp2 0.11.0. The protocol paths are unchanged from 0.10.2; the cross-version differences were measured on a shared VM with a newer rustc and are not a controlled release A/B.',
+  'lib_bench_note_de' => 'Criterion-Microbenchmarks für librtmp2 0.11.0. Die Protokollpfade sind gegenüber 0.10.2 unverändert; die Unterschiede zwischen den Versionen wurden auf einer Shared-VM mit neuerem rustc gemessen und sind kein kontrollierter Release-A/B-Test.',
+  'lib_protocol' => [
+    [OPENRTMP_BENCH_STR_CHUNK_WRITE_READ_ROUNDTRIP, '4.55 µs', '~858 MiB/s'],
+    [OPENRTMP_BENCH_STR_AMF0_BUILD_CONNECT, '274 ns', '—'],
+    [OPENRTMP_BENCH_STR_FLV_VIDEO_TAG_H264, '1.51 ns', '—'],
+    [OPENRTMP_BENCH_STR_FLV_AUDIO_TAG_AAC, '1.24 ns', '—'],
+    [OPENRTMP_BENCH_STR_FOURCC_TO_VIDEO_CODEC_AVC1, '2.19 ns', '—'],
+    [OPENRTMP_BENCH_STR_SERVER_READ_C1, '1.21 µs', '—'],
+  ],
+  'lib_relay' => [
+    [OPENRTMP_BENCH_STR_RELAY_PUBLISH_TO_PLAYER_100, '99.1 ms', '~1010 elem/s'],
+    [OPENRTMP_BENCH_STR_RELAY_PUBLISH_TO_PLAYER_500, '101.4 ms', '~4930 elem/s'],
+  ],
+];
 
 // Immutable benchmark snapshots, newest first.
 //
@@ -411,10 +411,10 @@ const OPENRTMP_BENCH_RUNS = [
         OPENRTMP_BENCH_SERVER_0_6_2_URL,
         OPENRTMP_BENCH_LIB_0_11_0_URL,
       ],
-      'mediamtx' => ['v1.21.2', 'release binary', 'Go'],
+      'mediamtx' => [OPENRTMP_BENCH_STR_V1_21_2, 'release binary', 'Go'],
       'liveforge' => [OPENRTMP_BENCH_LIVEFORGE_4E70FB3, '', 'Go'],
-      'srs' => ['8.0.48', 'v8.0-d0', 'C++'],
-      'nginx' => ['nginx 1.31.6', 'nginx-rtmp-module @ 6c7719d', 'C'],
+      'srs' => ['8.0.48', OPENRTMP_BENCH_STR_V8_0_D0, 'C++'],
+      'nginx' => [OPENRTMP_BENCH_STR_NGINX_1_31_6, OPENRTMP_BENCH_STR_NGINX_RTMP_MODULE_6C7719D, 'C'],
     ],
     'handshake' => [
       'openrtmp' => [7256.8, 2.91, 2.72, 5.60, 6.45],
@@ -491,16 +491,16 @@ const OPENRTMP_BENCH_RUNS = [
     'lib_bench_note_en' => 'Criterion microbenchmarks for librtmp2 0.10.2. Absolute values are illustrative measurements from the shared benchmark VM.',
     'lib_bench_note_de' => 'Criterion-Microbenchmarks für librtmp2 0.10.2. Die absoluten Werte sind illustrative Messungen von der gemeinsam genutzten Benchmark-VM.',
     'lib_protocol' => [
-      ['chunk/write_read_roundtrip', '3.76 µs', '~1040 MiB/s'],
-      ['amf0_build_connect', '229 ns', '—'],
-      ['flv/video_tag_h264', '1.10 ns', '—'],
-      ['flv/audio_tag_aac', '1.15 ns', '—'],
-      ['fourcc_to_video_codec_avc1', '2.21 ns', '—'],
-      ['server_read_c1', '1.08 µs', '—'],
+      [OPENRTMP_BENCH_STR_CHUNK_WRITE_READ_ROUNDTRIP, '3.76 µs', '~1040 MiB/s'],
+      [OPENRTMP_BENCH_STR_AMF0_BUILD_CONNECT, '229 ns', '—'],
+      [OPENRTMP_BENCH_STR_FLV_VIDEO_TAG_H264, '1.10 ns', '—'],
+      [OPENRTMP_BENCH_STR_FLV_AUDIO_TAG_AAC, '1.15 ns', '—'],
+      [OPENRTMP_BENCH_STR_FOURCC_TO_VIDEO_CODEC_AVC1, '2.21 ns', '—'],
+      [OPENRTMP_BENCH_STR_SERVER_READ_C1, '1.08 µs', '—'],
     ],
     'lib_relay' => [
-      ['relay/publish_to_player/100', '99.0 ms', '~1010 elem/s'],
-      ['relay/publish_to_player/500', '101.0 ms', '~4950 elem/s'],
+      [OPENRTMP_BENCH_STR_RELAY_PUBLISH_TO_PLAYER_100, '99.0 ms', '~1010 elem/s'],
+      [OPENRTMP_BENCH_STR_RELAY_PUBLISH_TO_PLAYER_500, '101.0 ms', '~4950 elem/s'],
     ],
     'note_en' => 'Published release snapshot: librtmp2-server 0.6.1 on librtmp2 0.10.2. These values come from the three-sweep benchmark published with the release.',
     'note_de' => 'Veröffentlichter Release-Snapshot: librtmp2-server 0.6.1 auf librtmp2 0.10.2. Diese Werte stammen aus dem mit dem Release veröffentlichten Drei-Sweep-Benchmark.',
@@ -517,7 +517,7 @@ const OPENRTMP_BENCH_RUNS = [
       'mediamtx' => ['v1.21.1', '', 'Go'],
       'liveforge' => [OPENRTMP_BENCH_LIVEFORGE_4E70FB3, '', 'Go'],
       'srs' => ['v8.0.48', '', 'C++'],
-      'nginx' => ['nginx 1.31.6', 'nginx-rtmp master @ 6c7719d', 'C'],
+      'nginx' => [OPENRTMP_BENCH_STR_NGINX_1_31_6, 'nginx-rtmp master @ 6c7719d', 'C'],
     ],
     'handshake' => [
       'openrtmp' => [9486.0, 2.41, 2.15, 5.53, 6.56],
