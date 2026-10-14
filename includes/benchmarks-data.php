@@ -153,6 +153,14 @@ const OPENRTMP_BENCH_RUNS = [
       ],
     ],
     'rounds' => [],
+    'environment' => [
+      'cpu' => 'AMD EPYC 9V74 80-Core Processor',
+      'vcpus' => 4,
+      'ram' => '15.6',
+      'kernel' => 'Linux 6.17.0-1022-azure x86_64',
+      'runner' => 'GitHub-hosted ubuntu24 (image 20261004.327.1)',
+      'rustc' => '1.99.0',
+    ],
   ],
   '0.6.4-0.13.0' => [
     'date' => '2026-10-14',
@@ -250,6 +258,14 @@ const OPENRTMP_BENCH_RUNS = [
       ],
     ],
     'rounds' => [],
+    'environment' => [
+      'cpu' => 'INTEL(R) XEON(R) PLATINUM 8573C',
+      'vcpus' => 4,
+      'ram' => '15.6',
+      'kernel' => 'Linux 6.17.0-1022-azure x86_64',
+      'runner' => 'GitHub-hosted ubuntu24 (image 20261004.327.1)',
+      'rustc' => '1.99.0',
+    ],
   ],
   '0.6.3-0.12.0' => [
     'date' => '2026-10-14',
@@ -347,6 +363,14 @@ const OPENRTMP_BENCH_RUNS = [
       ],
     ],
     'rounds' => [],
+    'environment' => [
+      'cpu' => 'AMD EPYC 9V45 96-Core Processor',
+      'vcpus' => 4,
+      'ram' => '15.6',
+      'kernel' => 'Linux 6.17.0-1022-azure x86_64',
+      'runner' => 'GitHub-hosted ubuntu24 (image 20261004.327.1)',
+      'rustc' => '1.99.0',
+    ],
   ],
   '0.6.2-0.11.0-2026-10-09' => OPENRTMP_BENCH_LIB_0_11_0 + [
     'date' => '2026-10-09',
