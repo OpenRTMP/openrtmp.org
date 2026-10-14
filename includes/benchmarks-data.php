@@ -277,8 +277,8 @@ const OPENRTMP_BENCH_RUNS = [
     ],
     'note_en' => 'librtmp2-server 0.6.3 on librtmp2 0.12.0 against LiveForge, MediaMTX, nginx-rtmp and SRS at the versions listed below. Measured automatically in GitHub Actions on GitHub-hosted ubuntu24 (image 20261004.327.1); AMD EPYC 9V45 96-Core Processor, 4 vCPUs, 15.6 GiB RAM. One sweep, no repetitions on a shared machine, so compare the servers within this snapshot.',
     'note_de' => 'librtmp2-server 0.6.3 auf librtmp2 0.12.0 gegen LiveForge, MediaMTX, nginx-rtmp und SRS in den unten aufgeführten Versionen. Automatisch in GitHub Actions auf GitHub-hosted ubuntu24 (image 20261004.327.1); AMD EPYC 9V45 96-Core Processor, 4 vCPUs, 15.6 GiB RAM. Ein Sweep ohne Wiederholungen auf einer geteilten Maschine, deshalb die Server innerhalb dieses Snapshots vergleichen.',
-    'load_note_en' => 'At 500 and 1000 viewers every server delivered the full source rate. At 2000 viewers nginx-rtmp fell below the source rate.',
-    'load_note_de' => 'Bei 500 und 1000 Zuschauern lieferten alle Server die volle Quellrate. Bei 2000 Zuschauern lieferte nginx-rtmp weniger als die volle Quellrate.',
+    'load_note_en' => 'At 500 and 1000 viewers every server delivered the full source rate. At 2000 viewers MediaMTX and nginx-rtmp fell below the source rate.',
+    'load_note_de' => 'Bei 500 und 1000 Zuschauern lieferten alle Server die volle Quellrate. Bei 2000 Zuschauern lieferten MediaMTX und nginx-rtmp weniger als die volle Quellrate.',
     'versions' => [
       'openrtmp' => ['0.6.3', 'librtmp2 0.12.0', 'Rust', 'https://github.com/OpenRTMP/librtmp2-server/releases/tag/v0.6.3', 'https://github.com/OpenRTMP/librtmp2/releases/tag/v0.12.0'],
       'liveforge' => ['main @ 4e70fb3', '', 'Go'],
