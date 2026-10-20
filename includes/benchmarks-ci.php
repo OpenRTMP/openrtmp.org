@@ -258,6 +258,35 @@ function benchCiEnv($env): ?array
   ];
 }
 
+/**
+ * A RAM size for display: one decimal with the page language's separators and
+ * trailing zeros dropped ("15,6" / "16"). The snapshots keep the value
+ * locale-neutral; only the rendered page is localised.
+ */
+function benchCiRam(string $ram, string $lang): string
+{
+  $decimal = $lang === 'de' ? ',' : '.';
+  $text = number_format((float) $ram, 1, $decimal, $lang === 'de' ? '.' : ',');
+  return rtrim(rtrim($text, '0'), $decimal);
+}
+
+/**
+ * Localise the machine RAM recorded inside prose (snapshot notes and the
+ * librtmp2 environment line). Those strings are stored locale-neutrally, so a
+ * German page must not show "15.6 GiB RAM" next to its localised numbers.
+ */
+function benchCiLocalizeRam(string $text, string $lang): string
+{
+    if ($lang !== 'de') {
+        return $text;
+    }
+    return preg_replace_callback(
+        '/(\d+)\.(\d{1,2})(?=\s*GiB RAM)/u',
+        static fn(array $m): string => $m[1] . ',' . $m[2],
+        $text
+    );
+}
+
 function benchCiTime(float $ns): string
 {
   // [upper bound in ns, divisor, decimals, unit]
@@ -384,16 +413,21 @@ function benchCiLibInfo(?array $lib, string $depLib): array
 function benchCiNotes(array $env, string $sha, string $date): array
 {
   $runner = $env['runner'] !== '' ? $env['runner'] : 'CI runner';
-  $machine = sprintf('%s, %d vCPUs, %s GiB RAM', $env['cpu'], $env['vcpus'], $env['ram']);
+  $machine = fn(string $language): string => sprintf(
+    '%s, %d vCPUs, %s GiB RAM',
+    $env['cpu'],
+    $env['vcpus'],
+    benchCiRam((string) $env['ram'], $language)
+  );
   $ref = $sha !== '' ? $sha : 'main';
   return [
     'en' => sprintf(
       'Next-release preview: the latest automated run on main (librtmp2-server %s, %s), measured on %s: %s. It shows what the next release may look like, but it is one sweep on a shared CI machine and is not comparable with the release snapshots, which were measured on a different, dedicated machine. Compare the servers with each other inside this run; every value is replaced after the next merge.',
-      $ref, $date, $runner, $machine
+      $ref, $date, $runner, $machine('en')
     ),
     'de' => sprintf(
       'Vorschau auf das nächste Release: der neueste automatische Lauf auf main (librtmp2-server %s, %s), gemessen auf %s: %s. Er zeigt, was das nächste Release erwarten lässt, ist aber ein einzelner Sweep auf einer geteilten CI-Maschine und nicht mit den Release-Snapshots vergleichbar, die auf einer anderen, dedizierten Maschine gemessen wurden. Server innerhalb dieses Laufs vergleichen; jeder Wert wird nach dem nächsten Merge ersetzt.',
-      $ref, $date, $runner, $machine
+      $ref, $date, $runner, $machine('de')
     ),
   ];
 }
@@ -477,6 +511,7 @@ function benchCiStrings(string $lang): array
   return $lang === 'de'
     ? [
       'badge' => 'Vorschau',
+      'kpi_par' => 'auf Augenhöhe mit %s',
       'kpi_slower' => '%s&times; langsamer als %s',
       'kpi_fewer' => '%s&times; weniger als %s',
       'frames_note_partial' => 'der Quellrate bei %d OpenRTMP-Zuschauern',
@@ -486,6 +521,7 @@ function benchCiStrings(string $lang): array
     ]
     : [
       'badge' => 'Preview',
+      'kpi_par' => 'on par with %s',
       'kpi_slower' => '%s&times; slower than %s',
       'kpi_fewer' => '%s&times; fewer than %s',
       'frames_note_partial' => 'of the source rate at %d OpenRTMP viewers',
