@@ -77,7 +77,13 @@ $kpiVs = function (float $ours, float $theirs, string $ref, bool $higherIsBetter
     return sprintf($ci['kpi_par'], OPENRTMP_BENCH_SERVERS[$ref]);
   }
   $template = $ratio >= 1 ? $L[$lead] : $ci[$trail];
-  return sprintf($template, $num($factor, $factor >= 10 ? 0 : ($factor < 1.1 ? 2 : 1)), OPENRTMP_BENCH_SERVERS[$ref]);
+  $decimals = 1;
+  if ($factor >= 10) {
+    $decimals = 0;
+  } elseif ($factor < 1.1) {
+    $decimals = 2;
+  }
+  return sprintf($template, $num($factor, $decimals), OPENRTMP_BENCH_SERVERS[$ref]);
 };
 $refJoin = $kpiRef($join100, 'mediamtx');
 $refHs = $kpiRef($hs, 'nginx');

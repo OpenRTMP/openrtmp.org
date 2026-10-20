@@ -676,9 +676,12 @@ function benchBarDelta(int $rank, float $value, float $lead, bool $higherIsBette
     return '';
   }
   if ($factor < OPENRTMP_BENCH_PARITY_TOLERANCE) {
-    return '<span class="bench-delta">' . ($lang === 'de' ? 'gleichauf' : 'on par') . '</span>';
+    $delta = $lang === 'de' ? 'gleichauf' : 'on par';
+  } else {
+    $decimals = $factor < 1.1 ? 2 : 1;
+    $delta = benchNum($factor, $decimals, $lang) . '&times;';
   }
-  return '<span class="bench-delta">' . benchNum($factor, $factor < 1.1 ? 2 : 1, $lang) . '&times;</span>';
+  return '<span class="bench-delta">' . $delta . '</span>';
 }
 
 /** One <li> of the bar chart. */
