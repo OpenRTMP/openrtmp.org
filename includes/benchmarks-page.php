@@ -33,7 +33,7 @@ if ($hasEnvironment) {
   // dedicated VM the older release snapshots were measured on.
   $ci = benchCiStrings($lang);
   $env = $bench['environment'];
-  $L['specs'][0][1] = $h(sprintf($ci['hardware'], $env['cpu'], $env['vcpus'], $env['ram']));
+  $L['specs'][0][1] = $h(sprintf($ci['hardware'], $env['cpu'], $env['vcpus'], benchCiRam((string) $env['ram'], $lang)));
   $L['specs'][1][1] = $h(sprintf($ci['os'], $env['kernel'], $env['runner']));
   $L['load_foot'] = sprintf($ci['load_foot'], $env['vcpus'], $env['vcpus'] * 100);
 }
@@ -63,16 +63,27 @@ if ($hasEnvironment) {
 }
 // KPI wording follows the measured direction: a preview can be slower than a
 // competitor, and must then say so instead of "0.8x faster". $ours/$theirs are
-// latencies (lower is better) unless $higherIsBetter.
+// latencies (lower is better) unless $higherIsBetter. A ratio inside the parity
+// band is a tie, not a direction, so it reads "on par"/"auf Augenhöhe" instead
+// of the self-contradictory "1.0x slower" a one-decimal factor would print.
 $kpiVs = function (float $ours, float $theirs, string $ref, bool $higherIsBetter, string $lead, string $trail) use ($L, $lang, $num) {
   if ($ours <= 0 || $theirs <= 0) {
     return '';
   }
   $ratio = $higherIsBetter ? $ours / $theirs : $theirs / $ours;
   $ci = benchCiStrings($lang);
-  $template = $ratio >= 1 ? $L[$lead] : $ci[$trail];
   $factor = $ratio >= 1 ? $ratio : 1 / $ratio;
-  return sprintf($template, $num($factor, $factor >= 10 ? 0 : 1), OPENRTMP_BENCH_SERVERS[$ref]);
+  if ($factor < OPENRTMP_BENCH_PARITY_TOLERANCE) {
+    return sprintf($ci['kpi_par'], OPENRTMP_BENCH_SERVERS[$ref]);
+  }
+  $template = $ratio >= 1 ? $L[$lead] : $ci[$trail];
+  $decimals = 1;
+  if ($factor >= 10) {
+    $decimals = 0;
+  } elseif ($factor < 1.1) {
+    $decimals = 2;
+  }
+  return sprintf($template, $num($factor, $decimals), OPENRTMP_BENCH_SERVERS[$ref]);
 };
 $refJoin = $kpiRef($join100, 'mediamtx');
 $refHs = $kpiRef($hs, 'nginx');
@@ -142,7 +153,7 @@ $maybeNum = fn($v, int $d) => $v === null ? '—' : $num((float) $v, $d);
         </a>
         <?php endforeach; ?>
       </div>
-      <p class="bench-snapshot-note"><?php echo $h($bench[$noteKey]); ?></p>
+      <p class="bench-snapshot-note"><?php echo $h(benchCiLocalizeRam($bench[$noteKey], $lang)); ?></p>
     </div>
   </section>
 
@@ -248,7 +259,7 @@ $maybeNum = fn($v, int $d) => $v === null ? '—' : $num((float) $v, $d);
           </table>
         </div>
       </div>
-      <p class="bench-foot"><?php echo $L['lib_environment']; ?>: <?php echo $h($bench['lib_bench_environment']); ?></p>
+      <p class="bench-foot"><?php echo $L['lib_environment']; ?>: <?php echo $h(benchCiLocalizeRam($bench['lib_bench_environment'], $lang)); ?></p>
     </div>
   </section>
   <?php endif; ?>

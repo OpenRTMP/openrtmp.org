@@ -48,9 +48,9 @@ include_once __DIR__ . '/../../includes/header.php';
         <p><code>librtmp2</code> ist eine <strong>Protokollbibliothek</strong> &mdash; sie dekodiert RTMP und Enhanced RTMP (E-RTMP v1/v2) auf Leitungsebene und ruft Ihre Anwendung über Callbacks auf. Sie enthält bewusst keinen HTTP-Server, keine Authentifizierungs-Policy und keine Stream-Speicherung. Wenn Sie statt der eingebetteten Crate einen sofort lauffähigen Endpunkt möchten, nutzen Sie <a href="#server">librtmp2-server</a>.</p>
         <p>Fügen Sie <code>librtmp2</code> von <a href="https://crates.io/crates/librtmp2" target="_blank" rel="noopener">crates.io</a> Ihrer <code>Cargo.toml</code> hinzu. Solange <code>librtmp2</code> auf <code>0.x</code> bleibt, verwenden Sie einen lockeren <code>0.x</code>-Bereich, wenn Sie regelmäßige Updates möchten, und aktualisieren Sie die Lockfile für Sicherheitsfixes (RTMPS/TLS über das Standard-Feature <code>tls</code>):</p>
         <pre><code>[dependencies.librtmp2]
-version = "0"
-
-cargo update -p librtmp2   # neueste 0.x-Version von crates.io holen</code></pre>
+version = "0"</code></pre>
+        <p>Aktualisieren Sie die aufgelöste Version, wenn Sie das neueste <code>0.x</code>-Release von crates.io möchten:</p>
+        <pre><code>cargo update -p librtmp2   # neueste 0.x-Version von crates.io holen</code></pre>
         <p>Für reproduzierbare Builds ersetzen Sie den lockeren Bereich durch das exakt getestete Release. Verwenden Sie die auf <a href="https://crates.io/crates/librtmp2" target="_blank" rel="noopener">crates.io</a> angezeigte Version, statt eine „aktuelle“ Versionsnummer von dieser Seite zu kopieren.</p>
         <p>In Cargo gibt es kein <code>version = "latest"</code> &mdash; <code>Cargo.lock</code> pinnt die aufgelöste Version immer, bis Sie <code>cargo update</code> ausführen.</p>
         <p>Alternativ für die Entwicklung lokal klonen und bauen (erfordert Rust 1.93+):</p>

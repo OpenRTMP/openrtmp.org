@@ -13,6 +13,12 @@ const OPENRTMP_BENCH_LIB_SOURCE_URL = 'https://github.com/OpenRTMP/librtmp2/blob
 const OPENRTMP_BENCH_SCRIPT_URL = 'https://github.com/OpenRTMP/librtmp2-server/blob/main/scripts/run_rtmp_benchmarks.sh';
 const OPENRTMP_BENCH_LATEST = '0.6.5-0.14.0';
 
+// Two measurements within this factor of each other are a tie: a shared machine
+// jitters by a couple of percent between runs, and a factor rounded to one
+// decimal ("1.0×") cannot state a direction. Comparisons inside the band are
+// not put in proportion at all and read "on par"/"gleichauf" instead.
+const OPENRTMP_BENCH_PARITY_TOLERANCE = 1.02;
+
 // Server key => display name. Version-specific details live in each snapshot.
 const OPENRTMP_BENCH_SERVERS = [
   'openrtmp' => 'librtmp2-server',
@@ -654,14 +660,28 @@ function benchBarFactor(float $value, float $lead, bool $higherIsBetter): ?float
   return $higherIsBetter ? $lead / $value : $value / $lead;
 }
 
-/** The badge for the leader, the "n.n×" factor for everyone else. */
+/**
+ * The badge for the leader, the "n.n×" factor for everyone else. A row inside
+ * the parity band is a tie: printing "1.0×" would claim a difference it cannot
+ * express -- and would sit next to the "Fastest" badge of the server it just
+ * called a full 1.0× ahead -- so it is labelled as level instead.
+ */
 function benchBarDelta(int $rank, float $value, float $lead, bool $higherIsBetter, string $best, string $lang): string
 {
   if ($rank === 1) {
     return '<span class="bench-badge">' . $best . '</span>';
   }
   $factor = benchBarFactor($value, $lead, $higherIsBetter);
-  return $factor === null ? '' : '<span class="bench-delta">' . benchNum($factor, 1, $lang) . '&times;</span>';
+  if ($factor === null) {
+    return '';
+  }
+  if ($factor < OPENRTMP_BENCH_PARITY_TOLERANCE) {
+    $delta = $lang === 'de' ? 'gleichauf' : 'on par';
+  } else {
+    $decimals = $factor < 1.1 ? 2 : 1;
+    $delta = benchNum($factor, $decimals, $lang) . '&times;';
+  }
+  return '<span class="bench-delta">' . $delta . '</span>';
 }
 
 /** One <li> of the bar chart. */
