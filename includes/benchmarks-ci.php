@@ -110,7 +110,9 @@ function benchCiEuid(): ?int
  * The private cache directory of the fetched documents, or null when it cannot
  * be used. It lives in the system temp directory but is created with 0700
  * permissions and must belong to the running user, so no other local user can
- * read, replace or pre-create the documents inside it.
+ * read, replace or pre-create the documents inside it. The effective user id
+ * is part of the name, so every site user on the host gets a private cache
+ * instead of losing it to the user who came first.
  */
 function benchCiCacheDir(): ?string
 {
@@ -119,7 +121,8 @@ function benchCiCacheDir(): ?string
     return $dir;
   }
   $dir = null;
-  $path = sys_get_temp_dir() . '/openrtmp-bench';
+  $euid = benchCiEuid();
+  $path = sys_get_temp_dir() . '/openrtmp-bench' . ($euid === null ? '' : '-' . $euid);
   if (!is_dir($path) && !@mkdir($path, 0700) && !is_dir($path)) {
     return null;
   }
@@ -127,16 +130,16 @@ function benchCiCacheDir(): ?string
   if ($stat === false || ($stat['mode'] & 0170000) !== 0040000) {
     return null; // not a directory, but a symlink to one
   }
-  $euid = benchCiEuid();
   if ($euid !== null) {
     if ((int) $stat['uid'] !== $euid) {
       return null; // the directory belongs to another user
     }
-    if (($stat['mode'] & 0022) !== 0) {
-      // Other users must not be able to plant a document in the cache.
+    if (($stat['mode'] & 0077) !== 0) {
+      // Other users must not be able to read the cache or plant a document
+      // in it.
       @chmod($path, 0700);
       $stat = @lstat($path);
-      if ($stat === false || ($stat['mode'] & 0022) !== 0) {
+      if ($stat === false || ($stat['mode'] & 0077) !== 0) {
         return null;
       }
     }
@@ -342,6 +345,11 @@ function benchCiEnv($env): ?array
   if ($vcpus === null || $ram === null) {
     return null;
   }
+  // The vCPU count is shown as an integer, so a fractional or out-of-range
+  // value would be truncated to a wrong count.
+  if ($vcpus !== floor($vcpus) || $vcpus >= (float) PHP_INT_MAX) {
+    return null;
+  }
   return [
     'cpu' => benchCiString($env['cpu'] ?? ''),
     'vcpus' => (int) $vcpus,
@@ -419,7 +427,15 @@ function benchCiTime(float $ns, string $lang = 'en'): string
 /** Items per second for a per-iteration count, or null if it is not a positive number. */
 function benchCiRate($count, float $ns): ?float
 {
-  return is_numeric($count) && is_finite((float) $count) && $count > 0 && $ns > 0 ? $count / ($ns * 1e-9) : null;
+  if (!is_numeric($count) || !is_finite((float) $count) || $count <= 0 || $ns <= 0) {
+    return null;
+  }
+  $seconds = $ns * 1e-9;
+  if ($seconds <= 0.0 || !is_finite($seconds)) {
+    return null; // the scaled duration underflows to zero
+  }
+  $rate = $count / $seconds;
+  return is_finite($rate) ? $rate : null;
 }
 
 function benchCiThroughput(array $b): string
