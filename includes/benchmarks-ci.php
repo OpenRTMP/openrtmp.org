@@ -117,35 +117,55 @@ function benchCiEuid(): ?int
 function benchCiCacheDir(): ?string
 {
   static $dir = false;
-  if ($dir !== false) {
-    return $dir;
+  if ($dir === false) {
+    $dir = benchCiUsableCacheDir();
   }
-  $dir = null;
+  return $dir;
+}
+
+/** The usable private cache directory, or null when it cannot be used. */
+function benchCiUsableCacheDir(): ?string
+{
   $euid = benchCiEuid();
   $path = sys_get_temp_dir() . '/openrtmp-bench' . ($euid === null ? '' : '-' . $euid);
+  return benchCiEnsurePrivateDir($path, $euid) ? $path : null;
+}
+
+/**
+ * Create the private cache directory if needed and make sure it is closed to
+ * other local users. Returns false when it cannot be used safely.
+ */
+function benchCiEnsurePrivateDir(string $path, ?int $euid): bool
+{
   if (!is_dir($path) && !@mkdir($path, 0700) && !is_dir($path)) {
-    return null;
+    return false;
   }
+  $owned = benchCiPrivateDirIsOurs($path, $euid);
+  $closed = $owned && benchCiPrivateDirIsClosed($path);
+  if ($owned && !$closed) {
+    // Other users must not be able to read the cache or plant a document in
+    // it: tighten the mode once and re-check.
+    @chmod($path, 0700);
+    $closed = benchCiPrivateDirIsClosed($path);
+  }
+  return $closed;
+}
+
+/** True when the path is a real directory (not a symlink) that we own. */
+function benchCiPrivateDirIsOurs(string $path, ?int $euid): bool
+{
   $stat = @lstat($path);
   if ($stat === false || ($stat['mode'] & 0170000) !== 0040000) {
-    return null; // not a directory, but a symlink to one
+    return false;
   }
-  if ($euid !== null) {
-    if ((int) $stat['uid'] !== $euid) {
-      return null; // the directory belongs to another user
-    }
-    if (($stat['mode'] & 0077) !== 0) {
-      // Other users must not be able to read the cache or plant a document
-      // in it.
-      @chmod($path, 0700);
-      $stat = @lstat($path);
-      if ($stat === false || ($stat['mode'] & 0077) !== 0) {
-        return null;
-      }
-    }
-  }
-  $dir = $path;
-  return $dir;
+  return $euid === null || (int) $stat['uid'] === $euid;
+}
+
+/** True when the directory grants no permission to group or other users. */
+function benchCiPrivateDirIsClosed(string $path): bool
+{
+  $stat = @lstat($path);
+  return $stat !== false && ($stat['mode'] & 0077) === 0;
 }
 
 /**
@@ -337,17 +357,15 @@ function benchCiPositiveNumber($value): ?float
 /** @return array{cpu:string,vcpus:int,ram:string,kernel:string,runner:string,rustc:string}|null */
 function benchCiEnv($env): ?array
 {
-  if (!is_array($env)) {
-    return null;
-  }
-  $vcpus = benchCiPositiveNumber($env['vcpus'] ?? null);
-  $ram = benchCiPositiveNumber($env['ram_gib'] ?? null);
-  if ($vcpus === null || $ram === null) {
-    return null;
-  }
+  $vcpus = is_array($env) ? benchCiPositiveNumber($env['vcpus'] ?? null) : null;
+  $ram = is_array($env) ? benchCiPositiveNumber($env['ram_gib'] ?? null) : null;
   // The vCPU count is shown as an integer, so a fractional or out-of-range
   // value would be truncated to a wrong count.
-  if ($vcpus !== floor($vcpus) || $vcpus >= (float) PHP_INT_MAX) {
+  $usable = $vcpus !== null
+    && $ram !== null
+    && $vcpus === floor($vcpus)
+    && $vcpus < (float) PHP_INT_MAX;
+  if (!$usable) {
     return null;
   }
   return [
