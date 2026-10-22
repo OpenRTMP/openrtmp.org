@@ -96,10 +96,81 @@ function benchCiDecode(?string $body): ?array
   return is_array($data) ? $data : null;
 }
 
-/** Age of a file in seconds, or null if it does not exist. */
+/**
+ * The uid of the user the site runs as, or null on platforms without file
+ * user ids (Windows). There the system temp directory belongs to one user
+ * anyway.
+ */
+function benchCiEuid(): ?int
+{
+  return function_exists('posix_geteuid') ? posix_geteuid() : null;
+}
+
+/**
+ * The private cache directory of the fetched documents, or null when it cannot
+ * be used. It lives in the system temp directory but is created with 0700
+ * permissions and must belong to the running user, so no other local user can
+ * read, replace or pre-create the documents inside it.
+ */
+function benchCiCacheDir(): ?string
+{
+  static $dir = false;
+  if ($dir !== false) {
+    return $dir;
+  }
+  $dir = null;
+  $path = sys_get_temp_dir() . '/openrtmp-bench';
+  if (!is_dir($path) && !@mkdir($path, 0700) && !is_dir($path)) {
+    return null;
+  }
+  $stat = @lstat($path);
+  if ($stat === false || ($stat['mode'] & 0170000) !== 0040000) {
+    return null; // not a directory, but a symlink to one
+  }
+  $euid = benchCiEuid();
+  if ($euid !== null) {
+    if ((int) $stat['uid'] !== $euid) {
+      return null; // the directory belongs to another user
+    }
+    if (($stat['mode'] & 0022) !== 0) {
+      // Other users must not be able to plant a document in the cache.
+      @chmod($path, 0700);
+      $stat = @lstat($path);
+      if ($stat === false || ($stat['mode'] & 0022) !== 0) {
+        return null;
+      }
+    }
+  }
+  $dir = $path;
+  return $dir;
+}
+
+/**
+ * True when the path is a regular file that belongs to the running user, so a
+ * document planted by another local user (or a symlink to one) is never
+ * trusted.
+ */
+function benchCiTrustedFile(string $path): bool
+{
+  $stat = @lstat($path);
+  if ($stat === false || ($stat['mode'] & 0170000) !== 0100000) {
+    return false;
+  }
+  $euid = benchCiEuid();
+  return $euid === null || (int) $stat['uid'] === $euid;
+}
+
+/** Age of a file in seconds, or null if it does not exist or is not ours. */
 function benchCiAge(string $path): ?int
 {
-  return is_file($path) ? time() - (int) @filemtime($path) : null;
+  return benchCiTrustedFile($path) ? time() - (int) @filemtime($path) : null;
+}
+
+/** The cache file of one document inside the private cache directory. */
+function benchCiCachePath(string $url): ?string
+{
+  $dir = benchCiCacheDir();
+  return $dir === null ? null : $dir . '/' . hash('sha256', $url) . '.json';
 }
 
 /** The cached document if it is younger than $maxAge seconds and still valid, else null. */
@@ -135,7 +206,8 @@ function benchCiRefresh(string $url, string $cache, callable $valid): ?array
     @touch($failed);
     return null;
   }
-  $tmp = @tempnam(sys_get_temp_dir(), 'openrtmp-bench-');
+  $dir = benchCiCacheDir();
+  $tmp = $dir === null ? false : @tempnam($dir, 'openrtmp-bench-');
   if ($tmp !== false) {
     $written = @file_put_contents($tmp, $body);
     if ($written !== strlen($body) || !@rename($tmp, $cache)) {
@@ -149,7 +221,13 @@ function benchCiRefresh(string $url, string $cache, callable $valid): ?array
 /** Fetch one JSON document with an on-disk cache; null if unavailable. */
 function benchCiFetchJson(string $url, callable $valid): ?array
 {
-  $cache = sys_get_temp_dir() . '/openrtmp-bench-' . hash('sha256', $url) . '.json';
+  $cache = benchCiCachePath($url);
+  if ($cache === null) {
+    // Without a private cache directory the document is fetched every time,
+    // but never stored where another user could plant one.
+    $data = benchCiDecode(benchCiHttpGet($url));
+    return $data !== null && $valid($data) ? $data : null;
+  }
   return benchCiCached($cache, OPENRTMP_BENCH_CI_TTL, $valid)
     ?? benchCiRefresh($url, $cache, $valid)
     ?? benchCiCached($cache, OPENRTMP_BENCH_CI_STALE_TTL, $valid);
@@ -287,19 +365,41 @@ function benchCiRam(string $ram, string $lang): string
 }
 
 /**
- * Localise the machine RAM recorded inside prose (snapshot notes and the
- * librtmp2 environment line). Those strings are stored locale-neutrally, so a
- * German page must not show "15.6 GiB RAM" next to its localised numbers.
+ * Localise the machine hardware recorded inside prose (snapshot notes and the
+ * librtmp2 environment line): the RAM size and the CPU frequency. Those
+ * strings are stored locale-neutrally, so a German page must not show
+ * "15.6 GiB RAM" or "2.10 GHz" next to its localised numbers.
  */
 function benchCiLocalizeRam(string $text, string $lang): string
 {
     if ($lang !== 'de') {
         return $text;
     }
-    return preg_replace_callback(
+    $text = preg_replace_callback(
         '/(\d+)\.(\d{1,2})(?=\s*GiB RAM)/u',
         static fn(array $m): string => $m[1] . ',' . $m[2],
         $text
+    );
+    return preg_replace_callback(
+        '/(\d+)\.(\d{1,2})(?=\s*GHz)/u',
+        static fn(array $m): string => $m[1] . ',' . $m[2],
+        $text
+    );
+}
+
+/**
+ * Localise a stored microbenchmark time ("6.87 µs") for the page language. The
+ * snapshots keep the value locale-neutral; only the rendered page is localised.
+ */
+function benchCiLocalizeTime(string $time, string $lang): string
+{
+    if ($lang !== 'de') {
+        return $time;
+    }
+    return preg_replace_callback(
+        '/(\d+)\.(\d+)(?=\s*(?:ns|µs|ms|s)(?![A-Za-z0-9]))/u',
+        static fn(array $m): string => $m[1] . ',' . $m[2],
+        $time
     );
 }
 
