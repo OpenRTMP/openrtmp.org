@@ -52,10 +52,10 @@ $interopEntries = [
       <div class="grid-2 guide-grid">
         <?php foreach ($interopEntries as $entry): ?>
         <article class="card guide-card">
-          <span class="guide-tag"><?php echo htmlspecialchars($entry['tag'], ENT_QUOTES, 'UTF-8'); ?></span>
-          <h2><?php echo htmlspecialchars($entry['name'], ENT_QUOTES, 'UTF-8'); ?></h2>
-          <p><?php echo htmlspecialchars($entry['description'], ENT_QUOTES, 'UTF-8'); ?></p>
-          <a href="<?php echo htmlspecialchars($entry['url'], ENT_QUOTES, 'UTF-8'); ?>" class="text-link"<?php echo strpos($entry['url'], 'http') === 0 ? ' target="_blank" rel="noopener"' : ''; ?>>See the evidence &rarr;</a>
+          <span class="guide-tag"><?php echo htmlspecialchars($entry['tag'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?></span>
+          <h2><?php echo htmlspecialchars($entry['name'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?></h2>
+          <p><?php echo htmlspecialchars($entry['description'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?></p>
+          <a href="<?php echo htmlspecialchars($entry['url'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>" class="text-link"<?php echo strpos($entry['url'], 'http') === 0 ? ' target="_blank" rel="noopener"' : ''; ?>>See the evidence &rarr;</a>
         </article>
         <?php endforeach; ?>
       </div>
@@ -79,9 +79,9 @@ $interopEntries = [
       <div class="grid-2 guide-grid">
         <?php foreach ($showcaseEntries as $entry): ?>
         <article class="card guide-card">
-          <span class="guide-tag"><?php echo htmlspecialchars($entry['tag'], ENT_QUOTES, 'UTF-8'); ?></span>
-          <h2><a href="<?php echo htmlspecialchars($entry['url'], ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener"><?php echo htmlspecialchars($entry['name'], ENT_QUOTES, 'UTF-8'); ?></a></h2>
-          <p><?php echo htmlspecialchars($entry['description'], ENT_QUOTES, 'UTF-8'); ?></p>
+          <span class="guide-tag"><?php echo htmlspecialchars($entry['tag'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?></span>
+          <h2><a href="<?php echo htmlspecialchars($entry['url'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>" target="_blank" rel="noopener"><?php echo htmlspecialchars($entry['name'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?></a></h2>
+          <p><?php echo htmlspecialchars($entry['description'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?></p>
         </article>
         <?php endforeach; ?>
       </div>
