@@ -100,10 +100,15 @@ def canonical(path):
 
 
 def page_index(pages):
-    """Map the canonical name of every fetched page to the path it was fetched
-    under and to the page itself, so a link spelled '/docs/index.php' or
-    '/docs' finds the page that was fetched as '/docs/'."""
-    return {canonical(path): (path, page) for path, page in pages.items()}
+    """Map every fetched page to the path it was fetched under and to the
+    page itself, under its exact path and under its canonical name, so a link
+    spelled '/docs/index.php' or '/docs' finds the page that was fetched as
+    '/docs/'. The exact path wins, so pages whose canonical names collide
+    keep their own anchors."""
+    index = {path: (path, page) for path, page in pages.items()}
+    for path, page in pages.items():
+        index.setdefault(canonical(path), (path, page))
+    return index
 
 
 def check_ref(base, index, path, ref, cache):
@@ -114,7 +119,9 @@ def check_ref(base, index, path, ref, cache):
     if target.netloc and target.hostname not in SITE_HOSTS:
         return None  # external
     local = target.path or "/"
-    entry = index.get(canonical(local))
+    entry = index.get(local)
+    if entry is None:
+        entry = index.get(canonical(local))
     if entry is not None:
         fetched_path, page = entry
         if target.fragment and target.fragment not in page.ids:
