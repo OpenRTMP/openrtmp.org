@@ -242,16 +242,32 @@ function benchCiSha($value): string
   return is_string($value) && preg_match('/^[0-9a-f]{7,40}$/', $value) ? substr($value, 0, 7) : '';
 }
 
+/**
+ * A measurement of the remote document as a positive, finite number, or null
+ * when it is missing, not a number, infinite or not above zero. The sweep rows
+ * use the same rule (see benchCiRow), so a malformed document can never be
+ * published as a measurement.
+ */
+function benchCiPositiveNumber($value): ?float
+{
+  return (is_int($value) || is_float($value)) && is_finite((float) $value) && $value > 0 ? (float) $value : null;
+}
+
 /** @return array{cpu:string,vcpus:int,ram:string,kernel:string,runner:string,rustc:string}|null */
 function benchCiEnv($env): ?array
 {
-  if (!is_array($env) || !is_numeric($env['vcpus'] ?? null) || !is_numeric($env['ram_gib'] ?? null)) {
+  if (!is_array($env)) {
+    return null;
+  }
+  $vcpus = benchCiPositiveNumber($env['vcpus'] ?? null);
+  $ram = benchCiPositiveNumber($env['ram_gib'] ?? null);
+  if ($vcpus === null || $ram === null) {
     return null;
   }
   return [
     'cpu' => benchCiString($env['cpu'] ?? ''),
-    'vcpus' => (int) $env['vcpus'],
-    'ram' => rtrim(rtrim(number_format((float) $env['ram_gib'], 1, '.', ''), '0'), '.'),
+    'vcpus' => (int) $vcpus,
+    'ram' => rtrim(rtrim(number_format($ram, 1, '.', ''), '0'), '.'),
     'kernel' => benchCiString($env['kernel'] ?? ''),
     'runner' => benchCiString($env['runner'] ?? ''),
     'rustc' => benchCiString($env['rustc'] ?? ''),
@@ -287,21 +303,23 @@ function benchCiLocalizeRam(string $text, string $lang): string
     );
 }
 
-function benchCiTime(float $ns): string
+function benchCiTime(float $ns, string $lang = 'en'): string
 {
+  $decimal = $lang === 'de' ? ',' : '.';
+  $thousand = $lang === 'de' ? '.' : ',';
   // [upper bound in ns, divisor, decimals, unit]
   foreach ([[1e3, 1, $ns < 10 ? 2 : 0, 'ns'], [1e6, 1e3, 2, 'µs'], [1e9, 1e6, 1, 'ms']] as [$limit, $divisor, $decimals, $unit]) {
     if ($ns < $limit) {
-      return number_format($ns / $divisor, $decimals) . ' ' . $unit;
+      return number_format($ns / $divisor, $decimals, $decimal, $thousand) . ' ' . $unit;
     }
   }
-  return number_format($ns / 1e9, 2) . ' s';
+  return number_format($ns / 1e9, 2, $decimal, $thousand) . ' s';
 }
 
 /** Items per second for a per-iteration count, or null if it is not a positive number. */
 function benchCiRate($count, float $ns): ?float
 {
-  return is_numeric($count) && $count > 0 && $ns > 0 ? $count / ($ns * 1e-9) : null;
+  return is_numeric($count) && is_finite((float) $count) && $count > 0 && $ns > 0 ? $count / ($ns * 1e-9) : null;
 }
 
 function benchCiThroughput(array $b): string
@@ -316,7 +334,7 @@ function benchCiThroughput(array $b): string
 }
 
 /** @return list<array{string,string,string}> */
-function benchCiLibRows($suite): array
+function benchCiLibRows($suite, string $lang = 'en'): array
 {
   $rows = [];
   if (!is_array($suite)) {
@@ -324,8 +342,12 @@ function benchCiLibRows($suite): array
   }
   ksort($suite);
   foreach ($suite as $name => $b) {
-    if (is_array($b) && isset($b['ns']) && is_numeric($b['ns'])) {
-      $rows[] = [benchCiString((string) $name, 120), benchCiTime((float) $b['ns']), benchCiThroughput($b)];
+    if (!is_array($b)) {
+      continue;
+    }
+    $ns = benchCiPositiveNumber($b['ns'] ?? null);
+    if ($ns !== null) {
+      $rows[] = [benchCiString((string) $name, 120), benchCiTime($ns, $lang), benchCiThroughput($b)];
     }
   }
   return $rows;
@@ -386,7 +408,7 @@ function benchCiVersions(array $rows, string $sha, string $serverVersion): array
 }
 
 /** Library microbenchmark data from librtmp2's own latest run, if usable. */
-function benchCiLibInfo(?array $lib, string $depLib): array
+function benchCiLibInfo(?array $lib, string $depLib, string $lang = 'en'): array
 {
   $ok = $lib !== null && ($lib['schema'] ?? null) === 1 && is_array($lib['suites'] ?? null);
   $env = $ok ? benchCiEnv($lib['environment'] ?? null) : null;
@@ -404,8 +426,8 @@ function benchCiLibInfo(?array $lib, string $depLib): array
     'sha' => $sha,
     'label' => $label,
     'env_line' => $envLine,
-    'protocol' => $ok ? benchCiLibRows($lib['suites']['protocol'] ?? null) : [],
-    'relay' => $ok ? benchCiLibRows($lib['suites']['relay'] ?? null) : [],
+    'protocol' => $ok ? benchCiLibRows($lib['suites']['protocol'] ?? null, $lang) : [],
+    'relay' => $ok ? benchCiLibRows($lib['suites']['relay'] ?? null, $lang) : [],
   ];
 }
 
@@ -436,14 +458,14 @@ function benchCiNotes(array $env, string $sha, string $date): array
  * Build the preview snapshot from the two results files, or null if the
  * librtmp2-server file does not carry a usable sweep.
  */
-function benchCiSnapshot(array $srv, ?array $lib): ?array
+function benchCiSnapshot(array $srv, ?array $lib, string $lang = 'en'): ?array
 {
   $rows = benchCiSweepRows($srv);
   if ($rows === null) {
     return null;
   }
   $sha = benchCiSha($srv['commit'] ?? '');
-  $libInfo = benchCiLibInfo($lib, benchCiString($srv['deps']['librtmp2'] ?? '', 40));
+  $libInfo = benchCiLibInfo($lib, benchCiString($srv['deps']['librtmp2'] ?? '', 40), $lang);
   $notes = benchCiNotes($rows['env'], $sha, $rows['date']);
   $commitUrl = fn(string $repo, string $ref) => $ref !== '' ? 'https://github.com/OpenRTMP/' . $repo . '/commit/' . $ref : null;
 
@@ -496,13 +518,17 @@ function benchCiRun(): ?array
     return $run;
   }
   $done = true;
+  // The preview is rendered by the page that asks for it, so its numbers use
+  // the language of that page (the site serves one language per request).
+  global $lang;
+  $pageLang = $lang === 'de' ? 'de' : 'en';
   $base = benchCiBase();
   $srv = benchCiFetchJson($base . '/librtmp2-server/main/bench/latest.json', 'benchCiValidServer');
   if ($srv === null) {
     return null;
   }
   $lib = benchCiFetchJson($base . '/librtmp2/main/bench/latest.json', 'benchCiValidLib');
-  return $run = benchCiSnapshot($srv, $lib);
+  return $run = benchCiSnapshot($srv, $lib, $pageLang);
 }
 
 /** Strings for the preview card and the setup section, by language. */
