@@ -6,7 +6,7 @@
 $parsed = parse_url($_SERVER['REQUEST_URI'] ?? '/');
 // A request target that starts with "//" is parsed as a host, so its path
 // cannot be determined and must not fall back to the document root.
-$path = is_array($parsed) && isset($parsed['path']) ? rawurldecode($parsed['path']) : '';
+$path = is_array($parsed) && !isset($parsed['host']) && isset($parsed['path']) ? rawurldecode($parsed['path']) : '';
 $target = dirname(__DIR__) . $path;
 if ($path !== '' && strpos($path, '..') === false && (is_file($target) || is_file(rtrim($target, '/') . '/index.php'))) {
     return false; // let the built-in server serve or execute it as usual
