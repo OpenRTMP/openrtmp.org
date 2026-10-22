@@ -89,18 +89,38 @@ def status_of(base, path, cache):
     return cache[path]
 
 
-def check_ref(base, pages, path, ref, cache):
+def canonical(path):
+    """The canonical name of a page path: '/docs/index.php', '/docs/index.html',
+    '/docs/' and '/docs' all name the page '/docs'."""
+    if path.endswith("/index.php"):
+        path = path[: -len("/index.php")]
+    elif path.endswith("/index.html"):
+        path = path[: -len("/index.html")]
+    return path.rstrip("/") or "/"
+
+
+def page_index(pages):
+    """Map the canonical name of every fetched page to the path it was fetched
+    under and to the page itself, so a link spelled '/docs/index.php' or
+    '/docs' finds the page that was fetched as '/docs/'."""
+    return {canonical(path): (path, page) for path, page in pages.items()}
+
+
+def check_ref(base, index, path, ref, cache):
     """Return a problem description for one href/src, or None."""
-    if ref.startswith(("mailto:", "tel:", "data:", "javascript:")):
+    if ref.split(":", 1)[0].lower() in {"mailto", "tel", "data", "javascript"}:
         return None
     target = urlsplit(urljoin(path, ref))
     if target.netloc and target.hostname not in SITE_HOSTS:
         return None  # external
     local = target.path or "/"
-    if local in pages and target.fragment and target.fragment not in pages[local].ids:
-        return f"{path}: '{ref}' points at a missing anchor"
-    if local in pages and not target.query:
-        return None  # already fetched
+    entry = index.get(canonical(local))
+    if entry is not None:
+        fetched_path, page = entry
+        if target.fragment and target.fragment not in page.ids:
+            return f"{path}: '{ref}' points at a missing anchor"
+        if local == fetched_path and not target.query:
+            return None  # already fetched
     if target.query:
         local += "?" + target.query
     status = status_of(base, local, cache)
@@ -118,11 +138,12 @@ def main():
     base = sys.argv[1].rstrip("/")
     errors = []
     pages = load_pages(base, sys.argv[2:], errors)
+    index = page_index(pages)
 
     cache = {}
     for path, page in pages.items():
         for ref in page.refs:
-            problem = check_ref(base, pages, path, ref, cache)
+            problem = check_ref(base, index, path, ref, cache)
             if problem:
                 errors.append(problem)
 
