@@ -242,7 +242,7 @@ $maybeNum = fn($v, int $d) => $v === null ? '—' : $num((float) $v, $d);
             <thead><tr><th>Benchmark</th><th><?php echo $L['lib_time']; ?></th><th><?php echo $L['lib_throughput']; ?></th></tr></thead>
             <tbody>
               <?php foreach ($libProtocol as [$name, $time, $throughput]): ?>
-              <tr><td><code><?php echo $h($name); ?></code></td><td><?php echo $h($time); ?></td><td><?php echo $h($throughput); ?></td></tr>
+              <tr><td><code><?php echo $h($name); ?></code></td><td><?php echo $h(benchCiLocalizeTime($time, $lang)); ?></td><td><?php echo $h($throughput); ?></td></tr>
               <?php endforeach; ?>
             </tbody>
           </table>
@@ -253,7 +253,7 @@ $maybeNum = fn($v, int $d) => $v === null ? '—' : $num((float) $v, $d);
             <thead><tr><th>Benchmark</th><th><?php echo $L['lib_time']; ?></th><th><?php echo $L['lib_throughput']; ?></th></tr></thead>
             <tbody>
               <?php foreach ($libRelay as [$name, $time, $throughput]): ?>
-              <tr><td><code><?php echo $h($name); ?></code></td><td><?php echo $h($time); ?></td><td><?php echo $h($throughput); ?></td></tr>
+              <tr><td><code><?php echo $h($name); ?></code></td><td><?php echo $h(benchCiLocalizeTime($time, $lang)); ?></td><td><?php echo $h($throughput); ?></td></tr>
               <?php endforeach; ?>
             </tbody>
           </table>

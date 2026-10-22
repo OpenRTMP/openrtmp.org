@@ -96,10 +96,104 @@ function benchCiDecode(?string $body): ?array
   return is_array($data) ? $data : null;
 }
 
-/** Age of a file in seconds, or null if it does not exist. */
+/**
+ * The uid of the user the site runs as, or null on platforms without file
+ * user ids (Windows). There the system temp directory belongs to one user
+ * anyway.
+ */
+function benchCiEuid(): ?int
+{
+  return function_exists('posix_geteuid') ? posix_geteuid() : null;
+}
+
+/**
+ * The private cache directory of the fetched documents, or null when it cannot
+ * be used. It lives in the system temp directory but is created with 0700
+ * permissions and must belong to the running user, so no other local user can
+ * read, replace or pre-create the documents inside it. The effective user id
+ * is part of the name, so every site user on the host gets a private cache
+ * instead of losing it to the user who came first.
+ */
+function benchCiCacheDir(): ?string
+{
+  static $dir = false;
+  if ($dir === false) {
+    $dir = benchCiUsableCacheDir();
+  }
+  return $dir;
+}
+
+/** The usable private cache directory, or null when it cannot be used. */
+function benchCiUsableCacheDir(): ?string
+{
+  $euid = benchCiEuid();
+  $path = sys_get_temp_dir() . '/openrtmp-bench' . ($euid === null ? '' : '-' . $euid);
+  return benchCiEnsurePrivateDir($path, $euid) ? $path : null;
+}
+
+/**
+ * Create the private cache directory if needed and make sure it is closed to
+ * other local users. Returns false when it cannot be used safely.
+ */
+function benchCiEnsurePrivateDir(string $path, ?int $euid): bool
+{
+  if (!is_dir($path) && !@mkdir($path, 0700) && !is_dir($path)) {
+    return false;
+  }
+  $owned = benchCiPrivateDirIsOurs($path, $euid);
+  $closed = $owned && benchCiPrivateDirIsClosed($path);
+  if ($owned && !$closed) {
+    // Other users must not be able to read the cache or plant a document in
+    // it: tighten the mode once and re-check.
+    @chmod($path, 0700);
+    $closed = benchCiPrivateDirIsClosed($path);
+  }
+  return $closed;
+}
+
+/** True when the path is a real directory (not a symlink) that we own. */
+function benchCiPrivateDirIsOurs(string $path, ?int $euid): bool
+{
+  $stat = @lstat($path);
+  if ($stat === false || ($stat['mode'] & 0170000) !== 0040000) {
+    return false;
+  }
+  return $euid === null || (int) $stat['uid'] === $euid;
+}
+
+/** True when the directory grants no permission to group or other users. */
+function benchCiPrivateDirIsClosed(string $path): bool
+{
+  $stat = @lstat($path);
+  return $stat !== false && ($stat['mode'] & 0077) === 0;
+}
+
+/**
+ * True when the path is a regular file that belongs to the running user, so a
+ * document planted by another local user (or a symlink to one) is never
+ * trusted.
+ */
+function benchCiTrustedFile(string $path): bool
+{
+  $stat = @lstat($path);
+  if ($stat === false || ($stat['mode'] & 0170000) !== 0100000) {
+    return false;
+  }
+  $euid = benchCiEuid();
+  return $euid === null || (int) $stat['uid'] === $euid;
+}
+
+/** Age of a file in seconds, or null if it does not exist or is not ours. */
 function benchCiAge(string $path): ?int
 {
-  return is_file($path) ? time() - (int) @filemtime($path) : null;
+  return benchCiTrustedFile($path) ? time() - (int) @filemtime($path) : null;
+}
+
+/** The cache file of one document inside the private cache directory. */
+function benchCiCachePath(string $url): ?string
+{
+  $dir = benchCiCacheDir();
+  return $dir === null ? null : $dir . '/' . hash('sha256', $url) . '.json';
 }
 
 /** The cached document if it is younger than $maxAge seconds and still valid, else null. */
@@ -135,7 +229,8 @@ function benchCiRefresh(string $url, string $cache, callable $valid): ?array
     @touch($failed);
     return null;
   }
-  $tmp = @tempnam(sys_get_temp_dir(), 'openrtmp-bench-');
+  $dir = benchCiCacheDir();
+  $tmp = $dir === null ? false : @tempnam($dir, 'openrtmp-bench-');
   if ($tmp !== false) {
     $written = @file_put_contents($tmp, $body);
     if ($written !== strlen($body) || !@rename($tmp, $cache)) {
@@ -149,7 +244,13 @@ function benchCiRefresh(string $url, string $cache, callable $valid): ?array
 /** Fetch one JSON document with an on-disk cache; null if unavailable. */
 function benchCiFetchJson(string $url, callable $valid): ?array
 {
-  $cache = sys_get_temp_dir() . '/openrtmp-bench-' . hash('sha256', $url) . '.json';
+  $cache = benchCiCachePath($url);
+  if ($cache === null) {
+    // Without a private cache directory the document is fetched every time,
+    // but never stored where another user could plant one.
+    $data = benchCiDecode(benchCiHttpGet($url));
+    return $data !== null && $valid($data) ? $data : null;
+  }
   return benchCiCached($cache, OPENRTMP_BENCH_CI_TTL, $valid)
     ?? benchCiRefresh($url, $cache, $valid)
     ?? benchCiCached($cache, OPENRTMP_BENCH_CI_STALE_TTL, $valid);
@@ -242,16 +343,35 @@ function benchCiSha($value): string
   return is_string($value) && preg_match('/^[0-9a-f]{7,40}$/', $value) ? substr($value, 0, 7) : '';
 }
 
+/**
+ * A measurement of the remote document as a positive, finite number, or null
+ * when it is missing, not a number, infinite or not above zero. The sweep rows
+ * use the same rule (see benchCiRow), so a malformed document can never be
+ * published as a measurement.
+ */
+function benchCiPositiveNumber($value): ?float
+{
+  return (is_int($value) || is_float($value)) && is_finite((float) $value) && $value > 0 ? (float) $value : null;
+}
+
 /** @return array{cpu:string,vcpus:int,ram:string,kernel:string,runner:string,rustc:string}|null */
 function benchCiEnv($env): ?array
 {
-  if (!is_array($env) || !is_numeric($env['vcpus'] ?? null) || !is_numeric($env['ram_gib'] ?? null)) {
+  $vcpus = is_array($env) ? benchCiPositiveNumber($env['vcpus'] ?? null) : null;
+  $ram = is_array($env) ? benchCiPositiveNumber($env['ram_gib'] ?? null) : null;
+  // The vCPU count is shown as an integer, so a fractional or out-of-range
+  // value would be truncated to a wrong count.
+  $usable = $vcpus !== null
+    && $ram !== null
+    && $vcpus === floor($vcpus)
+    && $vcpus < (float) PHP_INT_MAX;
+  if (!$usable) {
     return null;
   }
   return [
     'cpu' => benchCiString($env['cpu'] ?? ''),
-    'vcpus' => (int) $env['vcpus'],
-    'ram' => rtrim(rtrim(number_format((float) $env['ram_gib'], 1, '.', ''), '0'), '.'),
+    'vcpus' => (int) $vcpus,
+    'ram' => rtrim(rtrim(number_format($ram, 1, '.', ''), '0'), '.'),
     'kernel' => benchCiString($env['kernel'] ?? ''),
     'runner' => benchCiString($env['runner'] ?? ''),
     'rustc' => benchCiString($env['rustc'] ?? ''),
@@ -271,37 +391,69 @@ function benchCiRam(string $ram, string $lang): string
 }
 
 /**
- * Localise the machine RAM recorded inside prose (snapshot notes and the
- * librtmp2 environment line). Those strings are stored locale-neutrally, so a
- * German page must not show "15.6 GiB RAM" next to its localised numbers.
+ * Localise the machine hardware recorded inside prose (snapshot notes and the
+ * librtmp2 environment line): the RAM size and the CPU frequency. Those
+ * strings are stored locale-neutrally, so a German page must not show
+ * "15.6 GiB RAM" or "2.10 GHz" next to its localised numbers.
  */
 function benchCiLocalizeRam(string $text, string $lang): string
 {
     if ($lang !== 'de') {
         return $text;
     }
-    return preg_replace_callback(
+    $text = preg_replace_callback(
         '/(\d+)\.(\d{1,2})(?=\s*GiB RAM)/u',
+        static fn(array $m): string => $m[1] . ',' . $m[2],
+        $text
+    );
+    return preg_replace_callback(
+        '/(\d+)\.(\d{1,2})(?=\s*GHz)/u',
         static fn(array $m): string => $m[1] . ',' . $m[2],
         $text
     );
 }
 
-function benchCiTime(float $ns): string
+/**
+ * Localise a stored microbenchmark time ("6.87 µs") for the page language. The
+ * snapshots keep the value locale-neutral; only the rendered page is localised.
+ */
+function benchCiLocalizeTime(string $time, string $lang): string
 {
+    if ($lang !== 'de') {
+        return $time;
+    }
+    return preg_replace_callback(
+        '/(\d+)\.(\d+)(?=\s*(?:ns|µs|ms|s)(?![A-Za-z0-9]))/u',
+        static fn(array $m): string => $m[1] . ',' . $m[2],
+        $time
+    );
+}
+
+function benchCiTime(float $ns, string $lang = 'en'): string
+{
+  $decimal = $lang === 'de' ? ',' : '.';
+  $thousand = $lang === 'de' ? '.' : ',';
   // [upper bound in ns, divisor, decimals, unit]
   foreach ([[1e3, 1, $ns < 10 ? 2 : 0, 'ns'], [1e6, 1e3, 2, 'µs'], [1e9, 1e6, 1, 'ms']] as [$limit, $divisor, $decimals, $unit]) {
     if ($ns < $limit) {
-      return number_format($ns / $divisor, $decimals) . ' ' . $unit;
+      return number_format($ns / $divisor, $decimals, $decimal, $thousand) . ' ' . $unit;
     }
   }
-  return number_format($ns / 1e9, 2) . ' s';
+  return number_format($ns / 1e9, 2, $decimal, $thousand) . ' s';
 }
 
 /** Items per second for a per-iteration count, or null if it is not a positive number. */
 function benchCiRate($count, float $ns): ?float
 {
-  return is_numeric($count) && $count > 0 && $ns > 0 ? $count / ($ns * 1e-9) : null;
+  if (!is_numeric($count) || !is_finite((float) $count) || $count <= 0 || $ns <= 0) {
+    return null;
+  }
+  $seconds = $ns * 1e-9;
+  if ($seconds <= 0.0 || !is_finite($seconds)) {
+    return null; // the scaled duration underflows to zero
+  }
+  $rate = $count / $seconds;
+  return is_finite($rate) ? $rate : null;
 }
 
 function benchCiThroughput(array $b): string
@@ -316,7 +468,7 @@ function benchCiThroughput(array $b): string
 }
 
 /** @return list<array{string,string,string}> */
-function benchCiLibRows($suite): array
+function benchCiLibRows($suite, string $lang = 'en'): array
 {
   $rows = [];
   if (!is_array($suite)) {
@@ -324,8 +476,12 @@ function benchCiLibRows($suite): array
   }
   ksort($suite);
   foreach ($suite as $name => $b) {
-    if (is_array($b) && isset($b['ns']) && is_numeric($b['ns'])) {
-      $rows[] = [benchCiString((string) $name, 120), benchCiTime((float) $b['ns']), benchCiThroughput($b)];
+    if (!is_array($b)) {
+      continue;
+    }
+    $ns = benchCiPositiveNumber($b['ns'] ?? null);
+    if ($ns !== null) {
+      $rows[] = [benchCiString((string) $name, 120), benchCiTime($ns, $lang), benchCiThroughput($b)];
     }
   }
   return $rows;
@@ -386,7 +542,7 @@ function benchCiVersions(array $rows, string $sha, string $serverVersion): array
 }
 
 /** Library microbenchmark data from librtmp2's own latest run, if usable. */
-function benchCiLibInfo(?array $lib, string $depLib): array
+function benchCiLibInfo(?array $lib, string $depLib, string $lang = 'en'): array
 {
   $ok = $lib !== null && ($lib['schema'] ?? null) === 1 && is_array($lib['suites'] ?? null);
   $env = $ok ? benchCiEnv($lib['environment'] ?? null) : null;
@@ -404,8 +560,8 @@ function benchCiLibInfo(?array $lib, string $depLib): array
     'sha' => $sha,
     'label' => $label,
     'env_line' => $envLine,
-    'protocol' => $ok ? benchCiLibRows($lib['suites']['protocol'] ?? null) : [],
-    'relay' => $ok ? benchCiLibRows($lib['suites']['relay'] ?? null) : [],
+    'protocol' => $ok ? benchCiLibRows($lib['suites']['protocol'] ?? null, $lang) : [],
+    'relay' => $ok ? benchCiLibRows($lib['suites']['relay'] ?? null, $lang) : [],
   ];
 }
 
@@ -436,14 +592,14 @@ function benchCiNotes(array $env, string $sha, string $date): array
  * Build the preview snapshot from the two results files, or null if the
  * librtmp2-server file does not carry a usable sweep.
  */
-function benchCiSnapshot(array $srv, ?array $lib): ?array
+function benchCiSnapshot(array $srv, ?array $lib, string $lang = 'en'): ?array
 {
   $rows = benchCiSweepRows($srv);
   if ($rows === null) {
     return null;
   }
   $sha = benchCiSha($srv['commit'] ?? '');
-  $libInfo = benchCiLibInfo($lib, benchCiString($srv['deps']['librtmp2'] ?? '', 40));
+  $libInfo = benchCiLibInfo($lib, benchCiString($srv['deps']['librtmp2'] ?? '', 40), $lang);
   $notes = benchCiNotes($rows['env'], $sha, $rows['date']);
   $commitUrl = fn(string $repo, string $ref) => $ref !== '' ? 'https://github.com/OpenRTMP/' . $repo . '/commit/' . $ref : null;
 
@@ -496,13 +652,17 @@ function benchCiRun(): ?array
     return $run;
   }
   $done = true;
+  // The preview is rendered by the page that asks for it, so its numbers use
+  // the language of that page (the site serves one language per request).
+  global $lang;
+  $pageLang = $lang === 'de' ? 'de' : 'en';
   $base = benchCiBase();
   $srv = benchCiFetchJson($base . '/librtmp2-server/main/bench/latest.json', 'benchCiValidServer');
   if ($srv === null) {
     return null;
   }
   $lib = benchCiFetchJson($base . '/librtmp2/main/bench/latest.json', 'benchCiValidLib');
-  return $run = benchCiSnapshot($srv, $lib);
+  return $run = benchCiSnapshot($srv, $lib, $pageLang);
 }
 
 /** Strings for the preview card and the setup section, by language. */
