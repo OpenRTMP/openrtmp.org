@@ -78,13 +78,13 @@ let config = ServerConfig {
     max_connections_per_addr: 0,
 };
 
-let mut server = Server::new(config)?;
+let mut server = Server::from_config(config, None)?;
 server.on_frame_cb = Some(on_frame);
 server.on_publish_cb = Some(|_conn_id: u64, _app: &str, _stream_name: &str| true);
 server.on_play_cb = Some(|_conn_id: u64, _app: &str, _stream_name: &str| true);
 server.listen("127.0.0.1:1935")?;
 
-while running {
+while server.running {
     server.poll(100)?;
 }</code></pre>
         <p>Die beiden Limits pro Adresse sind bei <code>0</code> <em>nicht</em> unbegrenzt. Null bedeutet &bdquo;eingebauten Standard verwenden&ldquo;, und der ist <strong>4</strong> (<code>DEFAULT_MAX_CONNECTIONS_PER_ADDR</code>, <code>DEFAULT_MAX_PENDING_TLS_PER_ADDR</code> richtet sich danach). Mit den Werten oben wird also ein fünfter Client von derselben Quell-IP abgewiesen, und dieselbe Grenze gilt für unvollständige TLS-Handshakes, sobald TLS aktiv ist. Erhöhen Sie sie explizit, wenn viele Clients eine Adresse teilen &mdash; hinter NAT, Load Balancer oder Reverse Proxy &mdash; oder senken Sie sie, damit ein einzelner Peer die Verbindungstabelle nicht blockiert.</p>
