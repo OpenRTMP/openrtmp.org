@@ -60,8 +60,9 @@ RTMPS_BIND=0.0.0.0:1936</code></pre>
         <p>The server refuses to enable TLS when either certificate path is missing, which prevents a false-positive configuration where the health endpoint suggests encrypted ingest is available but the listener never started.</p>
 
         <h2 id="verify">3. Verify the server before changing OBS</h2>
-        <p>Check the health endpoint:</p>
-        <pre><code>curl https://api.example.com/api/v1/health</code></pre>
+        <p>Check the health endpoint with the server's API token. The RTMPS fields are only part of an authenticated response; an anonymous request answers <code>{"status":"ok"}</code> alone:</p>
+        <pre><code>curl https://api.example.com/api/v1/health \
+  -H "Authorization: Bearer &lt;api-token&gt;"</code></pre>
         <p>The response should indicate that RTMPS is enabled and identify the bound port. Also verify the certificate from the client network:</p>
         <pre><code>openssl s_client -connect stream.example.com:1936 \
   -servername stream.example.com \

@@ -62,8 +62,9 @@ RTMPS_BIND=0.0.0.0:1936</code></pre>
         <p>Der Server verweigert das Aktivieren von TLS, wenn einer der Zertifikatspfade fehlt. Das verhindert eine scheinbar funktionierende Konfiguration, bei der der Health-Endpunkt verschlüsselten Ingest meldet, der Listener aber nie gestartet wurde.</p>
 
         <h2 id="verify">3. Server prüfen, bevor Sie OBS ändern</h2>
-        <p>Health-Endpunkt abfragen:</p>
-        <pre><code>curl https://api.example.com/api/v1/health</code></pre>
+        <p>Health-Endpunkt mit dem API-Token des Servers abfragen. Die RTMPS-Felder sind nur Teil einer authentifizierten Antwort; eine anonyme Anfrage antwortet allein mit <code>{"status":"ok"}</code>:</p>
+        <pre><code>curl https://api.example.com/api/v1/health \
+  -H "Authorization: Bearer &lt;api-token&gt;"</code></pre>
         <p>Die Antwort sollte anzeigen, dass RTMPS aktiviert ist, und den gebundenen Port nennen. Prüfen Sie außerdem das Zertifikat aus dem Netzwerk des Clients:</p>
         <pre><code>openssl s_client -connect stream.example.com:1936 \
   -servername stream.example.com \
