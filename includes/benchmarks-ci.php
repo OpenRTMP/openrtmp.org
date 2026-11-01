@@ -692,7 +692,9 @@ function benchCiReleaseName($name, ?array &$m = null): bool
 /** Semantic check for the directory listing of `bench/releases`. */
 function benchCiValidReleaseList(array $doc): bool
 {
-  return array_is_list($doc);
+  // Same contract as array_is_list() (PHP 8.1+), but the site supports
+  // PHP 7.4/8.0 where that function does not exist.
+  return $doc === [] || array_keys($doc) === range(0, count($doc) - 1);
 }
 
 /**

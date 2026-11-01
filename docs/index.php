@@ -108,7 +108,6 @@ while server.running {
               <tr><td><code>on_publish</code></td><td>a publisher requests a stream key &mdash; return <code>false</code> to reject</td></tr>
               <tr><td><code>on_play</code></td><td>a viewer requests playback of a stream &mdash; return <code>false</code> to reject</td></tr>
               <tr><td><code>on_frame</code></td><td>a bounds-checked audio/video/script <code>Frame</code> is ready</td></tr>
-              <tr><td><code>on_close</code></td><td>the connection is tearing down, for any reason</td></tr>
             </tbody>
           </table>
         </div>
@@ -192,7 +191,7 @@ CLUSTER_BOOTSTRAP=true
 CLUSTER_SECRET=&lt;long-random-secret&gt;
 CLUSTER_ADVERTISE_ADDR=10.0.0.1:1940
 CLUSTER_MEDIA_ADVERTISE_ADDR=10.0.0.1:1941</code></pre>
-        <p>Additional nodes join with an empty database and <code>CLUSTER_JOIN=&lt;existing-control-addr&gt;</code>, then promote learners to voters via <code>POST /api/v1/cluster/nodes/{id}/promote</code>.</p>
+        <p>Additional nodes join with an empty database, <code>CLUSTER_JOIN=&lt;existing-control-addr&gt;</code> and a one-time <code>CLUSTER_JOIN_PROOF</code> minted specifically for that node via <code>POST /api/v1/cluster/join-proof</code> (a proof-less fresh join, or a proof minted for another node, is rejected). After catch-up, promote learners to voters via <code>POST /api/v1/cluster/nodes/{id}/promote</code>.</p>
         <p>Authenticated cluster APIs include <code>GET /api/v1/cluster</code>, <code>/nodes</code>, <code>/streams</code>, plus drain/resume/promote/remove. Full configuration, limitations, and operator notes live in the server repo's <a href="https://github.com/OpenRTMP/librtmp2-server/blob/main/docs/clustering.md" target="_blank" rel="noopener"><code>docs/clustering.md</code></a> and the site guide <a href="/guides/rtmp-server-ha-clustering/">Run an HA RTMP cluster</a>.</p>
         <p>Native builds that need clustering must compile with the feature:</p>
         <pre><code>cargo build --release --features cluster</code></pre>

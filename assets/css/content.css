@@ -83,6 +83,9 @@
   font-size: clamp(1.45rem, 3vw, 2rem);
   line-height: 1.25;
   letter-spacing: -0.02em;
+  /* The sticky header is 63-75px tall; without this every Contents link
+     scrolls its heading underneath it. */
+  scroll-margin-top: 96px;
 }
 
 .prose h2:first-of-type { margin-top: 28px; }
