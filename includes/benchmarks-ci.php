@@ -44,7 +44,7 @@ function benchCiIsFileUrl(string $url): bool
  */
 function benchCiReadStream(string $url)
 {
-  $context = benchCiIsFileUrl($url) ? null : stream_context_create(['http' => ['timeout' => 5]]);
+  $context = benchCiIsFileUrl($url) ? null : stream_context_create(['http' => ['timeout' => 5, 'user_agent' => 'openrtmp.org benchmark preview']]);
   return @file_get_contents($url, false, $context, 0, OPENRTMP_BENCH_CI_MAX_BYTES + 1);
 }
 
@@ -578,11 +578,11 @@ function benchCiNotes(array $env, string $sha, string $date): array
   $ref = $sha !== '' ? $sha : 'main';
   return [
     'en' => sprintf(
-      'Next-release preview: the latest automated run on main (librtmp2-server %s, %s), measured on %s: %s. It shows what the next release may look like, but it is one sweep on a shared CI machine and is not comparable with the release snapshots, which were measured on a different, dedicated machine. Compare the servers with each other inside this run; every value is replaced after the next merge.',
+      'Next-release preview: the latest automated run on main (librtmp2-server %s, %s), measured on %s: %s. It shows what the next release may look like, but it is one sweep on a shared CI machine. Compare the servers with each other inside this run; every value is replaced after the next merge.',
       $ref, $date, $runner, $machine('en')
     ),
     'de' => sprintf(
-      'Vorschau auf das nächste Release: der neueste automatische Lauf auf main (librtmp2-server %s, %s), gemessen auf %s: %s. Er zeigt, was das nächste Release erwarten lässt, ist aber ein einzelner Sweep auf einer geteilten CI-Maschine und nicht mit den Release-Snapshots vergleichbar, die auf einer anderen, dedizierten Maschine gemessen wurden. Server innerhalb dieses Laufs vergleichen; jeder Wert wird nach dem nächsten Merge ersetzt.',
+      'Vorschau auf das nächste Release: der neueste automatische Lauf auf main (librtmp2-server %s, %s), gemessen auf %s: %s. Er zeigt, was das nächste Release erwarten lässt, ist aber ein einzelner Sweep auf einer geteilten CI-Maschine. Server innerhalb dieses Laufs vergleichen; jeder Wert wird nach dem nächsten Merge ersetzt.',
       $ref, $date, $runner, $machine('de')
     ),
   ];
@@ -663,6 +663,204 @@ function benchCiRun(): ?array
   }
   $lib = benchCiFetchJson($base . '/librtmp2/main/bench/latest.json', 'benchCiValidLib');
   return $run = benchCiSnapshot($srv, $lib, $pageLang);
+}
+
+// ---------------------------------------------------------------------------
+// Release snapshots
+//
+// The release job of librtmp2-server records every release run as
+// `bench/releases/<tag>.json` on main (same schema as `latest.json`), and
+// librtmp2 does the same for its own releases. Releases that have no
+// hand-written entry in OPENRTMP_BENCH_RUNS are read from those files, so a
+// new release appears on the site as soon as its benchmark run is committed.
+
+const OPENRTMP_BENCH_RELEASE_LIST_URL = 'https://api.github.com/repos/OpenRTMP/librtmp2-server/contents/bench/releases?ref=main';
+const OPENRTMP_BENCH_RELEASE_MAX = 12; // newest release files read per request
+
+/** Path of a release results file inside a repository, e.g. `bench/releases/v0.6.6.json`. */
+function benchCiReleasePath(string $version): string
+{
+  return 'bench/releases/v' . $version . '.json';
+}
+
+/** True for a `bench/releases` file name such as `v0.6.6.json`; $m[1] is the version. */
+function benchCiReleaseName($name, ?array &$m = null): bool
+{
+  return is_string($name) && preg_match('/^v(\d{1,4}\.\d{1,4}\.\d{1,4})\.json$/', $name, $m) === 1;
+}
+
+/** Semantic check for the directory listing of `bench/releases`. */
+function benchCiValidReleaseList(array $doc): bool
+{
+  return array_is_list($doc);
+}
+
+/**
+ * Versions of the librtmp2-server releases that have a results file, newest
+ * first. Read from the GitHub contents API; a file:// test base is listed
+ * directly.
+ *
+ * @return list<string>
+ */
+function benchCiReleaseVersions(): array
+{
+  $base = benchCiBase();
+  if (benchCiIsFileUrl($base)) {
+    $names = @scandir(substr($base, 7) . '/librtmp2-server/main/bench/releases');
+    $names = is_array($names) ? $names : [];
+  } else {
+    $list = benchCiFetchJson(OPENRTMP_BENCH_RELEASE_LIST_URL, 'benchCiValidReleaseList') ?? [];
+    $names = array_map(fn($entry) => is_array($entry) ? ($entry['name'] ?? null) : null, $list);
+  }
+  $versions = [];
+  foreach ($names as $name) {
+    if (benchCiReleaseName($name, $m)) {
+      $versions[] = $m[1];
+    }
+  }
+  usort($versions, fn(string $a, string $b) => version_compare($b, $a));
+  return array_slice(array_values(array_unique($versions)), 0, OPENRTMP_BENCH_RELEASE_MAX);
+}
+
+/** "a", "a and b", "a, b and c" in the page language. */
+function benchCiJoinList(array $items, string $lang): string
+{
+  if (count($items) < 2) {
+    return implode('', $items);
+  }
+  $and = $lang === 'de' ? ' und ' : ' and ';
+  return implode(', ', array_slice($items, 0, -1)) . $and . end($items);
+}
+
+/** Display names of the servers in one load step that delivered less than the source rate. */
+function benchCiBelowSource(array $rows): array
+{
+  $source = max(array_column($rows, 2));
+  $below = [];
+  foreach ($rows as $key => $row) {
+    if ($row[2] < $source * 0.98) {
+      $below[] = OPENRTMP_BENCH_SERVERS[$key];
+    }
+  }
+  usort($below, 'strcasecmp');
+  return $below;
+}
+
+/** Servers that delivered less than the source rate, per load step, as a sentence. */
+function benchCiLoadNote(array $load, string $lang): string
+{
+  $full = [];
+  $short = [];
+  foreach ($load as $viewers => $rows) {
+    $below = benchCiBelowSource($rows);
+    if ($below === []) {
+      $full[] = $viewers;
+    } else {
+      $short[$viewers] = $below;
+    }
+  }
+  $de = $lang === 'de';
+  $parts = [];
+  if ($full !== []) {
+    $format = $de ? 'Bei %s Zuschauern lieferten alle Server die volle Quellrate.' : 'At %s viewers every server delivered the full source rate.';
+    $parts[] = sprintf($format, benchCiJoinList($full, $lang));
+  }
+  foreach ($short as $viewers => $below) {
+    $plural = count($below) > 1 ? 'n' : '';
+    $parts[] = $de
+      ? sprintf('Bei %d Zuschauern lieferte%s %s weniger als die volle Quellrate.', $viewers, $plural, benchCiJoinList($below, $lang))
+      : sprintf('At %d viewers %s fell below the source rate.', $viewers, benchCiJoinList($below, $lang));
+  }
+  return implode(' ', $parts);
+}
+
+/** The English and German note of a release snapshot. */
+function benchCiReleaseNotes(array $snap, string $server, string $lib): array
+{
+  $env = $snap['environment'];
+  $competitors = array_values(array_map(
+    fn($key) => OPENRTMP_BENCH_SERVERS[$key],
+    array_filter(array_keys($snap['versions']), fn($key) => $key !== 'openrtmp')
+  ));
+  usort($competitors, 'strcasecmp');
+  $machine = sprintf('%s, %d vCPUs, %s GiB RAM', $env['cpu'], $env['vcpus'], $env['ram']);
+  return [
+    'en' => sprintf(
+      'librtmp2-server %s on librtmp2 %s against %s at the versions listed below. Measured automatically in GitHub Actions on %s; %s. One sweep, no repetitions on a shared machine, so compare the servers within this snapshot.',
+      $server, $lib, benchCiJoinList($competitors, 'en'), $env['runner'], $machine
+    ),
+    'de' => sprintf(
+      'librtmp2-server %s auf librtmp2 %s gegen %s in den unten aufgeführten Versionen. Automatisch in GitHub Actions auf %s; %s. Ein Sweep ohne Wiederholungen auf einer geteilten Maschine, deshalb die Server innerhalb dieses Snapshots vergleichen.',
+      $server, $lib, benchCiJoinList($competitors, 'de'), $env['runner'], $machine
+    ),
+  ];
+}
+
+/** Turn a release results file (and the matching librtmp2 release file) into a snapshot. */
+function benchCiReleaseSnapshot(array $srv, ?array $lib, string $version, string $lang = 'en'): ?array
+{
+  $snap = benchCiSnapshot($srv, $lib, $lang);
+  $libVersion = benchCiString($srv['deps']['librtmp2'] ?? '', 40);
+  // A release run in which every competitor was skipped compares nothing;
+  // it stays off the site until the release is re-measured.
+  if ($snap === null || count($snap['handshake']) < 2 || preg_match('/^\d{1,4}\.\d{1,4}\.\d{1,4}$/', $libVersion) !== 1) {
+    return null;
+  }
+  $serverUrl = 'https://github.com/OpenRTMP/librtmp2-server/releases/tag/v' . $version;
+  $libUrl = 'https://github.com/OpenRTMP/librtmp2/releases/tag/v' . $libVersion;
+  $snap['versions']['openrtmp'] = [$version, 'librtmp2 ' . $libVersion, 'Rust', $serverUrl, $libUrl];
+  $notes = benchCiReleaseNotes($snap, $version, $libVersion);
+  return array_merge($snap, [
+    'kind' => 'release',
+    'server_version' => $version,
+    'lib_version' => $libVersion,
+    'published_server_release' => true,
+    'source_url' => 'https://github.com/OpenRTMP/librtmp2-server/blob/main/' . benchCiReleasePath($version),
+    'server_ref_url' => $serverUrl,
+    'lib_ref_url' => $libUrl,
+    'lib_bench_source_url' => 'https://github.com/OpenRTMP/librtmp2/blob/main/' . benchCiReleasePath($libVersion),
+    'lib_bench_note_en' => 'Criterion microbenchmarks for librtmp2 ' . $libVersion . ', measured automatically for the release on a shared GitHub Actions runner. Differences from earlier versions are within runner noise and are not a controlled A/B.',
+    'lib_bench_note_de' => 'Criterion-Microbenchmarks für librtmp2 ' . $libVersion . ', automatisch für das Release auf einem geteilten GitHub-Actions-Runner gemessen. Unterschiede zu früheren Versionen liegen im Rauschen des Runners und sind kein kontrollierter A/B-Test.',
+    'note_en' => $notes['en'],
+    'note_de' => $notes['de'],
+    'load_note_en' => benchCiLoadNote($snap['load'], 'en'),
+    'load_note_de' => benchCiLoadNote($snap['load'], 'de'),
+  ]);
+}
+
+/**
+ * Release snapshots read from the results files, keyed like
+ * OPENRTMP_BENCH_RUNS ("<server>-<librtmp2>"). Releases listed in $skip
+ * (server versions that already have a hand-written snapshot) are not
+ * fetched. Memoised per request.
+ *
+ * @param list<string> $skip
+ */
+function benchCiReleaseRuns(array $skip): array
+{
+  static $runs = null;
+  if ($runs !== null) {
+    return $runs;
+  }
+  global $lang;
+  $pageLang = $lang === 'de' ? 'de' : 'en';
+  $base = benchCiBase();
+  $runs = [];
+  foreach (benchCiReleaseVersions() as $version) {
+    if (in_array($version, $skip, true)) {
+      continue;
+    }
+    $srv = benchCiFetchJson($base . '/librtmp2-server/main/' . benchCiReleasePath($version), 'benchCiValidServer');
+    $libVersion = is_array($srv) ? benchCiString($srv['deps']['librtmp2'] ?? '', 40) : '';
+    $lib = preg_match('/^\d{1,4}\.\d{1,4}\.\d{1,4}$/', $libVersion) === 1
+      ? benchCiFetchJson($base . '/librtmp2/main/' . benchCiReleasePath($libVersion), 'benchCiValidLib')
+      : null;
+    $snap = $srv === null ? null : benchCiReleaseSnapshot($srv, $lib, $version, $pageLang);
+    if ($snap !== null) {
+      $runs[$version . '-' . $snap['lib_version']] = $snap;
+    }
+  }
+  return $runs;
 }
 
 /** Strings for the preview card and the setup section, by language. */

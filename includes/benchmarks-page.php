@@ -7,7 +7,7 @@ $num = fn(float $v, int $d) => benchNum($v, $d, $lang);
 $h = fn(string $s) => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
 $rowClass = fn(string $key) => $key === 'openrtmp' ? ' class="is-openrtmp"' : '';
 $viewersLabel = fn(int $n) => $n === 1 ? $L['one_viewer'] : sprintf($L['n_viewers'], $n);
-$benchRunId = $benchRunId ?? OPENRTMP_BENCH_LATEST;
+$benchRunId = $benchRunId ?? benchLatestId();
 $bench = $bench ?? benchRun($benchRunId);
 $joinData = $bench['join'];
 $loadData = $bench['load'];
@@ -147,7 +147,7 @@ $maybeNum = fn($v, int $d) => $v === null ? '—' : $num((float) $v, $d);
           <span class="bench-snapshot-lib">librtmp2 <?php echo $h($run['lib_version']); ?></span>
           <span class="bench-snapshot-meta">
             <time datetime="<?php echo $h($run['date']); ?>"><?php echo $h($run['date']); ?></time>
-            <?php if ($runId === OPENRTMP_BENCH_LATEST): ?><span><?php echo $L['snapshot_latest']; ?></span><?php endif; ?>
+            <?php if ($runId === benchLatestId()): ?><span><?php echo $L['snapshot_latest']; ?></span><?php endif; ?>
             <?php if ($runIsPreview): ?><span><?php echo benchCiStrings($lang)['badge']; ?></span><?php endif; ?>
           </span>
         </a>

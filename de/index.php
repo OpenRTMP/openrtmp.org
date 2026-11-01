@@ -29,6 +29,7 @@ $structuredData = [
 ];
 include_once __DIR__ . '/../includes/header.php';
 require_once __DIR__ . '/../includes/benchmarks-data.php';
+$benchTeaser = benchTeaserRun();
 ?>
 
 <main>
@@ -65,24 +66,24 @@ require_once __DIR__ . '/../includes/benchmarks-data.php';
       </div>
       <div class="bench-highlights">
         <div class="bench-highlight">
-          <strong><?php echo benchMs(OPENRTMP_BENCH_JOIN[100]['openrtmp'][0], 'de'); ?></strong>
+          <strong><?php echo benchMs($benchTeaser['join'][100]['openrtmp'][0], 'de'); ?></strong>
           <span>Join-Latenz bei 100 Zuschauern</span>
-          <p><?php echo benchNum(OPENRTMP_BENCH_JOIN[100]['mediamtx'][0] / OPENRTMP_BENCH_JOIN[100]['openrtmp'][0], 1, 'de'); ?>&times; schneller als MediaMTX (<?php echo benchMs(OPENRTMP_BENCH_JOIN[100]['mediamtx'][0], 'de'); ?>), <?php echo benchNum(OPENRTMP_BENCH_JOIN[100]['nginx'][0] / OPENRTMP_BENCH_JOIN[100]['openrtmp'][0], 0, 'de'); ?>&times; schneller als nginx-rtmp.</p>
+          <p><?php echo benchNum($benchTeaser['join'][100]['mediamtx'][0] / $benchTeaser['join'][100]['openrtmp'][0], 1, 'de'); ?>&times; schneller als MediaMTX (<?php echo benchMs($benchTeaser['join'][100]['mediamtx'][0], 'de'); ?>), <?php echo benchNum($benchTeaser['join'][100]['nginx'][0] / $benchTeaser['join'][100]['openrtmp'][0], 0, 'de'); ?>&times; schneller als nginx-rtmp.</p>
         </div>
         <div class="bench-highlight">
-          <strong><?php echo benchNum(OPENRTMP_BENCH_HANDSHAKE['openrtmp'][0], 0, 'de'); ?>/s</strong>
+          <strong><?php echo benchNum($benchTeaser['handshake']['openrtmp'][0], 0, 'de'); ?>/s</strong>
           <span>Connect- und Publish-Handshakes</span>
-          <p><?php echo benchNum(OPENRTMP_BENCH_HANDSHAKE['openrtmp'][0] / OPENRTMP_BENCH_HANDSHAKE['mediamtx'][0], 1, 'de'); ?>&times; MediaMTX und <?php echo benchNum(OPENRTMP_BENCH_HANDSHAKE['openrtmp'][0] / OPENRTMP_BENCH_HANDSHAKE['nginx'][0], 0, 'de'); ?>&times; nginx-rtmp, wobei jeder Publish gegen seinen Stream-Key authentifiziert wird.</p>
+          <p><?php echo benchNum($benchTeaser['handshake']['openrtmp'][0] / $benchTeaser['handshake']['mediamtx'][0], 1, 'de'); ?>&times; MediaMTX und <?php echo benchNum($benchTeaser['handshake']['openrtmp'][0] / $benchTeaser['handshake']['nginx'][0], 0, 'de'); ?>&times; nginx-rtmp, wobei jeder Publish gegen seinen Stream-Key authentifiziert wird.</p>
         </div>
         <div class="bench-highlight">
           <strong>100&nbsp;%</strong>
           <span>der Frames an jeden Zuschauer</span>
-          <p>Volle 30 fps Video plus Audio für alle 1000 gleichzeitigen Zuschauer, rund 1,1 Gbit/s weitergeleitet auf 4 vCPUs mit <?php echo benchNum(OPENRTMP_BENCH_LOAD[1000]['openrtmp'][3], 0, 'de'); ?>&nbsp;% eines Kerns.</p>
+          <p>Volle 30 fps Video plus Audio für alle 1000 gleichzeitigen Zuschauer, rund 1,1 Gbit/s weitergeleitet auf 4 vCPUs mit <?php echo benchNum($benchTeaser['load'][1000]['openrtmp'][3], 0, 'de'); ?>&nbsp;% eines Kerns.</p>
         </div>
       </div>
       <div class="bench-panel">
         <div class="bench-panel-head"><div><h3>Join-Latenz, 100 gleichzeitige Zuschauer</h3><p>Verbindungsaufbau bis zum ersten Frame, Durchschnitt. Weniger ist besser.</p></div></div>
-        <?php echo benchBars(array_map(fn($r) => $r[0], OPENRTMP_BENCH_JOIN[100]), fn($v) => benchMs($v, 'de'), 'de'); ?>
+        <?php echo benchBars(array_map(fn($r) => $r[0], $benchTeaser['join'][100]), fn($v) => benchMs($v, 'de'), 'de'); ?>
       </div>
       <div class="center-link"><a href="/de/benchmarks/" class="btn btn-primary">Alle Benchmark-Ergebnisse ansehen</a></div>
     </div>

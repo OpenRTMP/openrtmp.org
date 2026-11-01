@@ -128,12 +128,15 @@ second language and mirrors every page below `/de/` (for example
 
 ## Benchmark data
 
-`includes/benchmarks-data.php` holds the immutable release snapshots shown on
-`/benchmarks/` (EN + DE); add a new one by hand after a release, using the
-`bench-results-<tag>.json` / `BENCHMARKS-<tag>.md` attached to the GitHub
-Release of `librtmp2-server` and `librtmp2` as the source.
+`includes/benchmarks-data.php` holds the release snapshots up to
+librtmp2-server 0.6.5 (EN + DE). Newer releases need no edit here: the release
+job of `librtmp2-server` records every release run as `bench/releases/<tag>.json`
+on `main`, and `includes/benchmarks-ci.php` lists that directory (GitHub
+contents API), reads each file plus the matching `librtmp2`
+`bench/releases/v<librtmp2>.json`, and shows it as a release snapshot. The
+newest release is the default on `/benchmarks/` and feeds the homepage teaser.
 
-The third card, **Preview** (`?run=ci`), is not stored here.
+The **Preview** card (`?run=ci`) is not stored here either.
 `includes/benchmarks-ci.php` reads `bench/latest.json` on `main` of
 `OpenRTMP/librtmp2-server` and `OpenRTMP/librtmp2` (written by their
 `benchmarks.yml` after every merge to `main`), validates it, caches it in the
