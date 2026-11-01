@@ -801,7 +801,9 @@ function benchCiReleaseSnapshot(array $srv, ?array $lib, string $version, string
 {
   $snap = benchCiSnapshot($srv, $lib, $lang);
   $libVersion = benchCiString($srv['deps']['librtmp2'] ?? '', 40);
-  if ($snap === null || preg_match('/^\d{1,4}\.\d{1,4}\.\d{1,4}$/', $libVersion) !== 1) {
+  // A release run in which every competitor was skipped compares nothing;
+  // it stays off the site until the release is re-measured.
+  if ($snap === null || count($snap['handshake']) < 2 || preg_match('/^\d{1,4}\.\d{1,4}\.\d{1,4}$/', $libVersion) !== 1) {
     return null;
   }
   $serverUrl = 'https://github.com/OpenRTMP/librtmp2-server/releases/tag/v' . $version;
