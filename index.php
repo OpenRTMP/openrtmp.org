@@ -83,8 +83,8 @@ $benchTeaser = benchTeaserRun();
           $teaserVcpus = $benchTeaser['environment']['vcpus'] ?? 4;
           ?>
           <strong><?php echo benchNum($teaserFramesPct, 0); ?>%</strong>
-          <span>of frames to every viewer</span>
-          <p>Video plus audio for all 1000 concurrent viewers on <?php echo (int) $teaserVcpus; ?> vCPUs, with <?php echo benchNum($teaserLoad[3], 0); ?>&nbsp;% of one core.</p>
+          <span>of the best measured steady-state frame rate</span>
+          <p>Average across viewers at 1000 concurrent connections on <?php echo (int) $teaserVcpus; ?> vCPUs, with <?php echo benchNum($teaserLoad[3], 0); ?>&nbsp;% of one core.</p>
         </div>
       </div>
       <div class="bench-panel">
