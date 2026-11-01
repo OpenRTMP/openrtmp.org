@@ -192,7 +192,7 @@ CLUSTER_BOOTSTRAP=true
 CLUSTER_SECRET=&lt;langes-zufaelliges-secret&gt;
 CLUSTER_ADVERTISE_ADDR=10.0.0.1:1940
 CLUSTER_MEDIA_ADVERTISE_ADDR=10.0.0.1:1941</code></pre>
-        <p>Weitere Nodes treten mit leerer Datenbank, <code>CLUSTER_JOIN=&lt;bestehende-control-adresse&gt;</code> und dem gemeinsamen <code>CLUSTER_JOIN_PROOF</code>-Wert bei (ein frischer Join ohne Proof wird abgelehnt); anschließend werden Learner über <code>POST /api/v1/cluster/nodes/{id}/promote</code> zu Votern befördert.</p>
+        <p>Weitere Nodes treten mit leerer Datenbank, <code>CLUSTER_JOIN=&lt;bestehende-control-adresse&gt;</code> und einem einmaligen <code>CLUSTER_JOIN_PROOF</code> bei, der gezielt für diesen Node über <code>POST /api/v1/cluster/join-proof</code> erzeugt wurde (ein frischer Join ohne Proof oder mit dem Proof eines anderen Nodes wird abgelehnt). Nach dem Catch-up werden Learner über <code>POST /api/v1/cluster/nodes/{id}/promote</code> zu Votern befördert.</p>
         <p>Authentifizierte Cluster-APIs umfassen <code>GET /api/v1/cluster</code>, <code>/nodes</code>, <code>/streams</code> sowie Drain/Resume/Promote/Remove. Vollständige Konfiguration, Einschränkungen und Betriebshinweise stehen in <a href="https://github.com/OpenRTMP/librtmp2-server/blob/main/docs/clustering.md" target="_blank" rel="noopener"><code>docs/clustering.md</code></a> im Server-Repository und in der Anleitung <a href="/de/guides/rtmp-server-ha-clustering/">HA-RTMP-Cluster betreiben</a>.</p>
         <p>Native Builds mit Clustering müssen mit dem Feature kompiliert werden:</p>
         <pre><code>cargo build --release --features cluster</code></pre>

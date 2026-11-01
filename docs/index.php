@@ -191,7 +191,7 @@ CLUSTER_BOOTSTRAP=true
 CLUSTER_SECRET=&lt;long-random-secret&gt;
 CLUSTER_ADVERTISE_ADDR=10.0.0.1:1940
 CLUSTER_MEDIA_ADVERTISE_ADDR=10.0.0.1:1941</code></pre>
-        <p>Additional nodes join with an empty database, <code>CLUSTER_JOIN=&lt;existing-control-addr&gt;</code> and the shared <code>CLUSTER_JOIN_PROOF</code> value (a proof-less fresh join is rejected), then promote learners to voters via <code>POST /api/v1/cluster/nodes/{id}/promote</code>.</p>
+        <p>Additional nodes join with an empty database, <code>CLUSTER_JOIN=&lt;existing-control-addr&gt;</code> and a one-time <code>CLUSTER_JOIN_PROOF</code> minted specifically for that node via <code>POST /api/v1/cluster/join-proof</code> (a proof-less fresh join, or a proof minted for another node, is rejected). After catch-up, promote learners to voters via <code>POST /api/v1/cluster/nodes/{id}/promote</code>.</p>
         <p>Authenticated cluster APIs include <code>GET /api/v1/cluster</code>, <code>/nodes</code>, <code>/streams</code>, plus drain/resume/promote/remove. Full configuration, limitations, and operator notes live in the server repo's <a href="https://github.com/OpenRTMP/librtmp2-server/blob/main/docs/clustering.md" target="_blank" rel="noopener"><code>docs/clustering.md</code></a> and the site guide <a href="/guides/rtmp-server-ha-clustering/">Run an HA RTMP cluster</a>.</p>
         <p>Native builds that need clustering must compile with the feature:</p>
         <pre><code>cargo build --release --features cluster</code></pre>
