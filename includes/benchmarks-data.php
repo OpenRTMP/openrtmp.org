@@ -1,8 +1,9 @@
 <?php
 // Benchmark numbers shown on the homepage teaser and on /benchmarks/ (EN + DE).
 //
-// Source of truth: BENCHMARKS.md in OpenRTMP/librtmp2-server. Keep benchmark
-// snapshots immutable once published so visitors can switch between measured
+// The hand-written snapshots below cover the releases up to 0.6.5; newer
+// releases are read from librtmp2-server's bench/releases/<tag>.json (see
+// benchmarks-ci.php). Keep benchmark snapshots immutable once published so visitors can switch between measured
 // librtmp2-server/librtmp2 version pairs without mixing values from different
 // runs. The one exception is the "next release preview" (see
 // benchmarks-ci.php): the latest automated CI run on main, fetched at request
@@ -11,6 +12,7 @@
 const OPENRTMP_BENCH_SOURCE_URL = 'https://github.com/OpenRTMP/librtmp2-server/blob/main/BENCHMARKS.md';
 const OPENRTMP_BENCH_LIB_SOURCE_URL = 'https://github.com/OpenRTMP/librtmp2/blob/main/BENCHMARKS.md';
 const OPENRTMP_BENCH_SCRIPT_URL = 'https://github.com/OpenRTMP/librtmp2-server/blob/main/scripts/run_rtmp_benchmarks.sh';
+// Newest hand-written snapshot; newer releases are read from bench/releases/.
 const OPENRTMP_BENCH_LATEST = '0.6.5-0.14.0';
 
 // Two measurements within this factor of each other are a tie: a shared machine
@@ -587,28 +589,42 @@ const OPENRTMP_BENCH_RUNS = [
   ],
 ];
 
-$openrtmpLatestBench = OPENRTMP_BENCH_RUNS[OPENRTMP_BENCH_LATEST];
-define('OPENRTMP_BENCH_DATE', $openrtmpLatestBench['date']);
-define('OPENRTMP_BENCH_VERSIONS', $openrtmpLatestBench['versions']);
-define('OPENRTMP_BENCH_HANDSHAKE', $openrtmpLatestBench['handshake']);
-define('OPENRTMP_BENCH_JOIN', $openrtmpLatestBench['join']);
-define('OPENRTMP_BENCH_PLAY_HANDSHAKE', $openrtmpLatestBench['play_handshake']);
-define('OPENRTMP_BENCH_LOAD', $openrtmpLatestBench['load']);
-define('OPENRTMP_BENCH_ROUNDS', $openrtmpLatestBench['rounds']);
-unset($openrtmpLatestBench);
-
 require_once __DIR__ . '/benchmarks-ci.php';
 
 /**
- * All selectable snapshots: the immutable release snapshots (newest first)
- * followed, when available, by the latest automated run on main as a
- * "next release preview" under the key OPENRTMP_BENCH_CI_ID.
+ * The release snapshots, newest first: the hand-written OPENRTMP_BENCH_RUNS
+ * plus every newer release read from librtmp2-server's `bench/releases/`.
+ */
+function benchReleaseRuns(): array
+{
+  static $releases = null;
+  if ($releases === null) {
+    $known = array_column(OPENRTMP_BENCH_RUNS, 'server_version');
+    $releases = benchCiReleaseRuns($known) + OPENRTMP_BENCH_RUNS;
+    uksort($releases, fn($a, $b) => version_compare(
+      $releases[$b]['server_version'],
+      $releases[$a]['server_version']
+    ));
+  }
+  return $releases;
+}
+
+/** Key of the newest release snapshot. */
+function benchLatestId(): string
+{
+  return array_key_first(benchReleaseRuns()) ?? OPENRTMP_BENCH_LATEST;
+}
+
+/**
+ * All selectable snapshots: the release snapshots (newest first) followed,
+ * when available, by the latest automated run on main as a "next release
+ * preview" under the key OPENRTMP_BENCH_CI_ID.
  */
 function benchRuns(): array
 {
   static $all = null;
   if ($all === null) {
-    $all = OPENRTMP_BENCH_RUNS;
+    $all = benchReleaseRuns();
     $ci = benchCiRun();
     if ($ci !== null) {
       $all[OPENRTMP_BENCH_CI_ID] = $ci;
@@ -620,19 +636,36 @@ function benchRuns(): array
 /** Resolve a requested benchmark snapshot, falling back to the newest release. */
 function benchRunId(?string $requested = null): string
 {
-  if ($requested === OPENRTMP_BENCH_CI_ID) {
-    return array_key_exists(OPENRTMP_BENCH_CI_ID, benchRuns()) ? $requested : OPENRTMP_BENCH_LATEST;
-  }
-  if ($requested !== null && array_key_exists($requested, OPENRTMP_BENCH_RUNS)) {
+  if ($requested !== null && array_key_exists($requested, benchRuns())) {
     return $requested;
   }
-  return OPENRTMP_BENCH_LATEST;
+  return benchLatestId();
 }
 
 /** Return one benchmark snapshot. */
 function benchRun(?string $requested = null): array
 {
   return benchRuns()[benchRunId($requested)];
+}
+
+/**
+ * The snapshot behind the homepage teaser: the newest release that has every
+ * value the teaser quotes (a release run can miss a competitor that failed to
+ * build), else the newest hand-written one.
+ */
+function benchTeaserRun(): array
+{
+  foreach (benchReleaseRuns() as $run) {
+    $ok = isset(
+      $run['join'][100]['openrtmp'], $run['join'][100]['mediamtx'], $run['join'][100]['nginx'],
+      $run['handshake']['openrtmp'], $run['handshake']['mediamtx'], $run['handshake']['nginx'],
+      $run['load'][1000]['openrtmp']
+    );
+    if ($ok) {
+      return $run;
+    }
+  }
+  return OPENRTMP_BENCH_RUNS[OPENRTMP_BENCH_LATEST];
 }
 
 /** Format a millisecond value with the page language's decimal separator. */
