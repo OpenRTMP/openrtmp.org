@@ -76,9 +76,18 @@ $benchTeaser = benchTeaserRun();
           <p><?php echo benchNum($benchTeaser['handshake']['openrtmp'][0] / $benchTeaser['handshake']['mediamtx'][0], 1, 'de'); ?>&times; MediaMTX und <?php echo benchNum($benchTeaser['handshake']['openrtmp'][0] / $benchTeaser['handshake']['nginx'][0], 0, 'de'); ?>&times; nginx-rtmp, wobei jeder Publish gegen seinen Stream-Key authentifiziert wird.</p>
         </div>
         <div class="bench-highlight">
-          <strong>100&nbsp;%</strong>
+          <?php
+          $teaserLoad = $benchTeaser['load'][1000]['openrtmp'];
+          $teaserNominal = max(array_map(
+            fn($rows) => max(array_column($rows, 2)),
+            array_values($benchTeaser['load'])
+          ));
+          $teaserFramesPct = $teaserNominal > 0 ? $teaserLoad[2] / $teaserNominal * 100 : 0;
+          $teaserVcpus = $benchTeaser['environment']['vcpus'] ?? 4;
+          ?>
+          <strong><?php echo benchNum($teaserFramesPct, 0, 'de'); ?>&nbsp;%</strong>
           <span>der Frames an jeden Zuschauer</span>
-          <p>Volle 30 fps Video plus Audio für alle 1000 gleichzeitigen Zuschauer, rund 1,1 Gbit/s weitergeleitet auf 4 vCPUs mit <?php echo benchNum($benchTeaser['load'][1000]['openrtmp'][3], 0, 'de'); ?>&nbsp;% eines Kerns.</p>
+          <p>Video plus Audio für alle 1000 gleichzeitigen Zuschauer auf <?php echo (int) $teaserVcpus; ?> vCPUs mit <?php echo benchNum($teaserLoad[3], 0, 'de'); ?>&nbsp;% eines Kerns.</p>
         </div>
       </div>
       <div class="bench-panel">

@@ -81,10 +81,10 @@ $alternatePaths = openrtmpAlternates($canonicalPath);
           <?php endif; ?>
         <?php endforeach; ?>
       </span>
+      <div class="nav-cta">
+        <a href="<?php echo lurl('/quickstart/'); ?>" class="btn btn-primary"><?php echo t('Run with Docker'); ?></a>
+      </div>
     </nav>
-    <div class="nav-cta">
-      <a href="<?php echo lurl('/quickstart/'); ?>" class="btn btn-primary"><?php echo t('Run with Docker'); ?></a>
-    </div>
     <button class="nav-toggle" aria-label="<?php echo t('Toggle navigation'); ?>" aria-expanded="false">&#9776;</button>
   </div>
 </header>

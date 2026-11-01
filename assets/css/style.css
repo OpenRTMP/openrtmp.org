@@ -487,6 +487,10 @@ section { padding: 80px 0; }
   scroll-margin-top: 96px;
 }
 
+/* Any anchor target inside the docs (e.g. a callout with id="status") needs
+   the same offset as the headings, otherwise it scrolls under the header. */
+.docs-content [id] { scroll-margin-top: 96px; }
+
 .docs-content h2:first-child { margin-top: 0; }
 
 .docs-content p { color: var(--text-dim); }
@@ -524,6 +528,9 @@ section { padding: 80px 0; }
   background: var(--surface-2);
   color: var(--text-dim);
   cursor: pointer;
+  /* Keep the button out of a select-all copy of the code block. */
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .copy-btn:hover { color: var(--text); border-color: var(--accent); }
@@ -646,7 +653,7 @@ td { color: var(--text-dim); }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 1060px) {
-  .nav-links, .nav-cta { display: none; }
+  .nav-links { display: none; }
   .nav-toggle { display: block; }
   .nav.open .nav-links {
     display: flex;
@@ -659,6 +666,8 @@ td { color: var(--text-dim); }
     border-bottom: 1px solid var(--border);
     padding: 20px 24px;
     gap: 16px;
+    max-height: calc(100vh - 64px);
+    overflow-y: auto;
   }
 }
 
