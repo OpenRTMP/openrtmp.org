@@ -69,7 +69,6 @@ assets/js/                        Navigation, copy, and docs behavior
 assets/img/                       Logo, favicon, and social preview
 robots.txt                        Crawler policy
 sitemap.xml                       Indexable public pages (generated)
-errorpages/404.html               Branded 404 served by .htaccess
 scripts/generate-sitemap.sh       Rebuilds sitemap.xml from git history
 scripts/check-links.py            Checks internal links and anchors on a running site
 scripts/check-seo.py              Checks metadata, canonicals, hreflang, and the sitemap
