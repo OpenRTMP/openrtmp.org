@@ -39,9 +39,15 @@ with no page behind it answers 404 instead of falling back to the nearest
 
 ```bash
 scripts/check-links.py http://localhost:8090 $(find . -name index.php -not -path './includes/*' | sed 's|^\.||; s|index\.php$||')
+scripts/check-seo.py   http://localhost:8090 $(find . -name index.php -not -path './includes/*' | sed 's|^\.||; s|index\.php$||')
 ```
 
-`Website checks` runs the same link check in CI, renders every page with all
+`check-seo.py` asserts the conventions a page must keep: one title and
+description, a self-referencing canonical, an indexable robots meta tag, one
+`h1`, alt text on images, complete `TechArticle` structured data, reciprocal
+`hreflang` alternates, and a URL set that matches `sitemap.xml`.
+
+`Website checks` runs both checks in CI, renders every page with all
 PHP diagnostics enabled and fails on any warning, notice or deprecation. The
 production deploy runs these checks first and uploads nothing when they fail.
 
@@ -60,11 +66,13 @@ includes/                         Shared header, footer, and i18n strings
 assets/css/style.css              Core design system
 assets/css/content.css            Article and quickstart styles
 assets/js/                        Navigation, copy, and docs behavior
-assets/img/                       Logo and favicon
+assets/img/                       Logo, favicon, and social preview
 robots.txt                        Crawler policy
 sitemap.xml                       Indexable public pages (generated)
+errorpages/404.html               Branded 404 served by .htaccess
 scripts/generate-sitemap.sh       Rebuilds sitemap.xml from git history
 scripts/check-links.py            Checks internal links and anchors on a running site
+scripts/check-seo.py              Checks metadata, canonicals, hreflang, and the sitemap
 scripts/dev-router.php            php -S router that answers 404 for missing pages
 ```
 

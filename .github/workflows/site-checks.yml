@@ -69,6 +69,10 @@ jobs:
           # Internal links and #anchors on those pages must resolve.
           # shellcheck disable=SC2086
           python3 scripts/check-links.py http://127.0.0.1:8090 $paths
+          # Titles, canonicals, hreflang, structured data and the sitemap must
+          # stay consistent as pages are added.
+          # shellcheck disable=SC2086
+          python3 scripts/check-seo.py http://127.0.0.1:8090 $paths
           if [ -s "$php_errors" ]; then
             echo "PHP reported diagnostics while rendering the pages:"
             cat "$php_errors"
