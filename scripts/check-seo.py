@@ -44,6 +44,7 @@ class Page(HTMLParser):
     def __init__(self):
         super().__init__(convert_charrefs=True)
         self.title = None
+        self.title_count = 0
         self._in_title = False
         self._title = ""
         self._in_ld = False
@@ -60,6 +61,7 @@ class Page(HTMLParser):
         if tag == "html":
             self.lang = attrs.get("lang")
         elif tag == "title":
+            self.title_count += 1
             self._in_title = True
             self._title = ""
         elif tag == "meta":
@@ -89,6 +91,7 @@ class Page(HTMLParser):
             self._ld += data
 
     def meta(self, name=None, prop=None):
+        """The content of the first meta tag matching name or property."""
         for meta in self.metas:
             if name is not None and meta.get("name", "").lower() == name:
                 return meta.get("content", "")
@@ -97,12 +100,14 @@ class Page(HTMLParser):
         return None
 
     def canonical(self):
+        """The href of the rel=canonical link, or None."""
         for link in self.links:
             if (link.get("rel") or "").lower() == "canonical":
                 return link.get("href")
         return None
 
     def alternates(self):
+        """The hreflang alternates of the page, keyed by language code."""
         return {
             link.get("hreflang"): link.get("href")
             for link in self.links
@@ -111,6 +116,7 @@ class Page(HTMLParser):
 
 
 def fetch(base, path):
+    """Return (status, body) for a path, without following redirects."""
     try:
         with urllib.request.urlopen(base + path, timeout=20) as response:
             return response.status, response.read().decode("utf-8", "replace")
@@ -135,8 +141,11 @@ def schema_nodes(blob):
 
 
 def check_page(path, page, errors):
-    if not page.title:
-        errors.append(f"{path}: missing <title>")
+    """Check the per-page head, language, headings and structured data."""
+    if page.title_count != 1:
+        errors.append(f"{path}: expected one <title>, found {page.title_count}")
+    elif not page.title:
+        errors.append(f"{path}: <title> is empty")
     description = page.meta(name="description")
     if not description:
         errors.append(f"{path}: missing meta description")
@@ -186,9 +195,27 @@ def check_page(path, page, errors):
                     )
 
 
+def language_of(path):
+    """The language a site path belongs to, from its /de/ prefix."""
+    return "de" if path.startswith("/de/") else "en"
+
+
+def counterpart(path):
+    """The other language's path for the same page."""
+    return path[3:] if path.startswith("/de/") else "/de" + path
+
+
 def check_alternates(pages, errors):
+    """Check that hreflang sets are complete, labelled and reciprocal."""
     for path, page in pages.items():
         alternates = page.alternates()
+        mirror = counterpart(path)
+        if mirror in pages:
+            for lang in ("en", "de"):
+                if lang not in alternates:
+                    errors.append(
+                        f"{path}: missing hreflang {lang} although {mirror} exists"
+                    )
         if not alternates:
             continue
         for lang, href in alternates.items():
@@ -196,8 +223,15 @@ def check_alternates(pages, errors):
             if target not in pages:
                 errors.append(f"{path}: hreflang {lang} points outside the page set: {href}")
                 continue
-            if "x-default" in lang:
+            if lang == "x-default":
                 continue
+            if lang not in ("en", "de"):
+                errors.append(f"{path}: unexpected hreflang {lang!r}")
+                continue
+            if language_of(target) != lang:
+                errors.append(
+                    f"{path}: hreflang {lang} points at a {language_of(target)} page: {target}"
+                )
             if page.canonical() not in pages[target].alternates().values():
                 errors.append(f"{path}: hreflang {lang} -> {target} is not reciprocal")
         if "x-default" not in alternates:
@@ -207,6 +241,7 @@ def check_alternates(pages, errors):
 
 
 def check_uniqueness(pages, errors):
+    """Check that no two pages share a title or a description."""
     for field, value in (("title", lambda p: p.title), ("description", lambda p: p.meta(name="description"))):
         seen = {}
         for path, page in pages.items():
@@ -219,6 +254,7 @@ def check_uniqueness(pages, errors):
 
 
 def check_sitemap(base, paths, pages, errors):
+    """Check that sitemap.xml and robots.txt describe the pages on disk."""
     status, body = fetch(base, "/sitemap.xml")
     if status != 200:
         errors.append(f"/sitemap.xml: returned HTTP {status}")
@@ -246,6 +282,7 @@ def check_sitemap(base, paths, pages, errors):
 
 
 def main():
+    """Run every check against the paths given on the command line."""
     if len(sys.argv) < 3:
         print(__doc__.strip(), file=sys.stderr)
         return 2
