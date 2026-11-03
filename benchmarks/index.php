@@ -9,8 +9,10 @@ $structuredData = [
   '@type' => 'TechArticle',
   'headline' => 'RTMP server benchmarks: OpenRTMP vs nginx-rtmp, MediaMTX, SRS and LiveForge',
   'description' => $pageDescription,
+  'inLanguage' => 'en',
   'author' => ['@type' => 'Organization', 'name' => 'OpenRTMP'],
   'publisher' => ['@type' => 'Organization', 'name' => 'OpenRTMP'],
+  'image' => 'https://openrtmp.org/assets/img/social-preview.jpg',
   'mainEntityOfPage' => 'https://openrtmp.org/benchmarks/'
 ];
 include_once __DIR__ . '/../includes/header.php';

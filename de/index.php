@@ -24,6 +24,12 @@ $structuredData = [
       'description' => 'Selbst gehosteter RTMP/RTMPS-Server mit REST-API, Stream-Keys, optionalem HA-Clustering, Live-Statistiken und Web-Control-Panel.',
       'url' => 'https://openrtmp.org/de/quickstart/',
       'inLanguage' => 'de'
+    ],
+    [
+      '@type' => 'Organization',
+      'name' => 'OpenRTMP',
+      'url' => 'https://openrtmp.org/',
+      'sameAs' => ['https://github.com/OpenRTMP']
     ]
   ]
 ];

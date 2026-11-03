@@ -13,6 +13,7 @@ $structuredData = [
   'description' => $pageDescription,
   'author' => ['@type' => 'Organization', 'name' => 'OpenRTMP'],
   'publisher' => ['@type' => 'Organization', 'name' => 'OpenRTMP'],
+  'image' => 'https://openrtmp.org/assets/img/social-preview.jpg',
   'mainEntityOfPage' => 'https://openrtmp.org/de/benchmarks/'
 ];
 include_once __DIR__ . '/../../includes/header.php';

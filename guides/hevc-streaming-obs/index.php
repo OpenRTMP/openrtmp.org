@@ -9,8 +9,10 @@ $structuredData = [
   '@type' => 'TechArticle',
   'headline' => 'HEVC streaming with OBS over Enhanced RTMP',
   'description' => $pageDescription,
+  'inLanguage' => 'en',
   'author' => ['@type' => 'Organization', 'name' => 'OpenRTMP'],
   'publisher' => ['@type' => 'Organization', 'name' => 'OpenRTMP'],
+  'image' => 'https://openrtmp.org/assets/img/social-preview.jpg',
   'mainEntityOfPage' => 'https://openrtmp.org/guides/hevc-streaming-obs/'
 ];
 include_once __DIR__ . '/../../includes/header.php';

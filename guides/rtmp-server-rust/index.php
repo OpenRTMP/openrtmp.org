@@ -9,8 +9,10 @@ $structuredData = [
   '@type' => 'TechArticle',
   'headline' => 'Build an RTMP server in Rust with librtmp2',
   'description' => $pageDescription,
+  'inLanguage' => 'en',
   'author' => ['@type' => 'Organization', 'name' => 'OpenRTMP'],
   'publisher' => ['@type' => 'Organization', 'name' => 'OpenRTMP'],
+  'image' => 'https://openrtmp.org/assets/img/social-preview.jpg',
   'mainEntityOfPage' => 'https://openrtmp.org/guides/rtmp-server-rust/'
 ];
 include_once __DIR__ . '/../../includes/header.php';

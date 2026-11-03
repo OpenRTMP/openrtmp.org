@@ -9,7 +9,10 @@ $structuredData = [
   '@type' => 'TechArticle',
   'headline' => 'Use OpenRTMP JSON statistics with NOALBS',
   'description' => $pageDescription,
+  'inLanguage' => 'en',
   'author' => ['@type' => 'Organization', 'name' => 'OpenRTMP'],
+  'publisher' => ['@type' => 'Organization', 'name' => 'OpenRTMP'],
+  'image' => 'https://openrtmp.org/assets/img/social-preview.jpg',
   'mainEntityOfPage' => 'https://openrtmp.org/guides/openrtmp-noalbs-json-stats/'
 ];
 include_once __DIR__ . '/../../includes/header.php';
