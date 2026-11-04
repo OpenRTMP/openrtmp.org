@@ -48,6 +48,10 @@ OG_IMAGE = "og:image"
 OG_IMAGE_TYPE = "og:image:type"
 REQUIRED_OG = (OG_TITLE, OG_DESCRIPTION, OG_IMAGE, OG_IMAGE_TYPE)
 
+LD_CONTEXT = "@context"
+LD_TYPE = "@type"
+TECH_ARTICLE = "TechArticle"
+
 # A guide article lives one level below /guides/ (or /de/guides/); the listing
 # page itself does not match.
 GUIDE_ARTICLE = re.compile(r"^/(?:de/)?guides/[^/]+/$")
@@ -147,7 +151,7 @@ def schema_nodes(blob):
     while stack:
         node = stack.pop()
         if isinstance(node, dict):
-            if "@type" in node:
+            if LD_TYPE in node:
                 yield node
             stack.extend(node.values())
         elif isinstance(node, list):
@@ -209,10 +213,10 @@ def check_canonical(path, page, errors):
 
 def check_node(path, node, errors):
     """Check one JSON-LD node's context and, for articles, its fields."""
-    context = node.get("@context")
+    context = node.get(LD_CONTEXT)
     if context is not None and SCHEMA_CONTEXT not in str(context):
         errors.append(f"{path}: unexpected JSON-LD @context {context!r}")
-    if node.get("@type") != "TechArticle":
+    if node.get(LD_TYPE) != TECH_ARTICLE:
         return
     missing = [field for field in ARTICLE_FIELDS if not node.get(field)]
     if missing:
@@ -229,7 +233,7 @@ def check_structured_data(path, page, errors):
             errors.append(f"{path}: JSON-LD does not parse: {exc}")
             continue
         for node in nodes:
-            has_article = has_article or node.get("@type") == "TechArticle"
+            has_article = has_article or node.get(LD_TYPE) == TECH_ARTICLE
             check_node(path, node, errors)
     if GUIDE_ARTICLE.match(path) and not has_article:
         errors.append(f"{path}: guide article has no TechArticle structured data")
