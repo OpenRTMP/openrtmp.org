@@ -39,6 +39,13 @@ ARTICLE_FIELDS = (
     "mainEntityOfPage",
 )
 
+META_DESCRIPTION = "description"
+META_ROBOTS = "robots"
+OG_TITLE = "og:title"
+OG_DESCRIPTION = "og:description"
+OG_IMAGE = "og:image"
+REQUIRED_OG = (OG_TITLE, OG_DESCRIPTION, OG_IMAGE)
+
 
 class Page(HTMLParser):
     def __init__(self):
@@ -140,20 +147,30 @@ def schema_nodes(blob):
             stack.extend(node)
 
 
-def check_page(path, page, errors):
-    """Check the per-page head, language, headings and structured data."""
+def check_head(path, page, errors):
+    """Check the title, description, robots meta tag and social tags."""
     if page.title_count != 1:
         errors.append(f"{path}: expected one <title>, found {page.title_count}")
     elif not page.title:
         errors.append(f"{path}: <title> is empty")
-    description = page.meta(name="description")
-    if not description:
+    if not page.meta(name=META_DESCRIPTION):
         errors.append(f"{path}: missing meta description")
-    if page.meta(name="robots") is None:
+    robots = page.meta(name=META_ROBOTS)
+    if robots is None:
         errors.append(f"{path}: missing meta robots")
-    elif "noindex" in page.meta(name="robots").lower():
+    elif "noindex" in robots.lower():
         errors.append(f"{path}: public page is marked noindex")
-    if page.lang != ("de" if path.startswith("/de/") else "en"):
+    for prop in REQUIRED_OG:
+        if not page.meta(prop=prop):
+            errors.append(f"{path}: missing {prop}")
+    image = page.meta(prop=OG_IMAGE)
+    if image and not image.startswith("https://"):
+        errors.append(f"{path}: {OG_IMAGE} is not absolute")
+
+
+def check_document(path, page, errors):
+    """Check the document language, its single h1 and the image alt text."""
+    if page.lang != language_of(path):
         errors.append(f"{path}: <html lang> is {page.lang!r}")
     if page.h1 != 1:
         errors.append(f"{path}: expected one <h1>, found {page.h1}")
@@ -161,22 +178,22 @@ def check_page(path, page, errors):
         if not image.get("alt"):
             errors.append(f"{path}: image without alt text: {image.get('src')}")
 
-    for prop in ("og:title", "og:description", "og:image"):
-        if not page.meta(prop=prop):
-            errors.append(f"{path}: missing {prop}")
-    if page.meta(prop="og:image") and not page.meta(prop="og:image").startswith("https://"):
-        errors.append(f"{path}: og:image is not absolute")
 
+def check_canonical(path, page, errors):
+    """Check that the canonical URL is absolute and points at this page."""
     canonical = page.canonical()
     if canonical is None:
         errors.append(f"{path}: missing canonical")
-    else:
-        parts = urlsplit(canonical)
-        if not parts.scheme or not parts.netloc:
-            errors.append(f"{path}: canonical is not absolute: {canonical}")
-        elif parts.path != path:
-            errors.append(f"{path}: canonical points at {parts.path}")
+        return
+    parts = urlsplit(canonical)
+    if not parts.scheme or not parts.netloc:
+        errors.append(f"{path}: canonical is not absolute: {canonical}")
+    elif parts.path != path:
+        errors.append(f"{path}: canonical points at {parts.path}")
 
+
+def check_structured_data(path, page, errors):
+    """Check that every JSON-LD block parses and every article is complete."""
     for blob in page.json_ld:
         try:
             nodes = list(schema_nodes(blob))
@@ -190,9 +207,15 @@ def check_page(path, page, errors):
             if node.get("@type") == "TechArticle":
                 missing = [field for field in ARTICLE_FIELDS if not node.get(field)]
                 if missing:
-                    errors.append(
-                        f"{path}: TechArticle is missing {', '.join(missing)}"
-                    )
+                    errors.append(f"{path}: TechArticle is missing {', '.join(missing)}")
+
+
+def check_page(path, page, errors):
+    """Check the per-page head, document structure and structured data."""
+    check_head(path, page, errors)
+    check_document(path, page, errors)
+    check_canonical(path, page, errors)
+    check_structured_data(path, page, errors)
 
 
 def language_of(path):
@@ -205,44 +228,62 @@ def counterpart(path):
     return path[3:] if path.startswith("/de/") else "/de" + path
 
 
+def check_alternate_completeness(path, alternates, pages, errors):
+    """Both language labels must exist when the mirror page exists."""
+    mirror = counterpart(path)
+    if mirror not in pages:
+        return
+    for lang in ("en", "de"):
+        if lang not in alternates:
+            errors.append(f"{path}: missing hreflang {lang} although {mirror} exists")
+
+
+def check_alternate_target(path, page, lang, href, pages, errors):
+    """One alternate must target a real page in its own language and link back."""
+    target = urlsplit(href).path
+    if target not in pages:
+        errors.append(f"{path}: hreflang {lang} points outside the page set: {href}")
+        return
+    if lang == "x-default":
+        return
+    if lang not in ("en", "de"):
+        errors.append(f"{path}: unexpected hreflang {lang!r}")
+        return
+    if language_of(target) != lang:
+        errors.append(
+            f"{path}: hreflang {lang} points at a {language_of(target)} page: {target}"
+        )
+    if page.canonical() not in pages[target].alternates().values():
+        errors.append(f"{path}: hreflang {lang} -> {target} is not reciprocal")
+
+
+def check_x_default(path, alternates, errors):
+    """The alternate set must name the English page as x-default."""
+    if "x-default" not in alternates:
+        errors.append(f"{path}: hreflang set has no x-default")
+        return
+    english = path[3:] if path.startswith("/de/") else path
+    if urlsplit(alternates["x-default"]).path != english:
+        errors.append(f"{path}: x-default does not point at the English page")
+
+
 def check_alternates(pages, errors):
     """Check that hreflang sets are complete, labelled and reciprocal."""
     for path, page in pages.items():
         alternates = page.alternates()
-        mirror = counterpart(path)
-        if mirror in pages:
-            for lang in ("en", "de"):
-                if lang not in alternates:
-                    errors.append(
-                        f"{path}: missing hreflang {lang} although {mirror} exists"
-                    )
-        if not alternates:
-            continue
+        check_alternate_completeness(path, alternates, pages, errors)
         for lang, href in alternates.items():
-            target = urlsplit(href).path
-            if target not in pages:
-                errors.append(f"{path}: hreflang {lang} points outside the page set: {href}")
-                continue
-            if lang == "x-default":
-                continue
-            if lang not in ("en", "de"):
-                errors.append(f"{path}: unexpected hreflang {lang!r}")
-                continue
-            if language_of(target) != lang:
-                errors.append(
-                    f"{path}: hreflang {lang} points at a {language_of(target)} page: {target}"
-                )
-            if page.canonical() not in pages[target].alternates().values():
-                errors.append(f"{path}: hreflang {lang} -> {target} is not reciprocal")
-        if "x-default" not in alternates:
-            errors.append(f"{path}: hreflang set has no x-default")
-        elif urlsplit(alternates["x-default"]).path != (path if not path.startswith("/de/") else path[3:]):
-            errors.append(f"{path}: x-default does not point at the English page")
+            check_alternate_target(path, page, lang, href, pages, errors)
+        if alternates:
+            check_x_default(path, alternates, errors)
 
 
 def check_uniqueness(pages, errors):
     """Check that no two pages share a title or a description."""
-    for field, value in (("title", lambda p: p.title), ("description", lambda p: p.meta(name="description"))):
+    for field, value in (
+        ("title", lambda p: p.title),
+        ("description", lambda p: p.meta(name=META_DESCRIPTION)),
+    ):
         seen = {}
         for path, page in pages.items():
             text = value(page)
