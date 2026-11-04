@@ -22,6 +22,7 @@ paths were rendered from.
 """
 
 import json
+import re
 import sys
 import urllib.error
 import urllib.request
@@ -44,7 +45,13 @@ META_ROBOTS = "robots"
 OG_TITLE = "og:title"
 OG_DESCRIPTION = "og:description"
 OG_IMAGE = "og:image"
-REQUIRED_OG = (OG_TITLE, OG_DESCRIPTION, OG_IMAGE)
+OG_IMAGE_TYPE = "og:image:type"
+REQUIRED_OG = (OG_TITLE, OG_DESCRIPTION, OG_IMAGE, OG_IMAGE_TYPE)
+
+# A guide article lives one level below /guides/ (or /de/guides/); the listing
+# page itself does not match.
+GUIDE_ARTICLE = re.compile(r"^/(?:de/)?guides/[^/]+/$")
+NON_INDEXABLE = {"noindex", "none"}
 
 
 class Page(HTMLParser):
@@ -147,6 +154,12 @@ def schema_nodes(blob):
             stack.extend(node)
 
 
+def is_indexable(robots):
+    """False when a robots meta tag forbids indexing via noindex or none."""
+    directives = {part.strip().lower() for part in robots.split(",")}
+    return not directives & NON_INDEXABLE
+
+
 def check_head(path, page, errors):
     """Check the title, description, robots meta tag and social tags."""
     if page.title_count != 1:
@@ -158,8 +171,8 @@ def check_head(path, page, errors):
     robots = page.meta(name=META_ROBOTS)
     if robots is None:
         errors.append(f"{path}: missing meta robots")
-    elif "noindex" in robots.lower():
-        errors.append(f"{path}: public page is marked noindex")
+    elif not is_indexable(robots):
+        errors.append(f"{path}: public page is not indexable: {robots!r}")
     for prop in REQUIRED_OG:
         if not page.meta(prop=prop):
             errors.append(f"{path}: missing {prop}")
@@ -175,8 +188,10 @@ def check_document(path, page, errors):
     if page.h1 != 1:
         errors.append(f"{path}: expected one <h1>, found {page.h1}")
     for image in page.images:
-        if not image.get("alt"):
-            errors.append(f"{path}: image without alt text: {image.get('src')}")
+        # alt="" is a valid, deliberate marker for a decorative image; only a
+        # missing attribute is a defect.
+        if "alt" not in image:
+            errors.append(f"{path}: image without alt attribute: {image.get('src')}")
 
 
 def check_canonical(path, page, errors):
@@ -192,8 +207,21 @@ def check_canonical(path, page, errors):
         errors.append(f"{path}: canonical points at {parts.path}")
 
 
+def check_node(path, node, errors):
+    """Check one JSON-LD node's context and, for articles, its fields."""
+    context = node.get("@context")
+    if context is not None and SCHEMA_CONTEXT not in str(context):
+        errors.append(f"{path}: unexpected JSON-LD @context {context!r}")
+    if node.get("@type") != "TechArticle":
+        return
+    missing = [field for field in ARTICLE_FIELDS if not node.get(field)]
+    if missing:
+        errors.append(f"{path}: TechArticle is missing {', '.join(missing)}")
+
+
 def check_structured_data(path, page, errors):
-    """Check that every JSON-LD block parses and every article is complete."""
+    """Check that every JSON-LD block parses and guides keep an article node."""
+    has_article = False
     for blob in page.json_ld:
         try:
             nodes = list(schema_nodes(blob))
@@ -201,13 +229,10 @@ def check_structured_data(path, page, errors):
             errors.append(f"{path}: JSON-LD does not parse: {exc}")
             continue
         for node in nodes:
-            context = node.get("@context")
-            if context is not None and SCHEMA_CONTEXT not in str(context):
-                errors.append(f"{path}: unexpected JSON-LD @context {context!r}")
-            if node.get("@type") == "TechArticle":
-                missing = [field for field in ARTICLE_FIELDS if not node.get(field)]
-                if missing:
-                    errors.append(f"{path}: TechArticle is missing {', '.join(missing)}")
+            has_article = has_article or node.get("@type") == "TechArticle"
+            check_node(path, node, errors)
+    if GUIDE_ARTICLE.match(path) and not has_article:
+        errors.append(f"{path}: guide article has no TechArticle structured data")
 
 
 def check_page(path, page, errors):
@@ -239,8 +264,12 @@ def check_alternate_completeness(path, alternates, pages, errors):
 
 
 def check_alternate_target(path, page, lang, href, pages, errors):
-    """One alternate must target a real page in its own language and link back."""
-    target = urlsplit(href).path
+    """One alternate must stay on this host and name the mirrored page."""
+    parts = urlsplit(href)
+    target = parts.path
+    if parts.netloc != urlsplit(page.canonical() or "").netloc:
+        errors.append(f"{path}: hreflang {lang} points at another host: {href}")
+        return
     if target not in pages:
         errors.append(f"{path}: hreflang {lang} points outside the page set: {href}")
         return
@@ -253,6 +282,9 @@ def check_alternate_target(path, page, lang, href, pages, errors):
         errors.append(
             f"{path}: hreflang {lang} points at a {language_of(target)} page: {target}"
         )
+    expected = path if lang == language_of(path) else counterpart(path)
+    if target != expected:
+        errors.append(f"{path}: hreflang {lang} points at {target}, expected {expected}")
     if page.canonical() not in pages[target].alternates().values():
         errors.append(f"{path}: hreflang {lang} -> {target} is not reciprocal")
 
