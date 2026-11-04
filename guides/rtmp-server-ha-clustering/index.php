@@ -9,7 +9,10 @@ $structuredData = [
   '@type' => 'TechArticle',
   'headline' => 'Run an HA RTMP server cluster',
   'description' => $pageDescription,
+  'inLanguage' => 'en',
   'author' => ['@type' => 'Organization', 'name' => 'OpenRTMP'],
+  'publisher' => ['@type' => 'Organization', 'name' => 'OpenRTMP'],
+  'image' => 'https://openrtmp.org/assets/img/social-preview.jpg',
   'mainEntityOfPage' => 'https://openrtmp.org/guides/rtmp-server-ha-clustering/'
 ];
 include_once __DIR__ . '/../../includes/header.php';

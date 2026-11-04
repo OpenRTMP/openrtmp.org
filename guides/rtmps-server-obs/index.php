@@ -9,7 +9,10 @@ $structuredData = [
   '@type' => 'TechArticle',
   'headline' => 'Configure an RTMPS server for OBS',
   'description' => $pageDescription,
+  'inLanguage' => 'en',
   'author' => ['@type' => 'Organization', 'name' => 'OpenRTMP'],
+  'publisher' => ['@type' => 'Organization', 'name' => 'OpenRTMP'],
+  'image' => 'https://openrtmp.org/assets/img/social-preview.jpg',
   'mainEntityOfPage' => 'https://openrtmp.org/guides/rtmps-server-obs/'
 ];
 include_once __DIR__ . '/../../includes/header.php';

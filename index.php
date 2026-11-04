@@ -12,7 +12,8 @@ $structuredData = [
       'description' => 'Rust RTMP/RTMPS and Enhanced RTMP protocol library with a C-compatible FFI.',
       'codeRepository' => 'https://github.com/OpenRTMP/librtmp2',
       'programmingLanguage' => 'Rust',
-      'license' => 'https://opensource.org/license/mit'
+      'license' => 'https://opensource.org/license/mit',
+      'inLanguage' => 'en'
     ],
     [
       '@type' => 'SoftwareApplication',
@@ -20,7 +21,14 @@ $structuredData = [
       'applicationCategory' => 'DeveloperApplication',
       'operatingSystem' => 'Linux, Docker',
       'description' => 'Self-hosted RTMP/RTMPS server with REST API, stream keys, optional HA clustering, live statistics, and a web control panel.',
-      'url' => 'https://openrtmp.org/quickstart/'
+      'url' => 'https://openrtmp.org/quickstart/',
+      'inLanguage' => 'en'
+    ],
+    [
+      '@type' => 'Organization',
+      'name' => 'OpenRTMP',
+      'url' => 'https://openrtmp.org/',
+      'sameAs' => ['https://github.com/OpenRTMP']
     ]
   ]
 ];

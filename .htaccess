@@ -10,10 +10,15 @@ RewriteCond %{THE_REQUEST} \s/+index\.php(?:[?\s])
 RewriteRule ^index\.php$ / [R=301,L]
 RewriteRule ^docs\.php$ /docs/ [R=301,L]
 RewriteRule ^download\.php$ /download/ [R=301,L]
-RewriteCond %{THE_REQUEST} \s/+docs/index\.php(?:[?\s])
-RewriteRule ^docs/index\.php$ /docs/ [R=301,L]
-RewriteCond %{THE_REQUEST} \s/+download/index\.php(?:[?\s])
-RewriteRule ^download/index\.php$ /download/ [R=301,L]
+
+# Every page is served from a directory index, so the /index.php spelling is a
+# duplicate of the directory URL. Redirect it in one hop, for every page and
+# language, instead of listing each page here and letting new pages leak a
+# second indexable URL. The capture excludes "?" so a request whose query string
+# happens to contain "/index.php" is not rewritten. The query string is
+# preserved by the redirect.
+RewriteCond %{THE_REQUEST} \s/+([^?\s]+)/index\.php(?:[?\s])
+RewriteRule ^ /%1/ [R=301,L]
 
 # ===== BLOCK REPO METADATA FILES =====
 <FilesMatch "(\.md$|^renovate\.json$|^\.sftp_upload_action_hashes$)">
@@ -21,6 +26,8 @@ RewriteRule ^download/index\.php$ /download/ [R=301,L]
 </FilesMatch>
 
 # ===== CUSTOM ERROR PAGES =====
+# The documents live in /errorpages/ on the web root and are deployed outside
+# this repository, so they are referenced here but not stored here.
 ErrorDocument 400 /errorpages/400.html
 ErrorDocument 401 /errorpages/401.html
 ErrorDocument 403 /errorpages/403.html
@@ -37,3 +44,26 @@ ErrorDocument 501 /errorpages/501.html
 ErrorDocument 502 /errorpages/502.html
 ErrorDocument 503 /errorpages/503.html
 ErrorDocument 504 /errorpages/504.html
+
+# ===== RESPONSE HEADERS =====
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# ===== COMPRESSION =====
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml application/javascript application/json image/svg+xml
+</IfModule>
+
+# ===== CACHING =====
+# The asset filenames are not content-hashed, so keep the lifetimes short
+# enough that a deploy is picked up quickly.
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access plus 1 hour"
+    ExpiresByType application/javascript "access plus 1 hour"
+    ExpiresByType image/svg+xml "access plus 1 day"
+    ExpiresByType image/webp "access plus 1 day"
+    ExpiresByType image/jpeg "access plus 1 day"
+</IfModule>

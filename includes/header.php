@@ -8,9 +8,14 @@ $canonicalPath = parse_url($canonicalPath, PHP_URL_PATH) ?: '/';
 $canonicalPath = preg_replace('#/index\.php$#', '/', $canonicalPath);
 $canonicalUrl = OPENRTMP_BASE_URL . $canonicalPath;
 $ogType = $ogType ?? 'website';
-$socialImage = $socialImage ?? OPENRTMP_BASE_URL . '/assets/img/social-preview.webp';
+// JPEG rather than the WebP source: some social crawlers still ignore WebP,
+// and a preview image that does not render is worse than a larger file.
+$socialImage = $socialImage ?? OPENRTMP_BASE_URL . '/assets/img/social-preview.jpg';
 $socialImageWidth = $socialImageWidth ?? 1200;
 $socialImageHeight = $socialImageHeight ?? 630;
+$socialImageTypes = ['png' => 'image/png', 'webp' => 'image/webp', 'gif' => 'image/gif'];
+$socialImageExt = strtolower(pathinfo(parse_url($socialImage, PHP_URL_PATH) ?: '', PATHINFO_EXTENSION));
+$socialImageType = $socialImageTypes[$socialImageExt] ?? 'image/jpeg';
 $socialImageAlt = $socialImageAlt ?? t('OpenRTMP social preview showing the librtmp2 Rust RTMP/E-RTMP library and the self-hosted RTMP/RTMPS server with web panel.');
 $alternatePaths = openrtmpAlternates($canonicalPath);
 ?>
@@ -41,6 +46,7 @@ $alternatePaths = openrtmpAlternates($canonicalPath);
 <meta property="og:description" content="<?php echo htmlspecialchars($pageDescription, ENT_QUOTES, 'UTF-8'); ?>">
 <meta property="og:url" content="<?php echo htmlspecialchars($canonicalUrl, ENT_QUOTES, 'UTF-8'); ?>">
 <meta property="og:image" content="<?php echo htmlspecialchars($socialImage, ENT_QUOTES, 'UTF-8'); ?>">
+<meta property="og:image:type" content="<?php echo $socialImageType; ?>">
 <meta property="og:image:width" content="<?php echo (int) $socialImageWidth; ?>">
 <meta property="og:image:height" content="<?php echo (int) $socialImageHeight; ?>">
 <meta property="og:image:alt" content="<?php echo htmlspecialchars($socialImageAlt, ENT_QUOTES, 'UTF-8'); ?>">

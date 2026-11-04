@@ -9,8 +9,10 @@ $structuredData = [
   '@type' => 'TechArticle',
   'headline' => 'Enhanced RTMP v2 explained',
   'description' => $pageDescription,
+  'inLanguage' => 'en',
   'author' => ['@type' => 'Organization', 'name' => 'OpenRTMP'],
   'publisher' => ['@type' => 'Organization', 'name' => 'OpenRTMP'],
+  'image' => 'https://openrtmp.org/assets/img/social-preview.jpg',
   'mainEntityOfPage' => 'https://openrtmp.org/guides/enhanced-rtmp-v2-explained/'
 ];
 include_once __DIR__ . '/../../includes/header.php';

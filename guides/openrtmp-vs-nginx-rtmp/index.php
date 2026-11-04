@@ -9,7 +9,10 @@ $structuredData = [
   '@type' => 'TechArticle',
   'headline' => 'OpenRTMP vs nginx-rtmp',
   'description' => $pageDescription,
+  'inLanguage' => 'en',
   'author' => ['@type' => 'Organization', 'name' => 'OpenRTMP'],
+  'publisher' => ['@type' => 'Organization', 'name' => 'OpenRTMP'],
+  'image' => 'https://openrtmp.org/assets/img/social-preview.jpg',
   'mainEntityOfPage' => 'https://openrtmp.org/guides/openrtmp-vs-nginx-rtmp/'
 ];
 include_once __DIR__ . '/../../includes/header.php';

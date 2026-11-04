@@ -9,8 +9,10 @@ $structuredData = [
   '@type' => 'TechArticle',
   'headline' => 'Self-host an RTMP server in five minutes with Docker and OBS',
   'description' => $pageDescription,
+  'inLanguage' => 'en',
   'author' => ['@type' => 'Organization', 'name' => 'OpenRTMP'],
   'publisher' => ['@type' => 'Organization', 'name' => 'OpenRTMP'],
+  'image' => 'https://openrtmp.org/assets/img/social-preview.jpg',
   'mainEntityOfPage' => 'https://openrtmp.org/guides/self-hosted-rtmp-server-docker/'
 ];
 include_once __DIR__ . '/../../includes/header.php';

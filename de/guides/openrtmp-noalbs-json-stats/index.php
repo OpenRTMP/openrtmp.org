@@ -12,6 +12,8 @@ $structuredData = [
   'description' => $pageDescription,
   'inLanguage' => 'de',
   'author' => ['@type' => 'Organization', 'name' => 'OpenRTMP'],
+  'publisher' => ['@type' => 'Organization', 'name' => 'OpenRTMP'],
+  'image' => 'https://openrtmp.org/assets/img/social-preview.jpg',
   'mainEntityOfPage' => 'https://openrtmp.org/de/guides/openrtmp-noalbs-json-stats/'
 ];
 include_once __DIR__ . '/../../../includes/header.php';
