@@ -495,8 +495,10 @@ function benchCiSweepRows(array $srv): ?array
 {
   $sweep = $srv['sweep'] ?? null;
   $env = benchCiEnv($srv['environment'] ?? null);
+  $date = $srv['date'] ?? '';
   $valid = ($srv['schema'] ?? null) === 1 && is_array($sweep) && $env !== null
-    && preg_match('/^\d{4}-\d{2}-\d{2}/', (string) ($srv['date'] ?? ''), $m) === 1;
+    && is_string($date)
+    && preg_match('/^\d{4}-\d{2}-\d{2}/', $date, $m) === 1;
   if (!$valid) {
     return null;
   }
