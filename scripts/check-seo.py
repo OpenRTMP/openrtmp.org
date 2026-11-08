@@ -340,9 +340,12 @@ def check_sitemap(base, paths, pages, errors):
     for fragment in body.split("<loc>")[1:]:
         urls.append(fragment.split("</loc>", 1)[0].strip())
     sitemap_origins = {}
+    origins = set()
     for url in urls:
         parts = urlsplit(url)
-        sitemap_origins[parts.path] = (parts.scheme, parts.netloc)
+        origin = (parts.scheme, parts.netloc)
+        sitemap_origins[parts.path] = origin
+        origins.add(origin)
     listed = set(sitemap_origins)
     for path in sorted(listed - set(paths)):
         errors.append(f"/sitemap.xml lists {path}, which is not a known page")
@@ -356,7 +359,6 @@ def check_sitemap(base, paths, pages, errors):
             errors.append(f"{path}: sitemap URL and canonical disagree")
         elif (canonical.scheme, canonical.netloc) != sitemap_origins[path]:
             errors.append(f"{path}: canonical origin and sitemap URL disagree")
-    origins = set(sitemap_origins.values())
     if len(origins) > 1:
         errors.append("/sitemap.xml: URLs do not share one origin")
     for url in urls:
