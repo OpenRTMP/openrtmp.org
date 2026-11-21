@@ -2,7 +2,7 @@
 $lang = 'de';
 $page = 'download';
 $pageTitle = 'OpenRTMP herunterladen — Rust-Crate, Quellcode und Docker-Images';
-$pageDescription = 'librtmp2 von crates.io installieren, OpenRTMP-Projekte aus dem Quellcode bauen oder RTMP-Server und Web-Panel aus veröffentlichten Docker-Images betreiben.';
+$pageDescription = 'librtmp2 von crates.io installieren, OpenRTMP-Projekte aus dem Quellcode bauen oder RTMP-Server und Web-Panel aus Docker-Images betreiben.';
 $canonicalPath = '/de/download/';
 include_once __DIR__ . '/../../includes/header.php';
 ?>

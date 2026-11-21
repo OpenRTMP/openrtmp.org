@@ -2,7 +2,7 @@
 $lang = 'de';
 $page = 'guides';
 $pageTitle = 'HEVC-Streaming mit OBS über Enhanced RTMP — OpenRTMP-Anleitung';
-$pageDescription = 'HEVC (H.265) aus OBS über Enhanced RTMP streamen, einen OpenRTMP-Ingest-Endpunkt einrichten, die Codec-Signalisierung prüfen und Encoder- sowie Player-Kompatibilität untersuchen.';
+$pageDescription = 'HEVC (H.265) aus OBS über Enhanced RTMP streamen: OpenRTMP-Ingest einrichten, Codec-Signalisierung prüfen, Encoder- und Player-Kompatibilität klären.';
 $canonicalPath = '/de/guides/hevc-streaming-obs/';
 $ogType = 'article';
 $structuredData = [

@@ -2,7 +2,7 @@
 $lang = 'de';
 $page = 'guides';
 $pageTitle = 'OpenRTMP vs. Ant Media Server — RTMP-Bibliothek vs. WebRTC-orientierter Medienserver';
-$pageDescription = 'OpenRTMP und Ant Media Server im Vergleich nach Protokollabdeckung, WebRTC mit ultraniedriger Latenz, Lizenzstufen, Clustering und selbst gehostetem Deployment-Modell.';
+$pageDescription = 'OpenRTMP und Ant Media Server im Vergleich: Protokollabdeckung, WebRTC mit ultraniedriger Latenz, Lizenzstufen, Clustering und Self-Hosting-Modell.';
 $canonicalPath = '/de/guides/openrtmp-vs-ant-media-server/';
 $ogType = 'article';
 $structuredData = [

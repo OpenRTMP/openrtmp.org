@@ -2,7 +2,7 @@
 $lang = 'de';
 $page = 'guides';
 $pageTitle = 'OpenRTMP vs. Wowza Streaming Engine — Open Source vs. kommerzieller RTMP-Server';
-$pageDescription = 'OpenRTMP und Wowza Streaming Engine im Vergleich nach Lizenzkosten, Protokollabdeckung, Transcoding, DRM, Clustering und selbst gehostetem Deployment-Modell.';
+$pageDescription = 'OpenRTMP und Wowza Streaming Engine im Vergleich: Lizenzkosten, Protokollabdeckung, Transcoding, DRM, Clustering und selbst gehostetes Deployment.';
 $canonicalPath = '/de/guides/openrtmp-vs-wowza/';
 $ogType = 'article';
 $structuredData = [

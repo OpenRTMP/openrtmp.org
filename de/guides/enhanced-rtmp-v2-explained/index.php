@@ -2,7 +2,7 @@
 $lang = 'de';
 $page = 'guides';
 $pageTitle = 'Enhanced RTMP v2 erklärt — Codecs, Multitrack, Reconnect und Kompatibilität';
-$pageDescription = 'Enhanced RTMP v2 (E-RTMP) verstehen: FourCC-Codec-Signalisierung, HEVC, AV1, Opus, Multitrack-Audio/-Video, Reconnect-Anfragen, Zeitstempelgenauigkeit und Abwärtskompatibilität.';
+$pageDescription = 'Enhanced RTMP v2 (E-RTMP) erklärt: FourCC-Codec-Signalisierung, HEVC, AV1, Opus, Multitrack, Reconnect, Zeitstempelgenauigkeit und Kompatibilität.';
 $canonicalPath = '/de/guides/enhanced-rtmp-v2-explained/';
 $ogType = 'article';
 $structuredData = [

@@ -2,7 +2,7 @@
 $lang = 'de';
 $page = 'benchmarks';
 $pageTitle = 'RTMP-Server-Benchmarks — OpenRTMP gegen nginx-rtmp, MediaMTX, SRS und LiveForge';
-$pageDescription = 'Versionierte librtmp2-server-Benchmarks gegen nginx-rtmp, MediaMTX, SRS und LiveForge: Publish-/Play-Handshakes, Join-Latenz sowie CPU und Speicher bis 2000 Zuschauer.';
+$pageDescription = 'Versionierte librtmp2-server-Benchmarks gegen nginx-rtmp, MediaMTX, SRS und LiveForge: Handshakes, Join-Latenz, CPU und Speicher bis 2000 Zuschauer.';
 $canonicalPath = '/de/benchmarks/';
 $ogType = 'article';
 $structuredData = [

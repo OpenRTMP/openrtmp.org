@@ -2,7 +2,7 @@
 $lang = 'de';
 $page = 'guides';
 $pageTitle = 'OpenRTMP vs. MediaMTX vs. SRS — Vergleich selbst gehosteter Streaming-Server';
-$pageDescription = 'OpenRTMP, MediaMTX und SRS im Vergleich für RTMP, RTMPS, Enhanced RTMP, HLS, WebRTC, SRT, Aufzeichnung, APIs, Metriken und selbst gehostete Streaming-Architekturen.';
+$pageDescription = 'OpenRTMP, MediaMTX und SRS im Vergleich: RTMP, RTMPS, Enhanced RTMP, HLS, WebRTC, SRT, Aufzeichnung, APIs, Metriken und Self-Hosting-Architektur.';
 $canonicalPath = '/de/guides/openrtmp-vs-mediamtx-vs-srs/';
 $ogType = 'article';
 $structuredData = [

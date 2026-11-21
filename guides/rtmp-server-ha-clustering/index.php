@@ -1,7 +1,7 @@
 <?php
 $page = 'guides';
 $pageTitle = 'Run an HA RTMP server cluster — OpenRTMP Guide';
-$pageDescription = 'Enable optional multi-node HA clustering in librtmp2-server: OpenRaft state replication, media mesh ports, bootstrap and join, panel operations, and current operational limits.';
+$pageDescription = 'Enable optional multi-node HA clustering in librtmp2-server: OpenRaft replication, media mesh ports, bootstrap and join, panel operations and limits.';
 $canonicalPath = '/guides/rtmp-server-ha-clustering/';
 $ogType = 'article';
 $structuredData = [

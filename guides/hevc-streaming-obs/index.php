@@ -1,7 +1,7 @@
 <?php
 $page = 'guides';
 $pageTitle = 'HEVC streaming with OBS over Enhanced RTMP — OpenRTMP Guide';
-$pageDescription = 'Stream HEVC (H.265) from OBS over Enhanced RTMP, configure an OpenRTMP ingest endpoint, verify codec signaling, and troubleshoot encoder and player compatibility.';
+$pageDescription = 'Stream HEVC (H.265) from OBS over Enhanced RTMP: set up an OpenRTMP ingest endpoint, verify codec signaling and fix encoder and player compatibility.';
 $canonicalPath = '/guides/hevc-streaming-obs/';
 $ogType = 'article';
 $structuredData = [

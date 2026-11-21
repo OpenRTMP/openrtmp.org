@@ -2,7 +2,7 @@
 $lang = 'de';
 $page = 'guides';
 $pageTitle = 'HA-RTMP-Server-Cluster betreiben — OpenRTMP-Anleitung';
-$pageDescription = 'Optionales Multi-Node-HA-Clustering in librtmp2-server aktivieren: OpenRaft-Zustandsreplikation, Media-Mesh-Ports, Bootstrap und Join, Panel-Bedienung und aktuelle Betriebsgrenzen.';
+$pageDescription = 'Optionales Multi-Node-HA-Clustering in librtmp2-server: OpenRaft-Replikation, Media-Mesh-Ports, Bootstrap und Join, Panel-Bedienung und aktuelle Grenzen.';
 $canonicalPath = '/de/guides/rtmp-server-ha-clustering/';
 $ogType = 'article';
 $structuredData = [

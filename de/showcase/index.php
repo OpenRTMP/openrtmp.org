@@ -2,7 +2,7 @@
 $lang = 'de';
 $page = 'showcase';
 $pageTitle = 'OpenRTMP-Showcase — Projekte, Deployments und Integrationen auf Basis von OpenRTMP';
-$pageDescription = 'Was auf OpenRTMP aufbaut: geprüfte Interoperabilität mit echten RTMP-Werkzeugen sowie Projekte, Deployments und Integrationen aus der Community. Fügen Sie Ihr eigenes hinzu.';
+$pageDescription = 'Was auf OpenRTMP aufbaut: geprüfte Interoperabilität mit echten RTMP-Werkzeugen sowie Projekte und Integrationen aus der Community. Eigenes eintragen.';
 $canonicalPath = '/de/showcase/';
 include_once __DIR__ . '/../../includes/header.php';
 

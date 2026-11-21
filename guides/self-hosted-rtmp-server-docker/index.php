@@ -1,7 +1,7 @@
 <?php
 $page = 'guides';
 $pageTitle = 'Self-host an RTMP server in five minutes with Docker and OBS — OpenRTMP';
-$pageDescription = 'Self-host an RTMP server in five minutes with Docker and OBS, create stream keys, verify live stats, and prepare OpenRTMP for an internet-facing deployment.';
+$pageDescription = 'Self-host an RTMP server in five minutes with Docker and OBS, create stream keys, check live stats and prepare OpenRTMP for internet-facing use.';
 $canonicalPath = '/guides/self-hosted-rtmp-server-docker/';
 $ogType = 'article';
 $structuredData = [
