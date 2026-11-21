@@ -2,7 +2,7 @@
 $lang = 'de';
 $page = 'guides';
 $pageTitle = 'RTMP vs. Enhanced RTMP (E-RTMP): Was ist anders? — OpenRTMP';
-$pageDescription = 'Klassisches RTMP und Enhanced RTMP (E-RTMP) im Vergleich: FourCC-Codec-Signalisierung, HEVC, AV1, Opus, Multitrack, Reconnect-Unterstützung, Kompatibilität und Migration.';
+$pageDescription = 'Klassisches RTMP und Enhanced RTMP (E-RTMP) im Vergleich: FourCC-Signalisierung, HEVC, AV1, Opus, Multitrack, Reconnect, Kompatibilität und Migration.';
 $canonicalPath = '/de/guides/rtmp-vs-enhanced-rtmp/';
 $ogType = 'article';
 $structuredData = [

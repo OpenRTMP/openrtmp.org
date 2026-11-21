@@ -56,6 +56,7 @@ $alternatePaths = openrtmpAlternates($canonicalPath);
 <meta name="twitter:image" content="<?php echo htmlspecialchars($socialImage, ENT_QUOTES, 'UTF-8'); ?>">
 <meta name="twitter:image:alt" content="<?php echo htmlspecialchars($socialImageAlt, ENT_QUOTES, 'UTF-8'); ?>">
 <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
 <link rel="stylesheet" href="/assets/css/style.css">
 <link rel="stylesheet" href="/assets/css/content.css">
 <?php if (!empty($structuredData)): ?>

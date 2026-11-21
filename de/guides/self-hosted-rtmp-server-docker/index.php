@@ -2,7 +2,7 @@
 $lang = 'de';
 $page = 'guides';
 $pageTitle = 'Eigenen RTMP-Server in fünf Minuten mit Docker und OBS betreiben — OpenRTMP';
-$pageDescription = 'Eigenen RTMP-Server in fünf Minuten mit Docker und OBS betreiben, Stream-Keys anlegen, Live-Statistiken prüfen und OpenRTMP für ein Deployment mit Internetzugang vorbereiten.';
+$pageDescription = 'Eigenen RTMP-Server in fünf Minuten mit Docker und OBS betreiben, Stream-Keys anlegen, Live-Statistiken prüfen und OpenRTMP fürs Internet vorbereiten.';
 $canonicalPath = '/de/guides/self-hosted-rtmp-server-docker/';
 $ogType = 'article';
 $structuredData = [

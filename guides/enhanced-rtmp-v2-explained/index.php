@@ -1,7 +1,7 @@
 <?php
 $page = 'guides';
 $pageTitle = 'Enhanced RTMP v2 explained — codecs, multitrack, reconnect, and compatibility';
-$pageDescription = 'Understand Enhanced RTMP v2 (E-RTMP): FourCC codec signaling, HEVC, AV1, Opus, multitrack audio/video, reconnect requests, timestamp precision, and backward compatibility.';
+$pageDescription = 'Enhanced RTMP v2 (E-RTMP) explained: FourCC codec signaling, HEVC, AV1, Opus, multitrack, reconnect requests, timestamp precision and compatibility.';
 $canonicalPath = '/guides/enhanced-rtmp-v2-explained/';
 $ogType = 'article';
 $structuredData = [

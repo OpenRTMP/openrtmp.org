@@ -2,7 +2,7 @@
 $lang = 'de';
 $page = 'docs';
 $pageTitle = 'Dokumentation — OpenRTMP';
-$pageDescription = 'Einstieg in librtmp2, librtmp2-server und librtmp2-server-panel: Cargo-Builds, Host-Callbacks, Docker-Deployment, REST-API, optionales HA-Clustering und das Web-Panel.';
+$pageDescription = 'Einstieg in librtmp2, librtmp2-server und librtmp2-server-panel: Cargo-Builds, Host-Callbacks, Docker-Deployment, REST-API und optionales HA-Clustering.';
 $canonicalPath = '/de/docs/';
 include_once __DIR__ . '/../../includes/header.php';
 ?>

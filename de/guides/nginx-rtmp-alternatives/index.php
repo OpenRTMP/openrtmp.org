@@ -2,7 +2,7 @@
 $lang = 'de';
 $page = 'guides';
 $pageTitle = 'Alternativen zu nginx-rtmp: OpenRTMP, MediaMTX, SRS oder nginx-rtmp?';
-$pageDescription = 'Praktische Alternativen zu nginx-rtmp wie OpenRTMP, MediaMTX und SRS im Vergleich nach Protokollen, API-Modell, Aufzeichnung, HLS, WebRTC, Enhanced RTMP und Deployment-Zielen.';
+$pageDescription = 'Alternativen zu nginx-rtmp wie OpenRTMP, MediaMTX und SRS im Vergleich: Protokolle, API-Modell, Aufzeichnung, HLS, WebRTC, Enhanced RTMP und Deployment.';
 $canonicalPath = '/de/guides/nginx-rtmp-alternatives/';
 $ogType = 'article';
 $structuredData = [

@@ -2,7 +2,7 @@
 $lang = 'de';
 $page = 'guides';
 $pageTitle = 'OpenRTMP-Anleitungen — RTMP, Enhanced RTMP, OBS, Docker, Rust und Server-Vergleiche';
-$pageDescription = 'Praxisnahe OpenRTMP-Anleitungen zu selbst gehostetem RTMP, OBS, RTMPS, HEVC, AV1, Enhanced RTMP v2, Rust-Entwicklung, Clustering, NOALBS und Medienserver-Vergleichen.';
+$pageDescription = 'Praxisnahe OpenRTMP-Anleitungen: eigenes RTMP, OBS, RTMPS, HEVC, AV1, Enhanced RTMP v2, Rust-Entwicklung, Clustering, NOALBS und Server-Vergleiche.';
 $canonicalPath = '/de/guides/';
 include_once __DIR__ . '/../../includes/header.php';
 ?>

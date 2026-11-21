@@ -1,7 +1,7 @@
 <?php
 $page = 'guides';
 $pageTitle = 'Build an RTMP server in Rust with librtmp2 — OpenRTMP Developer Guide';
-$pageDescription = 'Build a custom RTMP/RTMPS server or relay in Rust with librtmp2. Understand the protocol/library boundary, session flow, TLS, E-RTMP, FFI, and when to use librtmp2-server instead.';
+$pageDescription = 'Build a custom RTMP/RTMPS server or relay in Rust with librtmp2: protocol boundary, session flow, TLS, E-RTMP, FFI, and when to use librtmp2-server.';
 $canonicalPath = '/guides/rtmp-server-rust/';
 $ogType = 'article';
 $structuredData = [

@@ -2,7 +2,7 @@
 $lang = 'de';
 $page = 'guides';
 $pageTitle = 'OpenRTMP-JSON-Statistiken mit NOALBS — Einrichtungsanleitung';
-$pageDescription = 'NOALBS v2.19.0 oder neuer mit den JSON-Statistiken von OpenRTMP verbinden, Stream-Keys verstehen, XML-Statistiken als Fallback konfigurieren und häufige Fehler beheben.';
+$pageDescription = 'NOALBS ab v2.19.0 mit den JSON-Statistiken von OpenRTMP verbinden, Stream-Keys verstehen, XML-Statistiken als Fallback einrichten und Fehler beheben.';
 $canonicalPath = '/de/guides/openrtmp-noalbs-json-stats/';
 $ogType = 'article';
 $structuredData = [

@@ -2,7 +2,7 @@
 $lang = 'de';
 $page = 'guides';
 $pageTitle = 'Enhanced RTMP mit HEVC, AV1 und Opus — OpenRTMP-Anleitung';
-$pageDescription = 'Enhanced-RTMP-Mediensignalisierung für HEVC, AV1 und Opus verstehen: Unterschiede zu klassischem RTMP und die aktuellen Implementierungsgrenzen von OpenRTMP.';
+$pageDescription = 'Enhanced-RTMP-Signalisierung für HEVC, AV1 und Opus verstehen: Unterschiede zu klassischem RTMP und die aktuellen Implementierungsgrenzen von OpenRTMP.';
 $canonicalPath = '/de/guides/enhanced-rtmp-hevc-av1-opus/';
 $ogType = 'article';
 $structuredData = [

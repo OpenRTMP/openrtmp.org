@@ -1,7 +1,7 @@
 <?php
 $page = 'docs';
 $pageTitle = 'Documentation — OpenRTMP';
-$pageDescription = 'Getting started with librtmp2, librtmp2-server, and librtmp2-server-panel: Cargo builds, host callbacks, Docker deployment, REST API, optional HA clustering, and the web panel.';
+$pageDescription = 'Get started with librtmp2, librtmp2-server and librtmp2-server-panel: Cargo builds, host callbacks, Docker deployment, REST API and optional HA clustering.';
 $canonicalPath = '/docs/';
 include_once __DIR__ . '/../includes/header.php';
 ?>

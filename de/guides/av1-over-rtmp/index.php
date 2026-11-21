@@ -2,7 +2,7 @@
 $lang = 'de';
 $page = 'guides';
 $pageTitle = 'AV1 über RTMP: Streaming mit Enhanced RTMP und OBS — OpenRTMP';
-$pageDescription = 'Wie AV1 über Enhanced RTMP transportiert wird, wie Sie AV1-Streaming von OBS zu OpenRTMP testen und wie Sie Kompatibilitätsprobleme bei Encoder, Server und Player eingrenzen.';
+$pageDescription = 'Wie AV1 über Enhanced RTMP übertragen wird, wie Sie AV1 von OBS zu OpenRTMP testen und Kompatibilitätsprobleme bei Encoder, Server und Player eingrenzen.';
 $canonicalPath = '/de/guides/av1-over-rtmp/';
 $ogType = 'article';
 $structuredData = [

@@ -2,7 +2,7 @@
 $lang = 'de';
 $page = 'guides';
 $pageTitle = 'RTMP-Server in Rust mit librtmp2 bauen — OpenRTMP-Entwickleranleitung';
-$pageDescription = 'Einen eigenen RTMP/RTMPS-Server oder ein Relay in Rust mit librtmp2 bauen. Die Grenze zwischen Protokoll und Bibliothek, Session-Ablauf, TLS, E-RTMP, FFI verstehen – und wann librtmp2-server die bessere Wahl ist.';
+$pageDescription = 'Eigenen RTMP/RTMPS-Server oder ein Relay in Rust mit librtmp2 bauen: Protokollgrenze, Session-Ablauf, TLS, E-RTMP, FFI und wann librtmp2-server passt.';
 $canonicalPath = '/de/guides/rtmp-server-rust/';
 $ogType = 'article';
 $structuredData = [

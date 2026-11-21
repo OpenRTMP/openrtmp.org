@@ -1,7 +1,7 @@
 <?php
 $page = 'home';
 $pageTitle = 'OpenRTMP — Rust RTMP/E-RTMP library and self-hosted server';
-$pageDescription = 'Build RTMP/E-RTMP applications with Rust or deploy a private RTMP/RTMPS server with Docker, stream-key authentication, optional multi-node clustering, live statistics, REST API, and a web panel.';
+$pageDescription = 'Build RTMP/E-RTMP apps in Rust or self-host an RTMP/RTMPS server with Docker: stream keys, optional clustering, live stats, REST API and web panel.';
 $canonicalPath = '/';
 $structuredData = [
   '@context' => 'https://schema.org',

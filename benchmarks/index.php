@@ -1,7 +1,7 @@
 <?php
 $page = 'benchmarks';
 $pageTitle = 'RTMP server benchmarks — OpenRTMP vs nginx-rtmp, MediaMTX, SRS and LiveForge';
-$pageDescription = 'Versioned librtmp2-server benchmarks against nginx-rtmp, MediaMTX, SRS and LiveForge: publish/play handshakes, viewer join latency, CPU and memory up to 2000 viewers.';
+$pageDescription = 'Versioned librtmp2-server benchmarks vs nginx-rtmp, MediaMTX, SRS and LiveForge: publish/play handshakes, join latency, CPU and memory to 2000 viewers.';
 $canonicalPath = '/benchmarks/';
 $ogType = 'article';
 $structuredData = [

@@ -6,7 +6,8 @@ Usage: scripts/check-seo.py BASE_URL PATH...
 Each PATH (for example /guides/ or /de/docs/) must answer 200 and satisfy the
 conventions this site relies on:
 
-* one <title> and one meta description, both non-empty and unique per page;
+* one <title> and one meta description, both non-empty and unique per page,
+  with the description short enough for a search result snippet;
 * one self-referencing absolute canonical URL;
 * an indexable robots meta tag;
 * an <html lang> that matches the /de/ prefix;
@@ -41,6 +42,8 @@ ARTICLE_FIELDS = (
 )
 
 META_DESCRIPTION = "description"
+# Search engines cut snippets at roughly 155-160 characters.
+MAX_DESCRIPTION_LENGTH = 155
 META_ROBOTS = "robots"
 OG_TITLE = "og:title"
 OG_DESCRIPTION = "og:description"
@@ -170,8 +173,14 @@ def check_head(path, page, errors):
         errors.append(f"{path}: expected one <title>, found {page.title_count}")
     elif not page.title:
         errors.append(f"{path}: <title> is empty")
-    if not page.meta(name=META_DESCRIPTION):
+    description = page.meta(name=META_DESCRIPTION)
+    if not description:
         errors.append(f"{path}: missing meta description")
+    elif len(description) > MAX_DESCRIPTION_LENGTH:
+        errors.append(
+            f"{path}: meta description is {len(description)} characters,"
+            f" limit is {MAX_DESCRIPTION_LENGTH}"
+        )
     robots = page.meta(name=META_ROBOTS)
     if robots is None:
         errors.append(f"{path}: missing meta robots")

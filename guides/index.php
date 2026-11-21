@@ -1,7 +1,7 @@
 <?php
 $page = 'guides';
 $pageTitle = 'OpenRTMP Guides — RTMP, Enhanced RTMP, OBS, Docker, Rust, and server comparisons';
-$pageDescription = 'Practical OpenRTMP guides for self-hosting RTMP, OBS, RTMPS, HEVC, AV1, Enhanced RTMP v2, Rust development, clustering, NOALBS, and media-server comparisons.';
+$pageDescription = 'Practical OpenRTMP guides: self-hosted RTMP, OBS, RTMPS, HEVC, AV1, Enhanced RTMP v2, Rust development, clustering, NOALBS and server comparisons.';
 $canonicalPath = '/guides/';
 include_once __DIR__ . '/../includes/header.php';
 ?>
